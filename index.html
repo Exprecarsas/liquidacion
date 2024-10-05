@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototipo Liquidación</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Liquidación de Envío</h1>
+        <form id="calculationForm">
+            <div class="form-group">
+                <label for="tipoCaja">Tipo de Caja:</label>
+                <select id="tipoCaja" required>
+                    <option value="" disabled selected>Seleccione el tipo de caja</option>
+                    <option value="normal">Caja Normal</option>
+                    <option value="calzado">Caja de Calzado</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="numUnidades">Cantidad de Unidades:</label>
+                <input type="number" id="numUnidades" placeholder="Ingrese la cantidad de unidades" required>
+            </div>
+            <div class="form-group">
+                <label for="pesoTotal">Peso Real Total (kg):</label>
+                <input type="number" id="pesoTotal" placeholder="Ingrese el peso total (kg)" required>
+            </div>
+            <div class="form-group" id="rangoPesoDiv" style="display:none;">
+                <label for="rangoPeso">Seleccione el rango de peso:</label>
+                <select id="rangoPeso">
+                    <option value="" disabled selected>Seleccione un rango de peso</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="valorDeclarado">Valor Declarado Total ($):</label>
+                <input type="number" id="valorDeclarado" placeholder="Ingrese el valor declarado" required>
+            </div>
+            <div class="form-group">
+                <label for="ciudadDestino">Ciudad de Destino:</label>
+                <input type="text" id="ciudadDestino" placeholder="Ingrese la ciudad de destino" required>
+                <div id="suggestions" class="suggestions"></div>
+            </div>
+            <button type="button" id="calcularBtn">Calcular</button>
+        </form>
+
+        <div id="resultado" class="result"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
