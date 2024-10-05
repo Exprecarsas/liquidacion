@@ -19,6 +19,11 @@
                 </select>
             </div>
             <div class="form-group">
+                <label for="ciudadDestino">Ciudad de Destino:</label>
+                <input type="text" id="ciudadDestino" placeholder="Ingrese la ciudad de destino" required>
+                <div id="suggestions" class="suggestions"></div>
+            </div>
+            <div class="form-group">
                 <label for="numUnidades">Cantidad de Unidades:</label>
                 <input type="number" id="numUnidades" placeholder="Ingrese la cantidad de unidades" required>
             </div>
@@ -36,11 +41,7 @@
                 <label for="valorDeclarado">Valor Declarado Total ($):</label>
                 <input type="number" id="valorDeclarado" placeholder="Ingrese el valor declarado" required>
             </div>
-            <div class="form-group">
-                <label for="ciudadDestino">Ciudad de Destino:</label>
-                <input type="text" id="ciudadDestino" placeholder="Ingrese la ciudad de destino" required>
-                <div id="suggestions" class="suggestions"></div>
-            </div>
+            
             <button type="button" id="calcularBtn">Calcular</button>
         </form>
 
