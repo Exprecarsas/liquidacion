@@ -39,8 +39,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Aplicar formato de puntos al valor declarado al perder el foco
-    valorDeclaradoInput.addEventListener('blur', function () {
+    // Aplicar formato de puntos al valor declarado cuando se escribe
+    valorDeclaradoInput.addEventListener('input', function () {
         let valor = valorDeclaradoInput.value.replace(/\D/g, '');  // Eliminar caracteres no numéricos
         valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);  // Aplicar formato con puntos
     });
@@ -131,9 +131,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
             // Costo basado en el rango de peso seleccionado
-            costoCaja = tarifas["calzado_nacional"][ciudadDestinoValue][rangoSeleccionado] || 0;
+            costoCaja = tarifas["calzado_nacional"][ciudadDestinoValue][rangoSeleccionado];
         } else {
-            costoCaja = tarifas["normal"][ciudadDestinoValue] || 0;
+            costoCaja = tarifas["normal"][ciudadDestinoValue];
         }
 
         // Calcular el costo total por todas las unidades de cajas
