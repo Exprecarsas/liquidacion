@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const pesoTotalInput = document.getElementById('pesoTotal');
     const rangoPesoDiv = document.getElementById('rangoPesoDiv');
     const rangoPesoSelect = document.getElementById('rangoPeso');
+    const valorDeclaradoInput = document.getElementById('valorDeclarado');
     const errorModal = document.getElementById('errorModal');
     const errorMessage = document.getElementById('errorMessage');
     const closeModalBtn = document.querySelector('.close-btn');
@@ -36,6 +37,12 @@ document.addEventListener('DOMContentLoaded', function () {
         if (event.target === errorModal) {
             errorModal.style.display = "none";
         }
+    });
+
+    // Aplicar formato de puntos al valor declarado
+    valorDeclaradoInput.addEventListener('input', function () {
+        let valor = valorDeclaradoInput.value.replace(/\D/g, '');  // Eliminar caracteres no numéricos
+        valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);  // Aplicar formato con puntos
     });
 
     // Cambiar las ciudades disponibles según el tipo de caja seleccionado
@@ -96,7 +103,8 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('calcularBtn').addEventListener('click', function () {
         const tipoCaja = tipoCajaSelect.value;
         const numUnidades = parseInt(document.getElementById('numUnidades').value);
-        const valorDeclarado = parseFloat(document.getElementById('valorDeclarado').value);
+        const valorDeclaradoStr = valorDeclaradoInput.value.replace(/\./g, '');  // Eliminar los puntos para convertir a número
+        const valorDeclarado = parseFloat(valorDeclaradoStr);
         const ciudadDestinoValue = ciudadDestino.value;
 
         if (!tipoCaja || !ciudadDestinoValue || !tarifas[tipoCaja][ciudadDestinoValue]) {
@@ -115,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        let costoTotal = 0;
+        let costoCaja = 0;
         if (tipoCaja === "calzado") {
             const rangoSeleccionado = rangoPesoSelect.value;
             if (!rangoSeleccionado) {
@@ -123,17 +131,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
             // Costo basado en el rango de peso seleccionado
-            costoTotal = tarifas["calzado_nacional"][ciudadDestinoValue][rangoSeleccionado];
+            costoCaja = tarifas["calzado_nacional"][ciudadDestinoValue][rangoSeleccionado];
         } else {
-            costoTotal = tarifas["normal"][ciudadDestinoValue];
+            costoCaja = tarifas["normal"][ciudadDestinoValue];
         }
+
+        // Calcular el costo total por todas las unidades de cajas
+        const costoTotalCajas = costoCaja * numUnidades;
 
         // Cálculo del seguro con el porcentaje correspondiente
         let porcentajeSeguro = valorDeclarado <= valorMinimo ? 0.01 : 0.005;
         const costoSeguro = valorDeclarado * porcentajeSeguro;
 
         // Calcular el total con el seguro incluido
-        const costoFinal = costoTotal * numUnidades;
+        const costoTotalFinal = costoTotalCajas + costoSeguro;
 
         document.getElementById('resultado').innerHTML = `
             <h3>Resultados de la Liquidación</h3>
@@ -142,9 +153,9 @@ document.addEventListener('DOMContentLoaded', function () {
             <p>Ciudad de Destino: ${ciudadDestinoValue}</p>
             <p>Valor Declarado: $${valorDeclarado.toLocaleString()}</p>
             <p>Costo del Seguro: $${costoSeguro.toLocaleString()}</p>
-            <p><strong>Costo Total sin Seguro: $${costoFinal.toLocaleString()}</strong></p>
+            <p>Costo Total de las Cajas: $${costoTotalCajas.toLocaleString()}</p>
+            <p><strong>Costo Total Final: $${costoTotalFinal.toLocaleString()}</strong></p>
         `;
     });
 });
-
 
