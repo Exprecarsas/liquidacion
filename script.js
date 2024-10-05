@@ -96,7 +96,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('calcularBtn').addEventListener('click', function () {
         const tipoCaja = tipoCajaSelect.value;
         const numUnidades = parseInt(document.getElementById('numUnidades').value);
-        let pesoTotal = parseFloat(document.getElementById('pesoTotal').value);
         const valorDeclarado = parseFloat(document.getElementById('valorDeclarado').value);
         const ciudadDestinoValue = ciudadDestino.value;
 
@@ -129,12 +128,12 @@ document.addEventListener('DOMContentLoaded', function () {
             costoTotal = tarifas["normal"][ciudadDestinoValue];
         }
 
-        // Cálculo del seguro
+        // Cálculo del seguro con el porcentaje correspondiente
         let porcentajeSeguro = valorDeclarado <= valorMinimo ? 0.01 : 0.005;
         const costoSeguro = valorDeclarado * porcentajeSeguro;
 
         // Calcular el total con el seguro incluido
-        const costoFinal = costoTotal * numUnidades + costoSeguro;
+        const costoFinal = costoTotal * numUnidades;
 
         document.getElementById('resultado').innerHTML = `
             <h3>Resultados de la Liquidación</h3>
@@ -143,8 +142,9 @@ document.addEventListener('DOMContentLoaded', function () {
             <p>Ciudad de Destino: ${ciudadDestinoValue}</p>
             <p>Valor Declarado: $${valorDeclarado.toLocaleString()}</p>
             <p>Costo del Seguro: $${costoSeguro.toLocaleString()}</p>
-            <p><strong>Costo Total: $${costoFinal.toLocaleString()}</strong></p>
+            <p><strong>Costo Total sin Seguro: $${costoFinal.toLocaleString()}</strong></p>
         `;
     });
 });
+
 
