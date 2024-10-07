@@ -100,13 +100,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 ...Object.keys(tarifas["calzado_reexpedicion"]),
                 ...Object.keys(tarifas["calzado_por_peso"])
             ];
-            rangoPesoDiv.style.display = "block";  // Mostrar la selección de rangos de peso
-            pesoTotalInput.disabled = true;  // Deshabilitar el campo de peso manual
-            pesoTotalInput.value = "";  // Limpiar el campo de peso manual
+            rangoPesoDiv.style.display = "block";
+            pesoTotalInput.disabled = true;
+            pesoTotalInput.value = "";
         } else if (tipoCaja === "normal") {
             ciudades = Object.keys(tarifas["normal"]);
-            rangoPesoDiv.style.display = "none";  // Ocultar la selección de rangos de peso
-            pesoTotalInput.disabled = false;  // Habilitar el campo de peso manual
+            rangoPesoDiv.style.display = "none";
+            pesoTotalInput.disabled = false;
         } else {
             ciudades = [];
         }
@@ -147,14 +147,13 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Definir el valor mínimo según el tipo de tarifa
         let valorMinimo;
         if (tarifas["calzado_reexpedicion"][ciudadDestinoValue]) {
-            valorMinimo = 1000000; // Mínimo para calzado reexpedición
+            valorMinimo = 1000000;
         } else if (tipoCaja === "calzado") {
-            valorMinimo = 500000; // Mínimo para calzado nacional o por peso
+            valorMinimo = 500000;
         } else {
-            valorMinimo = 500000; // Mínimo para caja normal
+            valorMinimo = 500000;
         }
 
         if (valorDeclarado < valorMinimo) {
@@ -165,10 +164,8 @@ document.addEventListener('DOMContentLoaded', function () {
         let costoCaja = 0;
         let kilosAdicionales = 0;
 
-        // Obtener la tarifa base según el tipo de caja
         if (tipoCaja === "normal") {
             costoCaja = tarifas["normal"][ciudadDestinoValue];
-            // Calcular kilos adicionales si el peso es mayor a 30 kg
             if (pesoUsado > 30) {
                 kilosAdicionales = (pesoUsado - 30) * (costoCaja / 30);
             }
@@ -177,10 +174,8 @@ document.addEventListener('DOMContentLoaded', function () {
             costoCaja = tarifas["calzado_nacional"][ciudadDestinoValue][rangoSeleccionado] || 0;
         }
 
-        // Calcular el costo del seguro
         let costoSeguro = valorDeclarado * (valorDeclarado <= valorMinimo ? 0.01 : 0.005);
 
-        // Calcular el costo total
         const costoTotal = (costoCaja + kilosAdicionales) * numUnidades + costoSeguro;
 
         // Mostrar los resultados
