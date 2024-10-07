@@ -171,18 +171,28 @@ document.addEventListener('DOMContentLoaded', function () {
         let costoSeguro = valorDeclarado * (valorDeclarado <= valorMinimo ? 0.01 : 0.005);
         const costoTotal = (costoCaja + kilosAdicionales) * numUnidades + costoSeguro;
 
-        
-
-               resultadoDiv.innerHTML = `
-            <h3>Resultados de la Liquidación</h3>
-            <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
-            <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
-            <p><strong>Peso Total:</strong> ${pesoUsado} kg</p>
-            <p><strong>Costo Base:</strong> $${costoCaja.toFixed(2)}</p>
-            <p><strong>Kilos Adicionales:</strong> $${kilosAdicionales.toFixed(2)}</p>
-            <p><strong>Costo Seguro:</strong> $${costoSeguro.toFixed(2)}</p>
-            <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
-        `;
+        // Mostrar resultados basados en el tipo de caja
+        if (tipoCaja === "calzado") {
+            resultadoDiv.innerHTML = `
+                <h3>Resultados de la Liquidación</h3>
+                <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
+                <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
+                <p><strong>Rango de Peso:</strong> ${rangoSeleccionado} kg</p>
+                <p><strong>Costo Base:</strong> $${costoCaja.toFixed(2)}</p>
+                <p><strong>Costo Seguro:</strong> $${costoSeguro.toFixed(2)}</p>
+                <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
+            `;
+        } else {
+            resultadoDiv.innerHTML = `
+                <h3>Resultados de la Liquidación</h3>
+                <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
+                <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
+                <p><strong>Peso Total:</strong> ${pesoUsado} kg</p>
+                <p><strong>Costo Base:</strong> $${costoCaja.toFixed(2)}</p>
+                <p><strong>Kilos Adicionales:</strong> $${kilosAdicionales.toFixed(2)}</p>
+                <p><strong>Costo Seguro:</strong> $${costoSeguro.toFixed(2)}</p>
+                <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
+            `;
+        }
     });
 });
-
