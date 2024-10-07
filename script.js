@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function () {
         suggestionsBox.innerHTML = '';
     });
 
-    // Mostrar los rangos de peso según la ciudad seleccionada
+    // Mostrar los rangos de peso según la ciudad seleccionada para calzado
     ciudadDestino.addEventListener('change', function () {
         const ciudadSeleccionada = ciudadDestino.value;
         const tipoCaja = tipoCajaSelect.value;
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Cálculo del costo total incluyendo el seguro
+    // Cálculo del costo total incluyendo el seguro y los kilos adicionales
     document.getElementById('calcularBtn').addEventListener('click', function () {
         const tipoCaja = tipoCajaSelect.value;
         const numUnidades = parseInt(document.getElementById('numUnidades').value);
