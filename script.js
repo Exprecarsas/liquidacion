@@ -178,10 +178,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Calcular el costo del seguro
-        let seguro = valorDeclarado * (valorDeclarado <= valorMinimo ? 0.01 : 0.005);
+        let costoSeguro = valorDeclarado * (valorDeclarado <= valorMinimo ? 0.01 : 0.005);
 
         // Calcular el costo total
-        const costoTotal = (costoCaja + kilosAdicionales) * numUnidades + seguro;
+        const costoTotal = (costoCaja + kilosAdicionales) * numUnidades + costoSeguro;
 
         // Mostrar los resultados
         document.getElementById('resultado').innerHTML = `
