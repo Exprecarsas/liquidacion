@@ -41,15 +41,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Formatear el valor declarado al ingresar valores
     valorDeclaradoInput.addEventListener('input', function () {
-        // Capturar solo los caracteres numéricos y eliminar todo lo demás
-        let valor = valorDeclaradoInput.value.replace(/\D/g, '');
-        // Aplicar formato con puntos para separar los miles
-        valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);
+        let valor = valorDeclaradoInput.value.replace(/\D/g, '');  // Eliminar caracteres no numéricos
+        valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);  // Aplicar formato con puntos
     });
 
     // Cambiar las ciudades disponibles según el tipo de caja seleccionado
     tipoCajaSelect.addEventListener('change', function () {
-        if (this.value === "calzado") {
+        const tipoCaja = tipoCajaSelect.value;
+
+        if (tipoCaja === "calzado") {
             ciudades = [
                 ...Object.keys(tarifas["calzado_nacional"]),
                 ...Object.keys(tarifas["calzado_reexpedicion"]),
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
             rangoPesoDiv.style.display = "block";  // Mostrar la selección de rangos de peso
             pesoTotalInput.disabled = true;  // Deshabilitar el campo de peso manual
             pesoTotalInput.value = "";  // Limpiar el campo de peso manual
-        } else if (this.value === "normal") {
+        } else if (tipoCaja === "normal") {
             ciudades = Object.keys(tarifas["normal"]);
             rangoPesoDiv.style.display = "none";  // Ocultar la selección de rangos de peso
             pesoTotalInput.disabled = false;  // Habilitar el campo de peso manual
@@ -130,14 +130,19 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Validar los valores mínimos de seguro según el tipo de caja
-        const valorMinimoCajaNormal = 500000;
-        const valorMinimoCalzado = 1000000;
-        let valorMinimo = tipoCaja === "calzado" ? valorMinimoCalzado : valorMinimoCajaNormal;
+        // Definir el valor mínimo según el tipo de tarifa
+        let valorMinimo;
+        if (tarifas["calzado_reexpedicion"][ciudadDestinoValue]) {
+            valorMinimo = 1000000; // Mínimo para calzado reexpedición
+        } else if (tipoCaja === "calzado") {
+            valorMinimo = 500000; // Mínimo para calzado nacional o por peso
+        } else {
+            valorMinimo = 500000; // Mínimo para caja normal
+        }
 
         // Verificar el valor declarado y mostrar un error si es menor al valor mínimo permitido
         if (valorDeclarado < valorMinimo) {
-            mostrarError(`El valor declarado no puede ser menor a $${valorMinimo.toLocaleString()} para ${tipoCaja === "calzado" ? 'Caja de Calzado' : 'Caja Normal'}.`);
+            mostrarError(`El valor declarado no puede ser menor a $${valorMinimo.toLocaleString()} para la ciudad seleccionada.`);
             return;
         }
 
@@ -165,7 +170,8 @@ document.addEventListener('DOMContentLoaded', function () {
         // Calcular el total con el seguro incluido
         const costoTotalFinal = costoTotalCajas + costoSeguro;
 
-          document.getElementById('resultado').innerHTML = `
+        // Mostrar los resultados
+        document.getElementById('resultado').innerHTML = `
             <h3>Resultados de la Liquidación</h3>
             <p>Tipo de Caja: ${tipoCaja === 'normal' ? 'Caja Normal' : 'Caja de Calzado'}</p>
             <p>Cantidad de Unidades: ${numUnidades}</p>
