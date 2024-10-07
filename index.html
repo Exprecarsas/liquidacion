@@ -9,55 +9,65 @@
 <body>
     <div class="container">
         <h1>Calculadora de Liquidación de Envío</h1>
-        <form id="calculationForm">
-            <div class="form-group">
-                <label for="tipoCaja">Tipo de Caja:</label>
-                <select id="tipoCaja" required>
-                    <option value="" disabled selected>Seleccione el tipo de caja</option>
-                    <option value="normal">Caja Normal</option>
-                    <option value="calzado">Caja de Calzado</option>
-                </select>
-            </div>
-            
-            <!-- Mover el campo de Ciudad de Destino justo después del Tipo de Caja -->
-            <div class="form-group">
-                <label for="ciudadDestino">Ciudad de Destino:</label>
-                <input type="text" id="ciudadDestino" placeholder="Ingrese la ciudad de destino" required>
-                <div id="suggestions" class="suggestions"></div>
-            </div>
+ <form id="formulario" onsubmit="return false;">
+    <label for="tipoCaja">Tipo de Caja:</label>
+    <select id="tipoCaja">
+        <option value="" disabled selected>Seleccione un tipo de caja</option>
+        <option value="normal">Caja Normal</option>
+        <option value="calzado">Caja Calzado</option>
+    </select><br>
 
-            <div class="form-group">
-                <label for="numUnidades">Cantidad de Unidades:</label>
-                <input type="number" id="numUnidades" placeholder="Ingrese la cantidad de unidades" required>
-            </div>
-            <div class="form-group">
-                <label for="pesoTotal">Peso Real Total (kg):</label>
-                <input type="number" id="pesoTotal" placeholder="Ingrese el peso total (kg)" required>
-            </div>
-            <div class="form-group" id="rangoPesoDiv" style="display:none;">
-                <label for="rangoPeso">Seleccione el rango de peso:</label>
-                <select id="rangoPeso">
-                    <option value="" disabled selected>Seleccione un rango de peso</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="valorDeclarado">Valor Declarado Total ($):</label>
-                <input type="text" id="valorDeclarado" placeholder="Ingrese el valor declarado" required>
-            </div>
-            
-            <button type="button" id="calcularBtn">Calcular</button>
-        </form>
+    <label for="ciudadDestino">Ciudad de Destino:</label>
+    <input type="text" id="ciudadDestino" autocomplete="off">
+    <div id="suggestions" class="suggestions-box"></div><br>
 
-        <div id="resultado" class="result"></div>
+    <label for="numUnidades">Cantidad de Unidades:</label>
+    <input type="number" id="numUnidades" value="1" min="1"><br>
+
+    <div id="rangoPesoDiv" style="display:none;">
+        <label for="rangoPeso">Rango de Peso:</label>
+        <select id="rangoPeso"></select><br>
     </div>
 
-    <!-- Ventana Modal -->
-    <div id="errorModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <p id="errorMessage"></p>
-        </div>
+    <label for="pesoTotal">Peso Total (kg):</label>
+    <input type="number" id="pesoTotal" min="1" disabled><br>
+
+    <!-- Botón para abrir la ventana modal de cálculo volumétrico -->
+    <button type="button" id="calcularVolumetricoBtn">Calcular Peso Volumétrico</button><br>
+
+    <label for="valorDeclarado">Valor Declarado:</label>
+    <input type="text" id="valorDeclarado"><br>
+
+    <button id="calcularBtn">Calcular</button>
+</form>
+<div id="resultado"></div>
+
+<!-- Modal para mostrar errores -->
+<div id="errorModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <p id="errorMessage"></p>
     </div>
+</div>
+
+<!-- Modal para cálculo volumétrico -->
+<div id="volumetricModal" class="modal">
+    <div class="modal-content">
+        <span class="close-volumetric-btn">&times;</span>
+        <h3>Calcular Peso Volumétrico</h3>
+        <label for="alto">Alto (cm):</label>
+        <input type="number" id="alto" min="1"><br>
+
+        <label for="ancho">Ancho (cm):</label>
+        <input type="number" id="ancho" min="1"><br>
+
+        <label for="largo">Largo (cm):</label>
+        <input type="number" id="largo" min="1"><br>
+
+        <button type="button" id="calcularVolumetrico">Calcular</button>
+        <button type="button" id="aceptarVolumetrico">Aceptar</button>
+    </div>
+</div>
 
     <script src="script.js"></script>
 </body>
