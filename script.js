@@ -178,17 +178,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const costoTotal = (costoCaja + kilosAdicionales) * numUnidades + costoSeguro;
 
-        // Mostrar los resultados
-        document.getElementById('resultado').innerHTML = `
+        resultadoDiv.innerHTML = `
             <h3>Resultados de la Liquidación</h3>
-            <p>Tipo de Caja: ${tipoCaja === 'normal' ? 'Caja Normal' : 'Caja de Calzado'}</p>
-            <p>Cantidad de Unidades: ${numUnidades}</p>
-            <p>Ciudad de Destino: ${ciudadDestinoValue}</p>
-            <p>Valor Declarado: $${valorDeclarado.toLocaleString()}</p>
-            <p>Costo del Seguro: $${costoSeguro.toLocaleString()}</p>
-            <p>Costo Total de las Cajas: $${costoTotalCajas.toLocaleString()}</p>
-            <p><strong>Costo Total Final: $${costoTotalFinal.toLocaleString()}</strong></p>
+            <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
+            <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
+            <p><strong>Peso Total:</strong> ${pesoUsado} kg</p>
+            <p><strong>Costo Base:</strong> $${costoCaja.toFixed(2)}</p>
+            <p><strong>Kilos Adicionales:</strong> $${kilosAdicionales.toFixed(2)}</p>
+            <p><strong>Costo Seguro:</strong> $${costoSeguro.toFixed(2)}</p>
+            <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
         `;
     });
 });
+
 
