@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const errorModal = document.getElementById('errorModal');
     const errorMessage = document.getElementById('errorMessage');
     const closeModalBtn = document.querySelector('.close-btn');
+    const resultadoDiv = document.getElementById('resultado');
+
     let tarifas = {};
     let ciudades = [];
     let pesoVolumetricoCalculado = 0;
@@ -112,34 +114,6 @@ document.addEventListener('DOMContentLoaded', function () {
         suggestionsBox.innerHTML = '';
     });
 
-    // Mostrar los rangos de peso según la ciudad seleccionada para calzado
-    ciudadDestino.addEventListener('change', function () {
-        const ciudadSeleccionada = ciudadDestino.value;
-        const tipoCaja = tipoCajaSelect.value;
-
-        if (tipoCaja === "calzado") {
-            let rangosPeso = [];
-
-            if (tarifas["calzado_nacional"][ciudadSeleccionada]) {
-                rangosPeso = Object.keys(tarifas["calzado_nacional"][ciudadSeleccionada]);
-            } else if (tarifas["calzado_por_peso"][ciudadSeleccionada]) {
-                rangosPeso = Object.keys(tarifas["calzado_por_peso"][ciudadSeleccionada]);
-            }
-
-            if (rangosPeso.length > 0) {
-                rangoPesoSelect.innerHTML = '<option value="" disabled selected>Seleccione un rango de peso</option>';
-                rangosPeso.forEach(rango => {
-                    rangoPesoSelect.innerHTML += `<option value="${rango}">${rango} kg</option>`;
-                });
-                rangoPesoDiv.style.display = "block";
-            } else {
-                rangoPesoDiv.style.display = "none";
-            }
-        } else {
-            rangoPesoDiv.style.display = "none";
-        }
-    });
-
     // Autocompletado de ciudad
     ciudadDestino.addEventListener('input', function () {
         const inputValue = this.value.toLowerCase();
@@ -168,7 +142,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const ciudadDestinoValue = ciudadDestino.value;
         let pesoUsado = parseFloat(pesoTotalInput.value) || 0;
 
-        // Validar si la ciudad seleccionada existe en las tarifas del tipo de caja
         if (!tipoCaja || !ciudadDestinoValue || !ciudades.includes(ciudadDestinoValue)) {
             mostrarError('Seleccione un tipo de caja y una ciudad válida de destino.');
             return;
@@ -184,35 +157,31 @@ document.addEventListener('DOMContentLoaded', function () {
             valorMinimo = 500000; // Mínimo para caja normal
         }
 
-        // Validar el valor mínimo permitido
         if (valorDeclarado < valorMinimo) {
             mostrarError(`El valor declarado no puede ser menor a $${valorMinimo.toLocaleString()} para la ciudad seleccionada.`);
             return;
         }
 
         let costoCaja = 0;
-        if (tipoCaja === "calzado") {
-            const rangoSeleccionado = rangoPesoSelect.value;
-            if (tarifas["calzado_nacional"][ciudadDestinoValue] && tarifas["calzado_nacional"][ciudadDestinoValue][rangoSeleccionado]) {
-                costoCaja = tarifas["calzado_nacional"][ciudadDestinoValue][rangoSeleccionado];
-            } else if (tarifas["calzado_por_peso"][ciudadDestinoValue] && tarifas["calzado_por_peso"][ciudadDestinoValue][rangoSeleccionado]) {
-                costoCaja = tarifas["calzado_por_peso"][ciudadDestinoValue][rangoSeleccionado];
-            } else if (tarifas["calzado_reexpedicion"][ciudadDestinoValue]) {
-                costoCaja = tarifas["calzado_reexpedicion"][ciudadDestinoValue]["Unnamed: 1"];
-            }
-        } else {
+        let kilosAdicionales = 0;
+
+        // Obtener la tarifa base según el tipo de caja
+        if (tipoCaja === "normal") {
             costoCaja = tarifas["normal"][ciudadDestinoValue];
+            // Calcular kilos adicionales si el peso es mayor a 30 kg
+            if (pesoUsado > 30) {
+                kilosAdicionales = (pesoUsado - 30) * (costoCaja / 30);
+            }
+        } else if (tipoCaja === "calzado") {
+            const rangoSeleccionado = rangoPesoSelect.value;
+            costoCaja = tarifas["calzado_nacional"][ciudadDestinoValue][rangoSeleccionado] || 0;
         }
 
-        // Calcular el costo total por todas las unidades de cajas
-        const costoTotalCajas = costoCaja * numUnidades;
+        // Calcular el costo del seguro
+        let seguro = valorDeclarado * (valorDeclarado <= valorMinimo ? 0.01 : 0.005);
 
-        // Cálculo del seguro con el porcentaje correspondiente
-        let porcentajeSeguro = valorDeclarado <= valorMinimo ? 0.01 : 0.005;
-        const costoSeguro = valorDeclarado * porcentajeSeguro;
-
-        // Calcular el total con el seguro incluido
-        const costoTotalFinal = costoTotalCajas + costoSeguro;
+        // Calcular el costo total
+        const costoTotal = (costoCaja + kilosAdicionales) * numUnidades + seguro;
 
         // Mostrar los resultados
         document.getElementById('resultado').innerHTML = `
