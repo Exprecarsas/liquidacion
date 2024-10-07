@@ -67,6 +67,37 @@ document.addEventListener('DOMContentLoaded', function () {
         suggestionsBox.innerHTML = '';
     });
 
+    // Actualizar los rangos de peso según la ciudad seleccionada
+    ciudadDestino.addEventListener('change', function () {
+        const ciudadSeleccionada = ciudadDestino.value;
+        const tipoCaja = tipoCajaSelect.value;
+
+        if (tipoCaja === "calzado" && ciudadSeleccionada) {
+            let rangosPeso = [];
+
+            // Verificar si la ciudad tiene rangos de peso definidos
+            if (tarifas["calzado_nacional"] && tarifas["calzado_nacional"][ciudadSeleccionada]) {
+                rangosPeso = Object.keys(tarifas["calzado_nacional"][ciudadSeleccionada]);
+            } else if (tarifas["calzado_por_peso"] && tarifas["calzado_por_peso"][ciudadSeleccionada]) {
+                rangosPeso = Object.keys(tarifas["calzado_por_peso"][ciudadSeleccionada]);
+            }
+
+            // Mostrar los rangos de peso en el select
+            if (rangosPeso.length > 0) {
+                rangoPesoSelect.innerHTML = '<option value="" disabled selected>Seleccione un rango de peso</option>';
+                rangosPeso.forEach(rango => {
+                    rangoPesoSelect.innerHTML += `<option value="${rango}">${rango} kg</option>`;
+                });
+                rangoPesoDiv.style.display = "block";
+            } else {
+                rangoPesoDiv.style.display = "none";
+                mostrarError(`No se encontraron rangos de peso para la ciudad seleccionada: ${ciudadSeleccionada}.`);
+            }
+        } else {
+            rangoPesoDiv.style.display = "none";
+        }
+    });
+
     // Autocompletado de ciudad
     ciudadDestino.addEventListener('input', function () {
         const inputValue = this.value.toLowerCase();
@@ -117,7 +148,6 @@ document.addEventListener('DOMContentLoaded', function () {
         let costoCaja = 0;
         let kilosAdicionales = 0;
 
-        // Validar el acceso a las tarifas antes de usarlas
         if (tipoCaja === "normal") {
             if (tarifas["normal"] && tarifas["normal"][ciudadDestinoValue]) {
                 costoCaja = tarifas["normal"][ciudadDestinoValue];
@@ -143,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let costoSeguro = valorDeclarado * (valorDeclarado <= valorMinimo ? 0.01 : 0.005);
         const costoTotal = (costoCaja + kilosAdicionales) * numUnidades + costoSeguro;
 
-        resultadoDiv.innerHTML = `
+               resultadoDiv.innerHTML = `
             <h3>Resultados de la Liquidación</h3>
             <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
             <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
