@@ -5,13 +5,21 @@ document.addEventListener('DOMContentLoaded', function () {
     const pesoTotalInput = document.getElementById('pesoTotal');
     const rangoPesoDiv = document.getElementById('rangoPesoDiv');
     const rangoPesoSelect = document.getElementById('rangoPeso');
+    const calcularVolumetricoBtn = document.getElementById('calcularVolumetricoBtn');
+    const volumetricModal = document.getElementById('volumetricModal');
+    const closeVolumetricBtn = document.querySelector('.close-volumetric-btn');
+    const calcularVolumetrico = document.getElementById('calcularVolumetrico');
+    const aceptarVolumetrico = document.getElementById('aceptarVolumetrico');
+    const altoInput = document.getElementById('alto');
+    const anchoInput = document.getElementById('ancho');
+    const largoInput = document.getElementById('largo');
     const valorDeclaradoInput = document.getElementById('valorDeclarado');
     const errorModal = document.getElementById('errorModal');
     const errorMessage = document.getElementById('errorMessage');
     const closeModalBtn = document.querySelector('.close-btn');
-
     let tarifas = {};
     let ciudades = [];
+    let pesoVolumetricoCalculado = 0;
 
     // Cargar las tarifas desde el archivo JSON
     fetch('tarifas_completas_actualizadas.json')
@@ -27,22 +35,57 @@ document.addEventListener('DOMContentLoaded', function () {
         errorModal.style.display = "block";
     }
 
-    // Cerrar el modal al hacer clic en la 'X'
+    // Cerrar el modal de error al hacer clic en la 'X'
     closeModalBtn.addEventListener('click', function () {
         errorModal.style.display = "none";
     });
 
-    // Cerrar el modal al hacer clic fuera de la ventana modal
+    // Abrir la ventana modal de cálculo volumétrico
+    calcularVolumetricoBtn.addEventListener('click', function () {
+        volumetricModal.style.display = 'block';
+    });
+
+    // Cerrar la ventana modal de cálculo volumétrico
+    closeVolumetricBtn.addEventListener('click', function () {
+        volumetricModal.style.display = 'none';
+    });
+
+    // Cerrar la ventana modal al hacer clic fuera de la ventana
     window.addEventListener('click', function (event) {
-        if (event.target === errorModal) {
-            errorModal.style.display = "none";
+        if (event.target === volumetricModal) {
+            volumetricModal.style.display = 'none';
         }
     });
 
-    // Formatear el valor declarado al ingresar valores
+    // Calcular el peso volumétrico
+    calcularVolumetrico.addEventListener('click', function () {
+        const alto = parseFloat(altoInput.value);
+        const ancho = parseFloat(anchoInput.value);
+        const largo = parseFloat(largoInput.value);
+
+        if (!alto || !ancho || !largo) {
+            alert('Debe ingresar dimensiones válidas para calcular el peso volumétrico.');
+            return;
+        }
+
+        pesoVolumetricoCalculado = (alto * ancho * largo) / 5000;
+        alert(`El peso volumétrico calculado es de: ${pesoVolumetricoCalculado.toFixed(2)} kg`);
+    });
+
+    // Transferir el peso volumétrico al campo de peso total
+    aceptarVolumetrico.addEventListener('click', function () {
+        if (pesoVolumetricoCalculado > 0) {
+            pesoTotalInput.value = pesoVolumetricoCalculado.toFixed(2);
+            volumetricModal.style.display = 'none';
+        } else {
+            alert('Debe calcular el peso volumétrico primero.');
+        }
+    });
+
+    // Formatear el valor declarado al escribir
     valorDeclaradoInput.addEventListener('input', function () {
-        let valor = valorDeclaradoInput.value.replace(/\D/g, '');  // Eliminar caracteres no numéricos
-        valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);  // Aplicar formato con puntos
+        let valor = valorDeclaradoInput.value.replace(/\D/g, '');
+        valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);
     });
 
     // Cambiar las ciudades disponibles según el tipo de caja seleccionado
@@ -120,9 +163,10 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('calcularBtn').addEventListener('click', function () {
         const tipoCaja = tipoCajaSelect.value;
         const numUnidades = parseInt(document.getElementById('numUnidades').value);
-        const valorDeclaradoStr = valorDeclaradoInput.value.replace(/\./g, '');  // Eliminar los puntos para convertir a número
+        const valorDeclaradoStr = valorDeclaradoInput.value.replace(/\./g, '');
         const valorDeclarado = parseFloat(valorDeclaradoStr);
         const ciudadDestinoValue = ciudadDestino.value;
+        let pesoUsado = parseFloat(pesoTotalInput.value) || 0;
 
         // Validar si la ciudad seleccionada existe en las tarifas del tipo de caja
         if (!tipoCaja || !ciudadDestinoValue || !ciudades.includes(ciudadDestinoValue)) {
@@ -140,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function () {
             valorMinimo = 500000; // Mínimo para caja normal
         }
 
-        // Verificar el valor declarado y mostrar un error si es menor al valor mínimo permitido
+        // Validar el valor mínimo permitido
         if (valorDeclarado < valorMinimo) {
             mostrarError(`El valor declarado no puede ser menor a $${valorMinimo.toLocaleString()} para la ciudad seleccionada.`);
             return;
