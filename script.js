@@ -125,6 +125,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const ciudadDestinoValue = ciudadDestino.value;
         let pesoUsado = parseFloat(pesoTotalInput.value) || 0;
 
+        // Definir la variable rangoSeleccionado solo si el tipo de caja es calzado
+        let rangoSeleccionado = tipoCaja === 'calzado' ? rangoPesoSelect.value : null;
+
         if (!tipoCaja || !ciudadDestinoValue || !ciudades.includes(ciudadDestinoValue)) {
             mostrarError('Seleccione un tipo de caja y una ciudad válida de destino.');
             return;
