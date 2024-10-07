@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.json())
         .then(data => {
             tarifas = data;
+            console.log("Tarifas cargadas:", tarifas);  // Verificar si las tarifas se cargan correctamente
         })
         .catch(error => console.error('Error al cargar el archivo de tarifas:', error));
 
@@ -42,69 +43,21 @@ document.addEventListener('DOMContentLoaded', function () {
         errorModal.style.display = "none";
     });
 
-    // Abrir la ventana modal de cálculo volumétrico
-    calcularVolumetricoBtn.addEventListener('click', function () {
-        volumetricModal.style.display = 'block';
-    });
-
-    // Cerrar la ventana modal de cálculo volumétrico
-    closeVolumetricBtn.addEventListener('click', function () {
-        volumetricModal.style.display = 'none';
-    });
-
-    // Cerrar la ventana modal al hacer clic fuera de la ventana
-    window.addEventListener('click', function (event) {
-        if (event.target === volumetricModal) {
-            volumetricModal.style.display = 'none';
-        }
-    });
-
-    // Calcular el peso volumétrico
-    calcularVolumetrico.addEventListener('click', function () {
-        const alto = parseFloat(altoInput.value);
-        const ancho = parseFloat(anchoInput.value);
-        const largo = parseFloat(largoInput.value);
-
-        if (!alto || !ancho || !largo) {
-            alert('Debe ingresar dimensiones válidas para calcular el peso volumétrico.');
-            return;
-        }
-
-        pesoVolumetricoCalculado = (alto * ancho * largo) / 5000;
-        alert(`El peso volumétrico calculado es de: ${pesoVolumetricoCalculado.toFixed(2)} kg`);
-    });
-
-    // Transferir el peso volumétrico al campo de peso total
-    aceptarVolumetrico.addEventListener('click', function () {
-        if (pesoVolumetricoCalculado > 0) {
-            pesoTotalInput.value = pesoVolumetricoCalculado.toFixed(2);
-            volumetricModal.style.display = 'none';
-        } else {
-            alert('Debe calcular el peso volumétrico primero.');
-        }
-    });
-
-    // Formatear el valor declarado al escribir
-    valorDeclaradoInput.addEventListener('input', function () {
-        let valor = valorDeclaradoInput.value.replace(/\D/g, '');
-        valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);
-    });
-
     // Cambiar las ciudades disponibles según el tipo de caja seleccionado
     tipoCajaSelect.addEventListener('change', function () {
         const tipoCaja = tipoCajaSelect.value;
 
         if (tipoCaja === "calzado") {
             ciudades = [
-                ...Object.keys(tarifas["calzado_nacional"]),
-                ...Object.keys(tarifas["calzado_reexpedicion"]),
-                ...Object.keys(tarifas["calzado_por_peso"])
+                ...Object.keys(tarifas["calzado_nacional"] || {}),
+                ...Object.keys(tarifas["calzado_reexpedicion"] || {}),
+                ...Object.keys(tarifas["calzado_por_peso"] || {})
             ];
             rangoPesoDiv.style.display = "block";
             pesoTotalInput.disabled = true;
             pesoTotalInput.value = "";
         } else if (tipoCaja === "normal") {
-            ciudades = Object.keys(tarifas["normal"]);
+            ciudades = Object.keys(tarifas["normal"] || {});
             rangoPesoDiv.style.display = "none";
             pesoTotalInput.disabled = false;
         } else {
@@ -148,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         let valorMinimo;
-        if (tarifas["calzado_reexpedicion"][ciudadDestinoValue]) {
+        if (tarifas["calzado_reexpedicion"] && tarifas["calzado_reexpedicion"][ciudadDestinoValue]) {
             valorMinimo = 1000000;
         } else if (tipoCaja === "calzado") {
             valorMinimo = 500000;
@@ -164,18 +117,30 @@ document.addEventListener('DOMContentLoaded', function () {
         let costoCaja = 0;
         let kilosAdicionales = 0;
 
+        // Validar el acceso a las tarifas antes de usarlas
         if (tipoCaja === "normal") {
-            costoCaja = tarifas["normal"][ciudadDestinoValue];
+            if (tarifas["normal"] && tarifas["normal"][ciudadDestinoValue]) {
+                costoCaja = tarifas["normal"][ciudadDestinoValue];
+            } else {
+                mostrarError(`No se encontraron tarifas para la ciudad seleccionada.`);
+                return;
+            }
+
+            // Calcular kilos adicionales si el peso es mayor a 30 kg
             if (pesoUsado > 30) {
                 kilosAdicionales = (pesoUsado - 30) * (costoCaja / 30);
             }
         } else if (tipoCaja === "calzado") {
             const rangoSeleccionado = rangoPesoSelect.value;
-            costoCaja = tarifas["calzado_nacional"][ciudadDestinoValue][rangoSeleccionado] || 0;
+            if (tarifas["calzado_nacional"] && tarifas["calzado_nacional"][ciudadDestinoValue] && tarifas["calzado_nacional"][ciudadDestinoValue][rangoSeleccionado]) {
+                costoCaja = tarifas["calzado_nacional"][ciudadDestinoValue][rangoSeleccionado];
+            } else {
+                mostrarError('Seleccione un rango de peso válido.');
+                return;
+            }
         }
 
         let costoSeguro = valorDeclarado * (valorDeclarado <= valorMinimo ? 0.01 : 0.005);
-
         const costoTotal = (costoCaja + kilosAdicionales) * numUnidades + costoSeguro;
 
         resultadoDiv.innerHTML = `
@@ -190,5 +155,4 @@ document.addEventListener('DOMContentLoaded', function () {
         `;
     });
 });
-
 
