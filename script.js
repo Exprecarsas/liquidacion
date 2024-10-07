@@ -132,7 +132,10 @@ document.addEventListener('DOMContentLoaded', function () {
             mostrarError('Seleccione un tipo de caja y una ciudad válida de destino.');
             return;
         }
-
+        if (tipoCaja === "calzado" && (!rangoSeleccionado || rangoSeleccionado === "")) {
+            mostrarError('Seleccione un rango de peso válido.');
+            return;
+        }
         let valorMinimo;
         if (tarifas["calzado_reexpedicion"] && tarifas["calzado_reexpedicion"][ciudadDestinoValue]) {
             valorMinimo = 1000000;
