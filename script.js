@@ -39,17 +39,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Formatear el valor declarado cuando se escribe
+    // Formatear el valor declarado al ingresar valores
     valorDeclaradoInput.addEventListener('input', function () {
-        let valor = valorDeclaradoInput.value.replace(/\D/g, '');  // Eliminar caracteres no numéricos
-        valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);  // Aplicar formato con puntos
+        // Capturar solo los caracteres numéricos y eliminar todo lo demás
+        let valor = valorDeclaradoInput.value.replace(/\D/g, '');
+        // Aplicar formato con puntos para separar los miles
+        valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);
     });
 
     // Cambiar las ciudades disponibles según el tipo de caja seleccionado
     tipoCajaSelect.addEventListener('change', function () {
-        const tipoCaja = tipoCajaSelect.value;
-
-        if (tipoCaja === "calzado") {
+        if (this.value === "calzado") {
             ciudades = [
                 ...Object.keys(tarifas["calzado_nacional"]),
                 ...Object.keys(tarifas["calzado_reexpedicion"]),
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
             rangoPesoDiv.style.display = "block";  // Mostrar la selección de rangos de peso
             pesoTotalInput.disabled = true;  // Deshabilitar el campo de peso manual
             pesoTotalInput.value = "";  // Limpiar el campo de peso manual
-        } else if (tipoCaja === "normal") {
+        } else if (this.value === "normal") {
             ciudades = Object.keys(tarifas["normal"]);
             rangoPesoDiv.style.display = "none";  // Ocultar la selección de rangos de peso
             pesoTotalInput.disabled = false;  // Habilitar el campo de peso manual
@@ -74,7 +74,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const ciudadSeleccionada = ciudadDestino.value;
         const tipoCaja = tipoCajaSelect.value;
 
-        // Manejo de tarifas de calzado con diferentes categorías
         if (tipoCaja === "calzado") {
             let rangosPeso = [];
 
