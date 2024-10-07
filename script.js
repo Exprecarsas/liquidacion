@@ -28,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.json())
         .then(data => {
             tarifas = data;
-            console.log("Tarifas cargadas:", tarifas);  // Verificar si las tarifas se cargan correctamente
         })
         .catch(error => console.error('Error al cargar el archivo de tarifas:', error));
 
@@ -156,7 +155,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // Calcular kilos adicionales si el peso es mayor a 30 kg
             if (pesoUsado > 30) {
                 kilosAdicionales = (pesoUsado - 30) * (costoCaja / 30);
             }
@@ -172,6 +170,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         let costoSeguro = valorDeclarado * (valorDeclarado <= valorMinimo ? 0.01 : 0.005);
         const costoTotal = (costoCaja + kilosAdicionales) * numUnidades + costoSeguro;
+
+        
 
                resultadoDiv.innerHTML = `
             <h3>Resultados de la Liquidación</h3>
