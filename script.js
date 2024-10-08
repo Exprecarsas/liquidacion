@@ -70,21 +70,24 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Calcular el peso volumétrico
-    calcularVolumetrico.addEventListener('click', function () {
-        const alto = parseFloat(altoInput.value);
-        const ancho = parseFloat(anchoInput.value);
-        const largo = parseFloat(largoInput.value);
+   // Calcular automáticamente el peso volumétrico al ingresar dimensiones
+    function calcularPesoVolumetrico() {
+        const alto = parseFloat(altoInput.value) || 0;
+        const ancho = parseFloat(anchoInput.value) || 0;
+        const largo = parseFloat(largoInput.value) || 0;
 
-        if (!alto || !ancho || !largo || alto <= 0 || ancho <= 0 || largo <= 0) {
-            mostrarError('Ingrese dimensiones válidas para calcular el peso volumétrico.');
-            return;
+        if (alto > 0 && ancho > 0 && largo > 0) {
+            pesoVolumetricoCalculado = (alto * ancho * largo) / 5000;
+            console.log(`Peso volumétrico calculado: ${pesoVolumetricoCalculado.toFixed(2)} kg.`);
+        } else {
+            pesoVolumetricoCalculado = 0;
         }
+    }
 
-        // Fórmula de peso volumétrico: (Alto * Ancho * Largo) / 
-        pesoVolumetricoCalculado = (alto * ancho * largo) / 12500;
-        mostrarError(`Peso volumétrico calculado: ${pesoVolumetricoCalculado.toFixed(2)} kg.`);
-    });
+    // Monitorear cambios en los campos de dimensiones para calcular el peso volumétrico automáticamente
+    altoInput.addEventListener('input', calcularPesoVolumetrico);
+    anchoInput.addEventListener('input', calcularPesoVolumetrico);
+    largoInput.addEventListener('input', calcularPesoVolumetrico);
 
     // Transferir el peso volumétrico al campo de peso total
     aceptarVolumetrico.addEventListener('click', function () {
