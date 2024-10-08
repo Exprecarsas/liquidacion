@@ -23,6 +23,12 @@ document.addEventListener('DOMContentLoaded', function () {
     let ciudades = [];
     let pesoVolumetricoCalculado = 0;
 
+    // Lista de ciudades con seguro mínimo de 1.000.000
+    const ciudadesSeguroMinimo = [
+        "POPAYAN", "PASTO", "NEIVA", "VILLAVICENCIO", "TUNJA", 
+        "TUMACO", "MOCOA", "GARZON", "FLORENCIA", "BUENAVENTURA"
+    ];
+
     // Cargar las tarifas desde el archivo JSON
     fetch('tarifas_completas_actualizadas.json')
         .then(response => response.json())
@@ -86,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Formatear el valor declarado al escribir (mostrar puntos como separadores de miles)
+    // Formatear el valor declarado al escribir
     valorDeclaradoInput.addEventListener('input', function () {
         let valor = valorDeclaradoInput.value.replace(/\D/g, '');
         valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);
@@ -171,7 +177,6 @@ document.addEventListener('DOMContentLoaded', function () {
         let pesoUsado = parseFloat(pesoTotalInput.value) || 0;
         let rangoSeleccionado = tipoCaja === 'calzado' ? rangoPesoSelect.value : null;
 
-
         if (!tipoCaja || !ciudadDestinoValue || !ciudades.includes(ciudadDestinoValue)) {
             mostrarError('Seleccione un tipo de caja y una ciudad válida de destino.');
             return;
@@ -182,7 +187,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        let valorMinimo = tipoCaja === "calzado" ? 500000 : 500000;
+        // Aplicar valor mínimo de seguro según la ciudad
+        let valorMinimo = ciudadesSeguroMinimo.includes(ciudadDestinoValue) ? 1000000 : 500000;
 
         if (valorDeclarado < valorMinimo) {
             mostrarError(`El valor declarado no puede ser menor a $${valorMinimo.toLocaleString()} para la ciudad seleccionada.`);
