@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const calcularVolumetricoBtn = document.getElementById('calcularVolumetricoBtn');
     const volumetricModal = document.getElementById('volumetricModal');
     const closeVolumetricBtn = document.querySelector('.close-volumetric-btn');
-    const calcularVolumetrico = document.getElementById('calcularVolumetrico');
     const aceptarVolumetrico = document.getElementById('aceptarVolumetrico');
     const altoInput = document.getElementById('alto');
     const anchoInput = document.getElementById('ancho');
@@ -25,12 +24,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Lista de ciudades con seguro mínimo de 1.000.000 y tasa de 1%
     const ciudadesSeguro1Porciento = [
-        "POPAYAN", "PASTO", "NEIVA", "VILLAVICENCIO", "TUNJA", 
+        "POPAYAN", "PASTO", "NEIVA", "VILLAVICENCIO", "TUNJA",
         "TUMACO", "MOCOA", "GARZON", "FLORENCIA", "BUENAVENTURA",
-        "NEPOCLI","APARTADO","CAUCACIA","YOPAL","DUITAMA","MITU",
-        "YARUMAL","TARAZA","PLANETA RICA","SAN MARCO","LORICA",
-        "PLATO","EL CARMEN DE BOLIVAR","ARMOBELETES","TIERRA ALTA","CHINU"
-        
+        "NEPOCLI", "APARTADO", "CAUCACIA", "YOPAL", "DUITAMA", "MITU",
+        "YARUMAL", "TARAZA", "PLANETA RICA", "SAN MARCO", "LORICA",
+        "PLATO", "EL CARMEN DE BOLIVAR", "ARMOBELETES", "TIERRA ALTA", "CHINU"
+
     ];
 
     // Cargar las tarifas desde el archivo JSON
@@ -70,14 +69,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-   // Calcular automáticamente el peso volumétrico al ingresar dimensiones
+    // Calcular automáticamente el peso volumétrico al ingresar dimensiones
     function calcularPesoVolumetrico() {
         const alto = parseFloat(altoInput.value) || 0;
         const ancho = parseFloat(anchoInput.value) || 0;
         const largo = parseFloat(largoInput.value) || 0;
 
         if (alto > 0 && ancho > 0 && largo > 0) {
-            pesoVolumetricoCalculado = (alto * ancho * largo) / 500;
+            // Cambiamos la fórmula a alto * ancho * largo / 2500
+            pesoVolumetricoCalculado = (alto * ancho * largo) / 2500;
             console.log(`Peso volumétrico calculado: ${pesoVolumetricoCalculado.toFixed(2)} kg.`);
         } else {
             pesoVolumetricoCalculado = 0;
@@ -89,17 +89,17 @@ document.addEventListener('DOMContentLoaded', function () {
     anchoInput.addEventListener('input', calcularPesoVolumetrico);
     largoInput.addEventListener('input', calcularPesoVolumetrico);
 
-    // Transferir el peso volumétrico al campo de peso total
+    // Transferir el peso volumétrico al campo de peso total y cerrar el modal
     aceptarVolumetrico.addEventListener('click', function () {
         if (pesoVolumetricoCalculado > 0) {
             pesoTotalInput.value = pesoVolumetricoCalculado.toFixed(2);
             volumetricModal.style.display = 'none';
         } else {
-            mostrarError('Debe calcular el peso volumétrico primero.');
+            mostrarError('Debe ingresar dimensiones válidas para calcular el peso volumétrico.');
         }
     });
 
-    // Formatear el valor declarado al escribir
+    // Formatear el valor declarado al escribir (mostrar puntos como separadores de miles)
     valorDeclaradoInput.addEventListener('input', function () {
         let valor = valorDeclaradoInput.value.replace(/\D/g, '');
         valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);
@@ -189,15 +189,15 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        // Determinar el porcentaje de seguro según la ciudad
+        let porcentajeSeguro = ciudadesSeguro1Porciento.includes(ciudadDestinoValue) ? 0.01 : 0.005;
+
         if (tipoCaja === "calzado" && (!rangoSeleccionado || rangoSeleccionado === "")) {
             mostrarError('Seleccione un rango de peso válido.');
             return;
         }
 
-        // Determinar valor mínimo y porcentaje de seguro según la ciudad
-        let valorMinimo = ciudadesSeguro1Porciento.includes(ciudadDestinoValue) ? 1000000 : 500000;
-        let porcentajeSeguro = ciudadesSeguro1Porciento.includes(ciudadDestinoValue) ? 0.01 : 0.005;
-
+        let valorMinimo = 500000;
         if (valorDeclarado < valorMinimo) {
             mostrarError(`El valor declarado no puede ser menor a $${valorMinimo.toLocaleString()} para la ciudad seleccionada.`);
             return;
@@ -236,9 +236,10 @@ document.addEventListener('DOMContentLoaded', function () {
             <p><strong>Peso Total:</strong> ${pesoUsado} kg</p>
             <p><strong>Costo Base:</strong> $${costoCaja.toFixed(2)}</p>
             <p><strong>Kilos Adicionales:</strong> $${kilosAdicionales.toFixed(2)}</p>
-            <p><strong>Costo Seguro (${(porcentajeSeguro * 100).toFixed(2)}%):</strong> $${costoSeguro.toFixed(2)}</p>
+            <p><strong>Costo Seguro (${(porcentajeSeguro * 100).toFixed(1)}%):</strong> $${costoSeguro.toFixed(2)}</p>
             <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
         `;
     });
 });
+
 
