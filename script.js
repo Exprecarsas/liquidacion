@@ -169,53 +169,53 @@ document.addEventListener('DOMContentLoaded', function () {
         const valorDeclarado = parseFloat(valorDeclaradoStr);
         const ciudadDestinoValue = ciudadDestino.value.trim().toUpperCase();
         let pesoUsado = parseFloat(pesoTotalInput.value) || 0;
-        let rangoSeleccionado = tipoCaja === 'calzado' ? rangoPesoSelect.value : null;     
+        let rangoSeleccionado = tipoCaja === 'calzado' ? rangoPesoSelect.value : null;
 
 
-            if (!tipoCaja || !ciudadDestinoValue || !ciudades.includes(ciudadDestinoValue)) {
-                mostrarError('Seleccione un tipo de caja y una ciudad válida de destino.');
+        if (!tipoCaja || !ciudadDestinoValue || !ciudades.includes(ciudadDestinoValue)) {
+            mostrarError('Seleccione un tipo de caja y una ciudad válida de destino.');
+            return;
+        }
+
+        if (tipoCaja === "calzado" && (!rangoSeleccionado || rangoSeleccionado === "")) {
+            mostrarError('Seleccione un rango de peso válido.');
+            return;
+        }
+
+        let valorMinimo = tipoCaja === "calzado" ? 500000 : 500000;
+
+        if (valorDeclarado < valorMinimo) {
+            mostrarError(`El valor declarado no puede ser menor a $${valorMinimo.toLocaleString()} para la ciudad seleccionada.`);
+            return;
+        }
+
+        let costoCaja = 0;
+        let kilosAdicionales = 0;
+
+        if (tipoCaja === "normal") {
+            if (tarifas["normal"] && tarifas["normal"][ciudadDestinoValue]) {
+                costoCaja = tarifas["normal"][ciudadDestinoValue];
+            } else {
+                mostrarError(`No se encontraron tarifas para la ciudad seleccionada.`);
                 return;
             }
 
-            if (tipoCaja === "calzado" && (!rangoSeleccionado || rangoSeleccionado === "")) {
+            if (pesoUsado > 30) {
+                kilosAdicionales = (pesoUsado - 30) * (costoCaja / 30);
+            }
+        } else if (tipoCaja === "calzado") {
+            if (tarifas["calzado"] && tarifas["calzado"][ciudadDestinoValue] && tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado]) {
+                costoCaja = tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado];
+            } else {
                 mostrarError('Seleccione un rango de peso válido.');
                 return;
             }
+        }
 
-            let valorMinimo = tipoCaja === "calzado" ? 500000 : 500000;
+        let costoSeguro = valorDeclarado * 0.005;
+        const costoTotal = (costoCaja + kilosAdicionales) * numUnidades + costoSeguro;
 
-            if (valorDeclarado < valorMinimo) {
-                mostrarError(`El valor declarado no puede ser menor a $${valorMinimo.toLocaleString()} para la ciudad seleccionada.`);
-                return;
-            }
-
-            let costoCaja = 0;
-            let kilosAdicionales = 0;
-
-            if (tipoCaja === "normal") {
-                if (tarifas["normal"] && tarifas["normal"][ciudadDestinoValue]) {
-                    costoCaja = tarifas["normal"][ciudadDestinoValue];
-                } else {
-                    mostrarError(`No se encontraron tarifas para la ciudad seleccionada.`);
-                    return;
-                }
-
-                if (pesoUsado > 30) {
-                    kilosAdicionales = (pesoUsado - 30) * (costoCaja / 30);
-                }
-            } else if (tipoCaja === "calzado") {
-                if (tarifas["calzado"] && tarifas["calzado"][ciudadDestinoValue] && tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado]) {
-                    costoCaja = tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado];
-                } else {
-                    mostrarError('Seleccione un rango de peso válido.');
-                    return;
-                }
-            }
-
-            let costoSeguro = valorDeclarado * 0.005;
-            const costoTotal = (costoCaja + kilosAdicionales) * numUnidades + costoSeguro;
-
-            resultadoDiv.innerHTML = `
+        resultadoDiv.innerHTML = `
             <h3>Resultados de la Liquidación</h3>
             <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
             <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
@@ -225,6 +225,5 @@ document.addEventListener('DOMContentLoaded', function () {
             <p><strong>Costo Seguro:</strong> $${costoSeguro.toFixed(2)}</p>
             <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
         `;
-        });
     });
 });
