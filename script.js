@@ -41,9 +41,9 @@ document.addEventListener('DOMContentLoaded', function () {
     closeModalBtn.addEventListener('click', function () {
         errorModal.style.display = "none";
     });
-       // Evento para abrir el modal de cálculo volumétrico
+
+    // Evento para abrir el modal de cálculo volumétrico
     calcularVolumetricoBtn.addEventListener('click', function () {
-        console.log("Botón 'Calcular Peso Volumétrico' presionado.");  // Confirmar si el botón funciona
         volumetricModal.style.display = 'block';
     });
 
@@ -59,22 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Calcular el peso volumétrico
-    calcularVolumetrico.addEventListener('click', function () {
-        const alto = parseFloat(altoInput.value);
-        const ancho = parseFloat(anchoInput.value);
-        const largo = parseFloat(largoInput.value);
-
-        if (!alto || !ancho || !largo) {
-            mostrarError('Debe ingresar dimensiones válidas para calcular el peso volumétrico.');
-            return;
-        }
-
-        pesoVolumetricoCalculado = (alto * ancho * largo) / 5000;
-        mostrarError(`El peso volumétrico calculado es de: ${pesoVolumetricoCalculado.toFixed(2)} kg`);
-    });
-
-    // Transferir el peso volumétrico al campo de peso total al hacer clic en 'Aceptar'
+    // Transferir el peso volumétrico al campo de peso total
     aceptarVolumetrico.addEventListener('click', function () {
         if (pesoVolumetricoCalculado > 0) {
             pesoTotalInput.value = pesoVolumetricoCalculado.toFixed(2);
@@ -89,7 +74,6 @@ document.addEventListener('DOMContentLoaded', function () {
         let valor = valorDeclaradoInput.value.replace(/\D/g, '');
         valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);
     });
-});
 
     // Cambiar las ciudades disponibles según el tipo de caja seleccionado
     tipoCajaSelect.addEventListener('change', function () {
@@ -117,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Actualizar los rangos de peso según la ciudad seleccionada
     ciudadDestino.addEventListener('change', function () {
-        const ciudadSeleccionada = ciudadDestino.value;
+        const ciudadSeleccionada = ciudadDestino.value.trim();
         const tipoCaja = tipoCajaSelect.value;
 
         if (tipoCaja === "calzado" && ciudadSeleccionada) {
@@ -164,7 +148,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     });
-
     // Cálculo del costo total incluyendo el seguro y los kilos adicionales
     document.getElementById('calcularBtn').addEventListener('click', function () {
         const tipoCaja = tipoCajaSelect.value;
