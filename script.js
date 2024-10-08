@@ -207,8 +207,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     kilosAdicionales = (pesoUsado - 30) * (costoCaja / 30);
                 }
             } else if (tipoCaja === "calzado") {
-                if (tarifas["calzado_nacional"] && tarifas["calzado_nacional"][ciudadDestinoValue] && tarifas["calzado_nacional"][ciudadDestinoValue][rangoSeleccionado]) {
-                    costoCaja = tarifas["calzado_nacional"][ciudadDestinoValue][rangoSeleccionado];
+                if (tarifas["calzado"] && tarifas["calzado"][ciudadDestinoValue] && tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado]) {
+                    costoCaja = tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado];
                 } else {
                     mostrarError('Seleccione un rango de peso válido.');
                     return;
