@@ -42,6 +42,24 @@ document.addEventListener('DOMContentLoaded', function () {
         errorModal.style.display = "none";
     });
 
+    // Evento para abrir el modal de cálculo volumétrico
+    calcularVolumetricoBtn.addEventListener('click', function () {
+        console.log("Botón 'Calcular Peso Volumétrico' presionado.");  // Confirmar si el botón funciona
+        volumetricModal.style.display = 'block';
+    });
+
+    // Cerrar la ventana modal de cálculo volumétrico al hacer clic en la 'X'
+    closeVolumetricBtn.addEventListener('click', function () {
+        volumetricModal.style.display = 'none';
+    });
+
+    // Cerrar la ventana modal al hacer clic fuera de la ventana modal
+    window.addEventListener('click', function (event) {
+        if (event.target === volumetricModal) {
+            volumetricModal.style.display = 'none';
+        }
+    });
+
     // Cambiar las ciudades disponibles según el tipo de caja seleccionado
     tipoCajaSelect.addEventListener('change', function () {
         const tipoCaja = tipoCajaSelect.value;
