@@ -114,24 +114,19 @@ document.addEventListener('DOMContentLoaded', function () {
         ciudadDestino.value = '';
         suggestionsBox.innerHTML = '';
     }
+
     // Actualizar los rangos de peso según la ciudad seleccionada
     ciudadDestino.addEventListener('change', function () {
         const ciudadSeleccionada = ciudadDestino.value.trim().toUpperCase();
         const tipoCaja = tipoCajaSelect.value;
 
-        // Verificar si se seleccionó el tipo de caja calzado
         if (tipoCaja === "calzado" && ciudadSeleccionada) {
             let rangosPeso = [];
-              // Buscar rangos de peso en el objeto unificado de calzado
+
             if (tarifas["calzado"][ciudadSeleccionada]) {
                 rangosPeso = Object.keys(tarifas["calzado"][ciudadSeleccionada]);
             }
 
-            
-            // Verificar los rangos encontrados
-            console.log(`Rangos de peso disponibles para ${ciudadSeleccionada}:`, rangosPeso);
-
-            // Mostrar los rangos en el selector si se encuentran
             if (rangosPeso.length > 0) {
                 rangoPesoSelect.innerHTML = '<option value="" disabled selected>Seleccione un rango de peso</option>';
                 rangosPeso.forEach(rango => {
@@ -164,16 +159,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 suggestionsBox.appendChild(suggestion);
             });
         }
-        // Cálculo del costo total incluyendo el seguro y los kilos adicionales
-        document.getElementById('calcularBtn').addEventListener('click', function () {
-            const tipoCaja = tipoCajaSelect.value;
-            const numUnidades = parseInt(document.getElementById('numUnidades').value);
-            const valorDeclaradoStr = valorDeclaradoInput.value.replace(/\./g, '');
-            const valorDeclarado = parseFloat(valorDeclaradoStr);
-            const ciudadDestinoValue = ciudadDestino.value.trim().toUpperCase();
-            let pesoUsado = parseFloat(pesoTotalInput.value) || 0;
+    });
 
-            let rangoSeleccionado = tipoCaja === 'calzado' ? rangoPesoSelect.value : null;
+    // Cálculo del costo total (incluye seguro y kilos adicionales)
+    document.getElementById('calcularBtn').addEventListener('click', function () {
+        const tipoCaja = tipoCajaSelect.value;
+        const numUnidades = parseInt(document.getElementById('numUnidades').value);
+        const valorDeclaradoStr = valorDeclaradoInput.value.replace(/\./g, '');
+        const valorDeclarado = parseFloat(valorDeclaradoStr);
+        const ciudadDestinoValue = ciudadDestino.value.trim().toUpperCase();
+        let pesoUsado = parseFloat(pesoTotalInput.value) || 0;
+        let rangoSeleccionado = tipoCaja === 'calzado' ? rangoPesoSelect.value : null;     
+
 
             if (!tipoCaja || !ciudadDestinoValue || !ciudades.includes(ciudadDestinoValue)) {
                 mostrarError('Seleccione un tipo de caja y una ciudad válida de destino.');
