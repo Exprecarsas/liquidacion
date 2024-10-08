@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         pesoVolumetricoCalculado = (alto * ancho * largo) / 5000;
-        mostrarError(`El peso volumétrico calculado es de: ${pesoVolumetricoCalculado.toFixed(2)} kg`);
+        mostrarError(El peso volumétrico calculado es de: ${pesoVolumetricoCalculado.toFixed(2)} kg);
     });
 
     // Transferir el peso volumétrico al campo de peso total
@@ -124,22 +124,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 rangosPeso = Object.keys(tarifas["calzado_por_peso"][ciudadSeleccionada]);
             }
 
-             // Mostrar los rangos de peso en el select (sin duplicar "kg")
+            // Mostrar los rangos de peso en el select
             if (rangosPeso.length > 0) {
                 rangoPesoSelect.innerHTML = '<option value="" disabled selected>Seleccione un rango de peso</option>';
                 rangosPeso.forEach(rango => {
-                    rangoPesoSelect.innerHTML += `<option value="${rango}">${rango}</option>`;
+                    rangoPesoSelect.innerHTML += <option value="${rango}">${rango}</option>;
                 });
                 rangoPesoDiv.style.display = "block";
             } else {
                 rangoPesoDiv.style.display = "none";
-                mostrarError(`No se encontraron rangos de peso para la ciudad seleccionada: ${ciudadSeleccionada}.`);
+                mostrarError(No se encontraron rangos de peso para la ciudad seleccionada: ${ciudadSeleccionada}.);
             }
         } else {
             rangoPesoDiv.style.display = "none";
         }
     });
-});
 
     // Autocompletado de ciudad
     ciudadDestino.addEventListener('input', function () {
@@ -190,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (valorDeclarado < valorMinimo) {
-            mostrarError(`El valor declarado no puede ser menor a $${valorMinimo.toLocaleString()} para la ciudad seleccionada.`);
+            mostrarError(El valor declarado no puede ser menor a $${valorMinimo.toLocaleString()} para la ciudad seleccionada.);
             return;
         }
 
@@ -201,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (tarifas["normal"] && tarifas["normal"][ciudadDestinoValue]) {
                 costoCaja = tarifas["normal"][ciudadDestinoValue];
             } else {
-                mostrarError(`No se encontraron tarifas para la ciudad seleccionada.`);
+                mostrarError(No se encontraron tarifas para la ciudad seleccionada.);
                 return;
             }
 
@@ -222,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Mostrar resultados basados en el tipo de caja
         if (tipoCaja === "calzado") {
-            resultadoDiv.innerHTML = `
+            resultadoDiv.innerHTML = 
                 <h3>Resultados de la Liquidación</h3>
                 <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
                 <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
@@ -230,9 +229,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 <p><strong>Costo Base:</strong> $${costoCaja.toFixed(2)}</p>
                 <p><strong>Costo Seguro:</strong> $${costoSeguro.toFixed(2)}</p>
                 <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
-            `;
+            ;
         } else {
-            resultadoDiv.innerHTML = `
+            resultadoDiv.innerHTML = 
                 <h3>Resultados de la Liquidación</h3>
                 <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
                 <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
@@ -241,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <p><strong>Kilos Adicionales:</strong> $${kilosAdicionales.toFixed(2)}</p>
                 <p><strong>Costo Seguro:</strong> $${costoSeguro.toFixed(2)}</p>
                 <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
-            `;
+            ;
         }
     });
 });
