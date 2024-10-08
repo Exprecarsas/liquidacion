@@ -164,8 +164,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (pesoUsado > 30) {
                 kilosAdicionales = (pesoUsado - 30) * (costoCaja / 30);
             }
-        } else if (tipoCaja === "calzado") {
-            const rangoSeleccionado = rangoPesoSelect.value;
+        } else if (tipoCaja === "calzado") {          
             if (tarifas["calzado_nacional"] && tarifas["calzado_nacional"][ciudadDestinoValue] && tarifas["calzado_nacional"][ciudadDestinoValue][rangoSeleccionado]) {
                 costoCaja = tarifas["calzado_nacional"][ciudadDestinoValue][rangoSeleccionado];
             } else {
