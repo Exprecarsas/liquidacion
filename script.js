@@ -100,11 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function actualizarCiudades(tipoCaja) {
         if (tipoCaja === "calzado") {
-            ciudades = [
-                ...Object.keys(tarifas["calzado_nacional"] || {}),
-                ...Object.keys(tarifas["calzado_reexpedicion"] || {}),
-                ...Object.keys(tarifas["calzado_por_peso"] || {})
-            ];
+            ciudades = Object.keys(tarifas["calzado"] || {});
             rangoPesoDiv.style.display = "block";
             pesoTotalInput.disabled = true;
             pesoTotalInput.value = "";
@@ -126,16 +122,12 @@ document.addEventListener('DOMContentLoaded', function () {
         // Verificar si se seleccionó el tipo de caja calzado
         if (tipoCaja === "calzado" && ciudadSeleccionada) {
             let rangosPeso = [];
-
-            // Revisión detallada de cada categoría
-            if (tarifas["calzado_nacional"] && tarifas["calzado_nacional"][ciudadSeleccionada]) {
-                rangosPeso = Object.keys(tarifas["calzado_nacional"][ciudadSeleccionada]);
-            } else if (tarifas["calzado_por_peso"] && tarifas["calzado_por_peso"][ciudadSeleccionada]) {
-                rangosPeso = Object.keys(tarifas["calzado_por_peso"][ciudadSeleccionada]);
-            } else {
-                mostrarError(`La ciudad ${ciudadSeleccionada} no tiene tarifas de calzado.`);
+              // Buscar rangos de peso en el objeto unificado de calzado
+            if (tarifas["calzado"][ciudadSeleccionada]) {
+                rangosPeso = Object.keys(tarifas["calzado"][ciudadSeleccionada]);
             }
 
+            
             // Verificar los rangos encontrados
             console.log(`Rangos de peso disponibles para ${ciudadSeleccionada}:`, rangosPeso);
 
