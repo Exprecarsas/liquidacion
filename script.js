@@ -65,6 +65,31 @@ document.addEventListener('DOMContentLoaded', function () {
         ciudadDestino.value = '';
         suggestionsBox.innerHTML = '';
     });
+    
+    // Calcular el peso volumétrico
+    calcularVolumetrico.addEventListener('click', function () {
+        const alto = parseFloat(altoInput.value);
+        const ancho = parseFloat(anchoInput.value);
+        const largo = parseFloat(largoInput.value);
+
+        if (!alto || !ancho || !largo || alto <= 0 || ancho <= 0 || largo <= 0) {
+            mostrarError('Debe ingresar dimensiones válidas (mayores a cero) para calcular el peso volumétrico.');
+            return;
+        }
+
+        pesoVolumetricoCalculado = (alto * ancho * largo) / 5000;
+        mostrarError(`El peso volumétrico calculado es de: ${pesoVolumetricoCalculado.toFixed(2)} kg`);
+    });
+
+    // Transferir el peso volumétrico al campo de peso total
+    aceptarVolumetrico.addEventListener('click', function () {
+        if (pesoVolumetricoCalculado > 0) {
+            pesoTotalInput.value = pesoVolumetricoCalculado.toFixed(2);
+            volumetricModal.style.display = 'none';
+        } else {
+            mostrarError('Debe calcular el peso volumétrico primero.');
+        }
+    });
 
     // Actualizar los rangos de peso según la ciudad seleccionada
     ciudadDestino.addEventListener('change', function () {
