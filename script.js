@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const largo = parseFloat(largoInput.value) || 0;
 
         if (alto > 0 && ancho > 0 && largo > 0) {
-            pesoVolumetricoCalculado = (alto * ancho * largo) / 5000;
+            pesoVolumetricoCalculado = (alto * ancho * largo) / 2500;
             console.log(`Peso volumétrico calculado: ${pesoVolumetricoCalculado.toFixed(2)} kg.`);
         } else {
             pesoVolumetricoCalculado = 0;
