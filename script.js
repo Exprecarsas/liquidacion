@@ -59,6 +59,22 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // Calcular el peso volumétrico
+    calcularVolumetrico.addEventListener('click', function () {
+        const alto = parseFloat(altoInput.value);
+        const ancho = parseFloat(anchoInput.value);
+        const largo = parseFloat(largoInput.value);
+
+        if (!alto || !ancho || !largo || alto <= 0 || ancho <= 0 || largo <= 0) {
+            mostrarError('Ingrese dimensiones válidas para calcular el peso volumétrico.');
+            return;
+        }
+
+        // Fórmula de peso volumétrico: (Alto * Ancho * Largo) / 5000
+        pesoVolumetricoCalculado = (alto * ancho * largo) / 5000;
+        mostrarError(`Peso volumétrico calculado: ${pesoVolumetricoCalculado.toFixed(2)} kg.`);
+    });
+
     // Transferir el peso volumétrico al campo de peso total
     aceptarVolumetrico.addEventListener('click', function () {
         if (pesoVolumetricoCalculado > 0) {
@@ -101,20 +117,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Actualizar los rangos de peso según la ciudad seleccionada
     ciudadDestino.addEventListener('change', function () {
-        const ciudadSeleccionada = ciudadDestino.value.trim();
+        const ciudadSeleccionada = ciudadDestino.value.trim().toUpperCase();
         const tipoCaja = tipoCajaSelect.value;
 
         if (tipoCaja === "calzado" && ciudadSeleccionada) {
             let rangosPeso = [];
 
-            // Verificar si la ciudad tiene rangos de peso definidos
             if (tarifas["calzado_nacional"] && tarifas["calzado_nacional"][ciudadSeleccionada]) {
                 rangosPeso = Object.keys(tarifas["calzado_nacional"][ciudadSeleccionada]);
             } else if (tarifas["calzado_por_peso"] && tarifas["calzado_por_peso"][ciudadSeleccionada]) {
                 rangosPeso = Object.keys(tarifas["calzado_por_peso"][ciudadSeleccionada]);
             }
 
-            // Mostrar los rangos de peso en el select
             if (rangosPeso.length > 0) {
                 rangoPesoSelect.innerHTML = '<option value="" disabled selected>Seleccione un rango de peso</option>';
                 rangosPeso.forEach(rango => {
@@ -148,13 +162,14 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     });
+
     // Cálculo del costo total incluyendo el seguro y los kilos adicionales
     document.getElementById('calcularBtn').addEventListener('click', function () {
         const tipoCaja = tipoCajaSelect.value;
         const numUnidades = parseInt(document.getElementById('numUnidades').value);
         const valorDeclaradoStr = valorDeclaradoInput.value.replace(/\./g, '');
         const valorDeclarado = parseFloat(valorDeclaradoStr);
-        const ciudadDestinoValue = ciudadDestino.value;
+        const ciudadDestinoValue = ciudadDestino.value.trim().toUpperCase();
         let pesoUsado = parseFloat(pesoTotalInput.value) || 0;
 
         let rangoSeleccionado = tipoCaja === 'calzado' ? rangoPesoSelect.value : null;
@@ -169,14 +184,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        let valorMinimo;
-        if (tarifas["calzado_reexpedicion"] && tarifas["calzado_reexpedicion"][ciudadDestinoValue]) {
-            valorMinimo = 1000000;
-        } else if (tipoCaja === "calzado") {
-            valorMinimo = 500000;
-        } else {
-            valorMinimo = 500000;
-        }
+        let valorMinimo = tipoCaja === "calzado" ? 500000 : 500000;
 
         if (valorDeclarado < valorMinimo) {
             mostrarError(`El valor declarado no puede ser menor a $${valorMinimo.toLocaleString()} para la ciudad seleccionada.`);
@@ -206,31 +214,18 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        let costoSeguro = valorDeclarado * (valorDeclarado <= valorMinimo ? 0.01 : 0.005);
+        let costoSeguro = valorDeclarado * 0.005;
         const costoTotal = (costoCaja + kilosAdicionales) * numUnidades + costoSeguro;
 
-        // Mostrar resultados basados en el tipo de caja
-        if (tipoCaja === "calzado") {
-            resultadoDiv.innerHTML = `
-                <h3>Resultados de la Liquidación</h3>
-                <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
-                <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
-                <p><strong>Rango de Peso:</strong> ${rangoSeleccionado} kg</p>
-                <p><strong>Costo Base:</strong> $${costoCaja.toFixed(2)}</p>
-                <p><strong>Costo Seguro:</strong> $${costoSeguro.toFixed(2)}</p>
-                <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
-            `;
-        } else {
-            resultadoDiv.innerHTML = 
-                <h3>Resultados de la Liquidación</h3>
-                <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
-                <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
-                <p><strong>Peso Total:</strong> ${pesoUsado} kg</p>
-                <p><strong>Costo Base:</strong> $${costoCaja.toFixed(2)}</p>
-                <p><strong>Kilos Adicionales:</strong> $${kilosAdicionales.toFixed(2)}</p>
-                <p><strong>Costo Seguro:</strong> $${costoSeguro.toFixed(2)}</p>
-                <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
-            ;
-        }
+        resultadoDiv.innerHTML = `
+            <h3>Resultados de la Liquidación</h3>
+            <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
+            <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
+            <p><strong>Peso Total:</strong> ${pesoUsado} kg</p>
+            <p><strong>Costo Base:</strong> $${costoCaja.toFixed(2)}</p>
+            <p><strong>Kilos Adicionales:</strong> $${kilosAdicionales.toFixed(2)}</p>
+            <p><strong>Costo Seguro:</strong> $${costoSeguro.toFixed(2)}</p>
+            <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
+        `;
     });
 });
