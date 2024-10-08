@@ -1,5 +1,5 @@
 {
-    "calzado_nacional": {
+    "calzado": {
         "BOGOTA": {
             "30-90 KG": 20000,
             "91-160 KG": 25000
@@ -337,7 +337,6 @@
         "VILLA NUEVA SANTANDER": 27100,
         "YONDO": 20300,
         "ZAPATOCA": 27100,
-        "DESTINOS NACIONALES": "VR CAJA 30 KG",
         "BOGOTA": 20800,
         "COTA": 20800,
         "MADRID": 20800,
@@ -365,7 +364,6 @@
         "YUMBO": 30000,
         "PALMIRA": 36500,
         "JAMUNDI": 36500,
-        "REEXPEDICION": "VR UNID 30 KG",
         "BOLIVAR": 50400,
         "CHITAGA": 50400,
         "DURANIA": 50400,
@@ -384,7 +382,6 @@
         "SARDINATA": 50400,
         "SIMACOTA": 50400,
         "TOLEDO": 50400,
-        "DESTINOS LA COSTA": "VR CAJA 30 KG",
         "ARACATACA": 39200,
         "ARJONA": 56000,
         "BARANOA": 50400,
@@ -420,7 +417,6 @@
         "SINCELEJO": 56000,
         "TAMALAMEQUE": 61600,
         "TURBACO": 56000,
-        "REEXPEDICION AL GUAJIRA": "VR CAJA 30 KG",
         "LA JAGUA DEL PILAR": 40000,
         "URUMITA": 40000,
         "VILLA NUEVA LA GUAJIRA": 40000,
