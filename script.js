@@ -124,11 +124,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 rangosPeso = Object.keys(tarifas["calzado_por_peso"][ciudadSeleccionada]);
             }
 
-            // Mostrar los rangos de peso en el select
+             // Mostrar los rangos de peso en el select (sin duplicar "kg")
             if (rangosPeso.length > 0) {
                 rangoPesoSelect.innerHTML = '<option value="" disabled selected>Seleccione un rango de peso</option>';
                 rangosPeso.forEach(rango => {
-                    rangoPesoSelect.innerHTML += `<option value="${rango}">${rango} kg</option>`;
+                    rangoPesoSelect.innerHTML += `<option value="${rango}">${rango}</option>`;
                 });
                 rangoPesoDiv.style.display = "block";
             } else {
@@ -139,6 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
             rangoPesoDiv.style.display = "none";
         }
     });
+});
 
     // Autocompletado de ciudad
     ciudadDestino.addEventListener('input', function () {
