@@ -26,7 +26,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Lista de ciudades con seguro mínimo de 1.000.000 y tasa de 1%
     const ciudadesSeguro1Porciento = [
         "POPAYAN", "PASTO", "NEIVA", "VILLAVICENCIO", "TUNJA", 
-        "TUMACO", "MOCOA", "GARZON", "FLORENCIA", "BUENAVENTURA"
+        "TUMACO", "MOCOA", "GARZON", "FLORENCIA", "BUENAVENTURA",
+        "NEPOCLI","APARTADO","CAUCACIA","YOPAL","DUITAMA","MITU",
+        "YARUMAL","TARAZA","PLANETA RICA","SAN MARCO","LORICA",
+        "PLATO","EL CARMEN DE BOLIVAR","ARMOBELETES","TIERRA ALTA","CHINU"
+        
     ];
 
     // Cargar las tarifas desde el archivo JSON
