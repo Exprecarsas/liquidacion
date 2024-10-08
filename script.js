@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (rangosPeso.length > 0) {
                 rangoPesoSelect.innerHTML = '<option value="" disabled selected>Seleccione un rango de peso</option>';
                 rangosPeso.forEach(rango => {
-                    rangoPesoSelect.innerHTML += `<option value="${rango}">${rango}</option>`;
+                    rangoPesoSelect.innerHTML += `<option value="${rango.trim()}">${rango.trim()}</option>`;
                 });
                 rangoPesoDiv.style.display = "block";
             } else {
