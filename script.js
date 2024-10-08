@@ -23,8 +23,8 @@ document.addEventListener('DOMContentLoaded', function () {
     let ciudades = [];
     let pesoVolumetricoCalculado = 0;
 
-    // Lista de ciudades con seguro mínimo de 1.000.000
-    const ciudadesSeguroMinimo = [
+    // Lista de ciudades con seguro mínimo de 1.000.000 y tasa de 1%
+    const ciudadesSeguro1Porciento = [
         "POPAYAN", "PASTO", "NEIVA", "VILLAVICENCIO", "TUNJA", 
         "TUMACO", "MOCOA", "GARZON", "FLORENCIA", "BUENAVENTURA"
     ];
@@ -187,8 +187,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Aplicar valor mínimo de seguro según la ciudad
-        let valorMinimo = ciudadesSeguroMinimo.includes(ciudadDestinoValue) ? 1000000 : 500000;
+        // Determinar valor mínimo y porcentaje de seguro según la ciudad
+        let valorMinimo = ciudadesSeguro1Porciento.includes(ciudadDestinoValue) ? 1000000 : 500000;
+        let porcentajeSeguro = ciudadesSeguro1Porciento.includes(ciudadDestinoValue) ? 0.01 : 0.005;
 
         if (valorDeclarado < valorMinimo) {
             mostrarError(`El valor declarado no puede ser menor a $${valorMinimo.toLocaleString()} para la ciudad seleccionada.`);
@@ -218,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        let costoSeguro = valorDeclarado * 0.005;
+        let costoSeguro = valorDeclarado * porcentajeSeguro;
         const costoTotal = (costoCaja + kilosAdicionales) * numUnidades + costoSeguro;
 
         resultadoDiv.innerHTML = `
@@ -228,8 +229,9 @@ document.addEventListener('DOMContentLoaded', function () {
             <p><strong>Peso Total:</strong> ${pesoUsado} kg</p>
             <p><strong>Costo Base:</strong> $${costoCaja.toFixed(2)}</p>
             <p><strong>Kilos Adicionales:</strong> $${kilosAdicionales.toFixed(2)}</p>
-            <p><strong>Costo Seguro:</strong> $${costoSeguro.toFixed(2)}</p>
+            <p><strong>Costo Seguro (${(porcentajeSeguro * 100).toFixed(2)}%):</strong> $${costoSeguro.toFixed(2)}</p>
             <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
         `;
     });
 });
+
