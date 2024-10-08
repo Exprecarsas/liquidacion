@@ -81,8 +81,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Fórmula de peso volumétrico: (Alto * Ancho * Largo) / 5000
-        pesoVolumetricoCalculado = (alto * ancho * largo) / 5000;
+        // Fórmula de peso volumétrico: (Alto * Ancho * Largo) * 400
+        pesoVolumetricoCalculado = (alto * ancho * largo) * 400;
         mostrarError(`Peso volumétrico calculado: ${pesoVolumetricoCalculado.toFixed(2)} kg.`);
     });
 
