@@ -55,11 +55,9 @@
         "ITAGUI": {
             "30-90 KG": 20000,
             "91-160 KG": 25000
-        }
-    },
-    "calzado_reexpedicion": {
+        },
         "POPAYAN": {
-            "Unnamed: 1": 60000
+            "30-90 KG": 60000
         },
         "PASTO": {
             "30-90 KG": 60000
@@ -135,9 +133,7 @@
         },
         "CHINU": {
             "30-90 KG": 60000
-        }
-    },
-    "calzado_por_peso": {
+        },
         "VALLEDUPAR": {
             "30-80 KG": 25000,
             "81-120 KG": 35000,
