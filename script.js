@@ -180,6 +180,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        let pesoMinimoPorUnidad = 30 * numUnidades; // Peso mínimo basado en el número de unidades
+        let pesoAplicado = Math.max(pesoUsado, pesoMinimoPorUnidad);
+
         let porcentajeSeguro;
         if (tipoCaja === "normal") {
             if (valorDeclarado >= 500000 && valorDeclarado <= 1000000) {
@@ -200,32 +203,10 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        let costoCaja = 0;
-        let kilosAdicionales = 0;
-
-        if (tipoCaja === "normal") {
-            if (tarifas["normal"] && tarifas["normal"][ciudadDestinoValue]) {
-                costoCaja = tarifas["normal"][ciudadDestinoValue];
-            } else {
-                mostrarError(`No se encontraron tarifas para la ciudad seleccionada.`);
-                return;
-            }
-
-            if (pesoUsado > 30) {
-                kilosAdicionales = (pesoUsado - 30) * (costoCaja / 30);
-            }
-        } else if (tipoCaja === "calzado") {
-            if (tarifas["calzado"] && tarifas["calzado"][ciudadDestinoValue] && tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado]) {
-                costoCaja = tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado];
-            } else {
-                mostrarError('Seleccione un rango de peso válido.');
-                return;
-            }
-        }
-
+        let costoCaja = tarifas["normal"][ciudadDestinoValue] || 0;
         let costoSeguro = valorDeclarado * porcentajeSeguro;
-        const costoTotal = (costoCaja + kilosAdicionales) * numUnidades + costoSeguro;
-
+        let costoTotal = (costoCaja * numUnidades) + costoSeguro;
+        
         resultadoDiv.innerHTML = `
             <h3>Resultados de la Liquidación</h3>
             <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
