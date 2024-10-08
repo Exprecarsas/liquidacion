@@ -41,8 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
     closeModalBtn.addEventListener('click', function () {
         errorModal.style.display = "none";
     });
-
-    // Evento para abrir el modal de cálculo volumétrico
+       // Evento para abrir el modal de cálculo volumétrico
     calcularVolumetricoBtn.addEventListener('click', function () {
         console.log("Botón 'Calcular Peso Volumétrico' presionado.");  // Confirmar si el botón funciona
         volumetricModal.style.display = 'block';
@@ -59,6 +58,38 @@ document.addEventListener('DOMContentLoaded', function () {
             volumetricModal.style.display = 'none';
         }
     });
+
+    // Calcular el peso volumétrico
+    calcularVolumetrico.addEventListener('click', function () {
+        const alto = parseFloat(altoInput.value);
+        const ancho = parseFloat(anchoInput.value);
+        const largo = parseFloat(largoInput.value);
+
+        if (!alto || !ancho || !largo) {
+            mostrarError('Debe ingresar dimensiones válidas para calcular el peso volumétrico.');
+            return;
+        }
+
+        pesoVolumetricoCalculado = (alto * ancho * largo) / 5000;
+        mostrarError(`El peso volumétrico calculado es de: ${pesoVolumetricoCalculado.toFixed(2)} kg`);
+    });
+
+    // Transferir el peso volumétrico al campo de peso total al hacer clic en 'Aceptar'
+    aceptarVolumetrico.addEventListener('click', function () {
+        if (pesoVolumetricoCalculado > 0) {
+            pesoTotalInput.value = pesoVolumetricoCalculado.toFixed(2);
+            volumetricModal.style.display = 'none';
+        } else {
+            mostrarError('Debe calcular el peso volumétrico primero.');
+        }
+    });
+
+    // Formatear el valor declarado al escribir (mostrar puntos como separadores de miles)
+    valorDeclaradoInput.addEventListener('input', function () {
+        let valor = valorDeclaradoInput.value.replace(/\D/g, '');
+        valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);
+    });
+});
 
     // Cambiar las ciudades disponibles según el tipo de caja seleccionado
     tipoCajaSelect.addEventListener('change', function () {
@@ -83,31 +114,6 @@ document.addEventListener('DOMContentLoaded', function () {
         ciudadDestino.value = '';
         suggestionsBox.innerHTML = '';
     });
-    
-    // Calcular el peso volumétrico
-    calcularVolumetrico.addEventListener('click', function () {
-        const alto = parseFloat(altoInput.value);
-        const ancho = parseFloat(anchoInput.value);
-        const largo = parseFloat(largoInput.value);
-
-        if (!alto || !ancho || !largo || alto <= 0 || ancho <= 0 || largo <= 0) {
-            mostrarError('Debe ingresar dimensiones válidas (mayores a cero) para calcular el peso volumétrico.');
-            return;
-        }
-
-        pesoVolumetricoCalculado = (alto * ancho * largo) / 5000;
-        mostrarError(El peso volumétrico calculado es de: ${pesoVolumetricoCalculado.toFixed(2)} kg);
-    });
-
-    // Transferir el peso volumétrico al campo de peso total
-    aceptarVolumetrico.addEventListener('click', function () {
-        if (pesoVolumetricoCalculado > 0) {
-            pesoTotalInput.value = pesoVolumetricoCalculado.toFixed(2);
-            volumetricModal.style.display = 'none';
-        } else {
-            mostrarError('Debe calcular el peso volumétrico primero.');
-        }
-    });
 
     // Actualizar los rangos de peso según la ciudad seleccionada
     ciudadDestino.addEventListener('change', function () {
@@ -128,12 +134,12 @@ document.addEventListener('DOMContentLoaded', function () {
             if (rangosPeso.length > 0) {
                 rangoPesoSelect.innerHTML = '<option value="" disabled selected>Seleccione un rango de peso</option>';
                 rangosPeso.forEach(rango => {
-                    rangoPesoSelect.innerHTML += <option value="${rango}">${rango}</option>;
+                    rangoPesoSelect.innerHTML += `<option value="${rango}">${rango}</option>`;
                 });
                 rangoPesoDiv.style.display = "block";
             } else {
                 rangoPesoDiv.style.display = "none";
-                mostrarError(No se encontraron rangos de peso para la ciudad seleccionada: ${ciudadSeleccionada}.);
+                mostrarError(`No se encontraron rangos de peso para la ciudad seleccionada: ${ciudadSeleccionada}.`);
             }
         } else {
             rangoPesoDiv.style.display = "none";
@@ -168,17 +174,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const ciudadDestinoValue = ciudadDestino.value;
         let pesoUsado = parseFloat(pesoTotalInput.value) || 0;
 
-        // Definir la variable rangoSeleccionado solo si el tipo de caja es calzado
         let rangoSeleccionado = tipoCaja === 'calzado' ? rangoPesoSelect.value : null;
 
         if (!tipoCaja || !ciudadDestinoValue || !ciudades.includes(ciudadDestinoValue)) {
             mostrarError('Seleccione un tipo de caja y una ciudad válida de destino.');
             return;
         }
+
         if (tipoCaja === "calzado" && (!rangoSeleccionado || rangoSeleccionado === "")) {
             mostrarError('Seleccione un rango de peso válido.');
             return;
         }
+
         let valorMinimo;
         if (tarifas["calzado_reexpedicion"] && tarifas["calzado_reexpedicion"][ciudadDestinoValue]) {
             valorMinimo = 1000000;
@@ -189,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (valorDeclarado < valorMinimo) {
-            mostrarError(El valor declarado no puede ser menor a $${valorMinimo.toLocaleString()} para la ciudad seleccionada.);
+            mostrarError(`El valor declarado no puede ser menor a $${valorMinimo.toLocaleString()} para la ciudad seleccionada.`);
             return;
         }
 
@@ -200,14 +207,14 @@ document.addEventListener('DOMContentLoaded', function () {
             if (tarifas["normal"] && tarifas["normal"][ciudadDestinoValue]) {
                 costoCaja = tarifas["normal"][ciudadDestinoValue];
             } else {
-                mostrarError(No se encontraron tarifas para la ciudad seleccionada.);
+                mostrarError(`No se encontraron tarifas para la ciudad seleccionada.`);
                 return;
             }
 
             if (pesoUsado > 30) {
                 kilosAdicionales = (pesoUsado - 30) * (costoCaja / 30);
             }
-        } else if (tipoCaja === "calzado") {          
+        } else if (tipoCaja === "calzado") {
             if (tarifas["calzado_nacional"] && tarifas["calzado_nacional"][ciudadDestinoValue] && tarifas["calzado_nacional"][ciudadDestinoValue][rangoSeleccionado]) {
                 costoCaja = tarifas["calzado_nacional"][ciudadDestinoValue][rangoSeleccionado];
             } else {
@@ -221,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Mostrar resultados basados en el tipo de caja
         if (tipoCaja === "calzado") {
-            resultadoDiv.innerHTML = 
+            resultadoDiv.innerHTML = `
                 <h3>Resultados de la Liquidación</h3>
                 <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
                 <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
@@ -229,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <p><strong>Costo Base:</strong> $${costoCaja.toFixed(2)}</p>
                 <p><strong>Costo Seguro:</strong> $${costoSeguro.toFixed(2)}</p>
                 <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
-            ;
+            `;
         } else {
             resultadoDiv.innerHTML = 
                 <h3>Resultados de la Liquidación</h3>
