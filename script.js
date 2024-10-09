@@ -181,21 +181,24 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
        // Peso mínimo basado en el número de unidades (30 kg por unidad)
-        let pesoMinimoPorUnidad = 30 * numUnidades;
-        let pesoAplicado = Math.max(pesoUsado, pesoMinimoPorUnidad);
+        let pesoMinimoPorUnidad = 30;
+        let pesoAplicado = pesoUsado > 0 ? Math.max(pesoUsado, pesoMinimoPorUnidad * numUnidades) : pesoMinimoPorUnidad * numUnidades;
+
+        let costoCaja = 0;
+        if (tipoCaja === "normal" && tarifas["normal"] && tarifas["normal"][ciudadDestinoValue]) {
+            costoCaja = tarifas["normal"][ciudadDestinoValue];
+        }
 
         let porcentajeSeguro = valorDeclarado <= 1000000 ? 0.01 : 0.005;
-        let costoCaja = tarifas["normal"][ciudadDestinoValue] || 0;
         let costoSeguro = valorDeclarado * porcentajeSeguro;
-        let costoTotal = (costoCaja * numUnidades) + costoSeguro;
+        const costoTotal = (costoCaja * numUnidades) + costoSeguro;
         
         resultadoDiv.innerHTML = `
-            <h3>Resultados de la Liquidación</h3>
+           <h3>Resultados de la Liquidación</h3>
             <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
             <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
-            <p><strong>Peso Total:</strong> ${pesoUsado} kg</p>
-            <p><strong>Costo Base:</strong> $${costoCaja.toFixed(2)}</p>
-            <p><strong>Kilos Adicionales:</strong> $${kilosAdicionales.toFixed(2)}</p>
+            <p><strong>Peso Total:</strong> ${pesoAplicado} kg</p>
+            <p><strong>Costo Base:</strong> $${(costoCaja * numUnidades).toFixed(2)}</p>
             <p><strong>Costo Seguro (${(porcentajeSeguro * 100).toFixed(1)}%):</strong> $${costoSeguro.toFixed(2)}</p>
             <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
         `;
