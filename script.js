@@ -180,29 +180,11 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        let pesoMinimoPorUnidad = 30 * numUnidades; // Peso mínimo basado en el número de unidades
+       // Peso mínimo basado en el número de unidades (30 kg por unidad)
+        let pesoMinimoPorUnidad = 30 * numUnidades;
         let pesoAplicado = Math.max(pesoUsado, pesoMinimoPorUnidad);
 
-        let porcentajeSeguro;
-        if (tipoCaja === "normal") {
-            if (valorDeclarado >= 500000 && valorDeclarado <= 1000000) {
-                porcentajeSeguro = 0.01;
-            } else if (valorDeclarado > 1000000) {
-                porcentajeSeguro = 0.005;
-            } else {
-                porcentajeSeguro = 0;
-            }
-        } else {
-            porcentajeSeguro = 0.005;
-        }
-
-        // Aplicar valor mínimo de seguro según la ciudad
-        let valorMinimo = 500000;
-        if (valorDeclarado < valorMinimo) {
-            mostrarError(`El valor declarado no puede ser menor a $${valorMinimo.toLocaleString()} para la ciudad seleccionada.`);
-            return;
-        }
-
+        let porcentajeSeguro = valorDeclarado <= 1000000 ? 0.01 : 0.005;
         let costoCaja = tarifas["normal"][ciudadDestinoValue] || 0;
         let costoSeguro = valorDeclarado * porcentajeSeguro;
         let costoTotal = (costoCaja * numUnidades) + costoSeguro;
