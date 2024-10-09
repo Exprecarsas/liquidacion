@@ -188,6 +188,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (tipoCaja === "normal" && tarifas["normal"] && tarifas["normal"][ciudadDestinoValue]) {
             costoCaja = tarifas["normal"][ciudadDestinoValue];
         }
+        let kilosAdicionales = pesoAplicado > 30 * numUnidades ? (pesoAplicado - (30 * numUnidades)) : 0;
 
         let porcentajeSeguro = valorDeclarado <= 1000000 ? 0.01 : 0.005;
         let costoSeguro = valorDeclarado * porcentajeSeguro;
