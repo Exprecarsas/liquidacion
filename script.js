@@ -182,49 +182,50 @@ document.addEventListener('DOMContentLoaded', function () {
         let costoSeguro = 0;
         let kilosAdicionales = 0;
 
-        // Cálculo para cajas normales
-        if (tipoCaja === "normal") {
+           // Cálculo para cajas normales
+    if (tipoCaja === "normal") {
+        if (valorDeclarado < 500000) {
+            mostrarError('El valor asegurado no puede ser menor a $500,000 para caja normal.');
+            return;
+        }
+        costoSeguro = valorDeclarado <= 1000000 ? valorDeclarado * 0.01 : valorDeclarado * 0.005;
+
+        if (tarifas["normal"] && tarifas["normal"][ciudadDestinoValue]) {
+            costoCaja = tarifas["normal"][ciudadDestinoValue] * numUnidades; // Costo base para todas las unidades
+            const pesoMinimoTotal = 30 * numUnidades; // Peso mínimo total basado en 30 kg por caja
+            if (pesoUsado > pesoMinimoTotal) {
+                kilosAdicionales = (pesoUsado - pesoMinimoTotal) * (tarifas["normal"][ciudadDestinoValue] / 30); // Exceso total en kilos
+            }
+        } else {
+            mostrarError(`No se encontraron tarifas para la ciudad seleccionada.`);
+            return;
+        }
+    }
+    // Cálculo para calzado
+    else if (tipoCaja === "calzado") {
+        if (ciudadesCalzadoSeguro1Porciento.includes(ciudadDestinoValue)) {
+            if (valorDeclarado < 1000000) {
+                mostrarError('El valor asegurado no puede ser menor a $1,000,000 para esta ciudad.');
+                return;
+            }
+            costoSeguro = valorDeclarado * 0.01;
+        } else {
             if (valorDeclarado < 500000) {
-                mostrarError('El valor asegurado no puede ser menor a $500,000 para caja normal.');
+                mostrarError('El valor asegurado no puede ser menor a $500,000 para caja de calzado.');
                 return;
             }
-            costoSeguro = valorDeclarado <= 1000000 ? valorDeclarado * 0.01 : valorDeclarado * 0.005;
-
-            if (tarifas["normal"] && tarifas["normal"][ciudadDestinoValue]) {
-                costoCaja = tarifas["normal"][ciudadDestinoValue];
-                const pesoPorUnidad = 30 * numUnidades;
-                if (pesoUsado > pesoPorUnidad) {
-                    kilosAdicionales = (pesoUsado - pesoPorUnidad) * (costoCaja / 30);
-                }
-            } else {
-                mostrarError(`No se encontraron tarifas para la ciudad seleccionada.`);
-                return;
-            }
+            costoSeguro = valorDeclarado * 0.005;
         }
-        // Cálculo para calzado
-        else if (tipoCaja === "calzado") {
-            if (ciudadesCalzadoSeguro1Porciento.includes(ciudadDestinoValue)) {
-                if (valorDeclarado < 1000000) {
-                    mostrarError('El valor asegurado no puede ser menor a $1,000,000 para esta ciudad.');
-                    return;
-                }
-                costoSeguro = valorDeclarado * 0.01;
-            } else {
-                if (valorDeclarado < 500000) {
-                    mostrarError('El valor asegurado no puede ser menor a $500,000 para caja de calzado.');
-                    return;
-                }
-                costoSeguro = valorDeclarado * 0.005;
-            }
-            if (tarifas["calzado"] && tarifas["calzado"][ciudadDestinoValue] && tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado]) {
-                costoCaja = tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado];
-            } else {
-                mostrarError('Seleccione un rango de peso válido.');
-                return;
-            }
+        if (tarifas["calzado"] && tarifas["calzado"][ciudadDestinoValue] && tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado]) {
+            costoCaja = tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado] * numUnidades; // Multiplicar por número de unidades
+        } else {
+            mostrarError('Seleccione un rango de peso válido.');
+            return;
         }
+    }
 
-        const costoTotal = (costoCaja + kilosAdicionales) * numUnidades + costoSeguro;  
+    // Ajustar los cálculos de costo total
+    const costoTotal = costoCaja + kilosAdicionales + costoSeguro;  // Suma de todos los costos sin multiplicar kilos adicionales por unidades
         
         resultadoDiv.innerHTML = `
            <h3>Resultados de la Liquidación</h3>
