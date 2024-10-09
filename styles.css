@@ -1,3 +1,5 @@
+/* --- Código CSS Actualizado para Responsividad --- */
+
 /* Estilo general de la página */
 body {
     font-family: Arial, sans-serif;
@@ -131,4 +133,65 @@ button:hover {
 
 .modal-content button:hover {
     background-color: #0056b3;
+}
+
+/* --- Responsividad con Media Queries --- */
+
+/* Pantallas pequeñas (teléfonos y móviles) */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        width: 100%; /* Hacer que el contenedor ocupe todo el ancho */
+        margin: 0 auto;
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 20px; /* Reducir tamaño de fuente */
+    }
+
+    input[type="number"], input[type="text"], select, button {
+        font-size: 14px; /* Reducir el tamaño de los inputs */
+    }
+
+    .modal-content {
+        width: 90%; /* Ajustar el ancho del modal en pantallas pequeñas */
+    }
+
+    .suggestions {
+        width: 95%; /* Ajustar el ancho de la caja de sugerencias */
+    }
+}
+
+/* Pantallas medianas (tabletas) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .container {
+        width: 90%;
+    }
+
+    .modal-content {
+        width: 70%;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+}
+
+/* Pantallas grandes (escritorios) */
+@media (min-width: 1024px) {
+    .container {
+        width: 70%;
+    }
+
+    .modal-content {
+        width: 50%;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
 }
