@@ -196,8 +196,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (tarifas["normal"] && tarifas["normal"][ciudadDestinoValue]) {
                 costoCaja = tarifas["normal"][ciudadDestinoValue];
-                if (pesoUsado > 30) {
-                    kilosAdicionales = (pesoUsado - 30) * (costoCaja / 30);
+                 const pesoPorUnidad = 30 * numUnidades;
+                if (pesoUsado > pesoPorUnidad) {
+                    kilosAdicionales = (pesoUsado - pesoPorUnidad) * (costoCaja / 30);
                 }
             } else {
                 mostrarError(`No se encontraron tarifas para la ciudad seleccionada.`);
