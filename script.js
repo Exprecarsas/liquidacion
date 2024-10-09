@@ -178,31 +178,54 @@ document.addEventListener('DOMContentLoaded', function () {
             mostrarError('Seleccione un tipo de caja y una ciudad válida de destino.');
             return;
         }
-         let pesoMinimoPorUnidad = 30;
         let costoCaja = 0;
         let costoSeguro = 0;
         let kilosAdicionales = 0;
-        let costoTotal = 0;
 
+        // Validación para cajas normales con seguro mínimo de 500,000
         if (tipoCaja === "normal") {
+            if (valorDeclarado < 500000) {
+                mostrarError('El valor asegurado no puede ser menor a $500,000 para caja normal.');
+                return;
+            }
+            if (valorDeclarado <= 1000000) {
+                costoSeguro = valorDeclarado * 0.01; // 1% de seguro entre 500,000 y 1,000,000
+            } else {
+                costoSeguro = valorDeclarado * 0.005; // 0.5% de seguro por encima de 1,000,000
+            }
+
             if (tarifas["normal"] && tarifas["normal"][ciudadDestinoValue]) {
                 costoCaja = tarifas["normal"][ciudadDestinoValue];
+                if (pesoUsado > 30) {
+                    kilosAdicionales = (pesoUsado - 30) * (costoCaja / 30);
+                }
+            } else {
+                mostrarError(`No se encontraron tarifas para la ciudad seleccionada.`);
+                return;
             }
-            let pesoAplicado = Math.max(pesoUsado, pesoMinimoPorUnidad * numUnidades);
-            kilosAdicionales = pesoAplicado > (30 * numUnidades) ? ((pesoAplicado - (30 * numUnidades)) * (costoCaja / 30)) : 0;
-
-            costoSeguro = valorDeclarado > 1000000 ? valorDeclarado * 0.005 : valorDeclarado * 0.01;
-            costoTotal = (costoCaja * numUnidades) + kilosAdicionales + costoSeguro;
         } else if (tipoCaja === "calzado") {
-            if (tarifas["calzado"][ciudadDestinoValue] && tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado]) {
+            if (ciudadesCalzadoSeguro1Porciento.includes(ciudadDestinoValue)) {
+                if (valorDeclarado < 1000000) {
+                    mostrarError('El valor asegurado no puede ser menor a $1,000,000 para esta ciudad.');
+                    return;
+                }
+                costoSeguro = valorDeclarado * 0.01; // 1% para ciudades específicas
+            } else {
+                if (valorDeclarado < 500000) {
+                    mostrarError('El valor asegurado no puede ser menor a $500,000 para caja de calzado.');
+                    return;
+                }
+                costoSeguro = valorDeclarado * 0.005; // 0.5% para otras ciudades
+            }
+            if (tarifas["calzado"] && tarifas["calzado"][ciudadDestinoValue] && tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado]) {
                 costoCaja = tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado];
-                costoSeguro = ciudadesCalzadoSeguro1Porciento.includes(ciudadDestinoValue)
-                    ? valorDeclarado * 0.01
-                    : (valorDeclarado <= 1000000 ? valorDeclarado * 0.01 : valorDeclarado * 0.005);
-                costoTotal = (costoCaja * numUnidades) + costoSeguro;
+            } else {
+                mostrarError('Seleccione un rango de peso válido.');
+                return;
             }
         }
-    
+
+        const costoTotal = (costoCaja + kilosAdicionales) * numUnidades + costoSeguro;  
         
         resultadoDiv.innerHTML = `
            <h3>Resultados de la Liquidación</h3>
