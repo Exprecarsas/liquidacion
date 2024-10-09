@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         let porcentajeSeguro = valorDeclarado <= 1000000 ? 0.01 : 0.005;
         let costoSeguro = valorDeclarado * porcentajeSeguro;
-        const costoTotal = (costoCaja * numUnidades) + costoSeguro;
+        const costoTotal = (costoCaja * numUnidades) + kilosAdicionales + costoSeguro;
         
         resultadoDiv.innerHTML = `
            <h3>Resultados de la Liquidación</h3>
@@ -199,6 +199,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
             <p><strong>Peso Total:</strong> ${pesoAplicado} kg</p>
             <p><strong>Costo Base:</strong> $${(costoCaja * numUnidades).toFixed(2)}</p>
+            <p><strong>Kilos Adicionales:</strong> $${kilosAdicionales.toFixed(2)}</p>
             <p><strong>Costo Seguro (${(porcentajeSeguro * 100).toFixed(1)}%):</strong> $${costoSeguro.toFixed(2)}</p>
             <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
         `;
