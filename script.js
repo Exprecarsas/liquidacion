@@ -22,14 +22,13 @@ document.addEventListener('DOMContentLoaded', function () {
     let ciudades = [];
     let pesoVolumetricoCalculado = 0;
 
-     // Lista de ciudades con seguro mínimo de 1.000.000 y tasa de 1%
-     const ciudadesSeguro1Porciento = [
+    // Lista de ciudades con seguro mínimo de 1,000,000 y tasa del 1% solo para calzado
+    const ciudadesCalzadoSeguro1Porciento = [
         "POPAYAN", "PASTO", "NEIVA", "VILLAVICENCIO", "TUNJA", 
         "TUMACO", "MOCOA", "GARZON", "FLORENCIA", "BUENAVENTURA",
         "NEPOCLI","APARTADO","CAUCACIA","YOPAL","DUITAMA","MITU",
         "YARUMAL","TARAZA","PLANETA RICA","SAN MARCO","LORICA",
         "PLATO","EL CARMEN DE BOLIVAR","ARMOBELETES","TIERRA ALTA","CHINU"
-        
     ];
 
     // Cargar las tarifas desde el archivo JSON
@@ -179,29 +178,40 @@ document.addEventListener('DOMContentLoaded', function () {
             mostrarError('Seleccione un tipo de caja y una ciudad válida de destino.');
             return;
         }
-
-       // Peso mínimo basado en el número de unidades (30 kg por unidad)
-        let pesoMinimoPorUnidad = 30;
-        let pesoAplicado = pesoUsado > 0 ? Math.max(pesoUsado, pesoMinimoPorUnidad * numUnidades) : pesoMinimoPorUnidad * numUnidades;
-
+         let pesoMinimoPorUnidad = 30;
         let costoCaja = 0;
-        if (tipoCaja === "normal" && tarifas["normal"] && tarifas["normal"][ciudadDestinoValue]) {
-            costoCaja = tarifas["normal"][ciudadDestinoValue];
-        }
-        let kilosAdicionales = pesoAplicado > 30 * numUnidades ? (pesoAplicado - (30 * numUnidades)) : 0;
+        let costoSeguro = 0;
+        let kilosAdicionales = 0;
+        let costoTotal = 0;
 
-        let porcentajeSeguro = valorDeclarado <= 1000000 ? 0.01 : 0.005;
-        let costoSeguro = valorDeclarado * porcentajeSeguro;
-        const costoTotal = (costoCaja * numUnidades) + kilosAdicionales + costoSeguro;
+        if (tipoCaja === "normal") {
+            if (tarifas["normal"] && tarifas["normal"][ciudadDestinoValue]) {
+                costoCaja = tarifas["normal"][ciudadDestinoValue];
+            }
+            let pesoAplicado = Math.max(pesoUsado, pesoMinimoPorUnidad * numUnidades);
+            kilosAdicionales = pesoAplicado > (30 * numUnidades) ? ((pesoAplicado - (30 * numUnidades)) * (costoCaja / 30)) : 0;
+
+            costoSeguro = valorDeclarado > 1000000 ? valorDeclarado * 0.005 : valorDeclarado * 0.01;
+            costoTotal = (costoCaja * numUnidades) + kilosAdicionales + costoSeguro;
+        } else if (tipoCaja === "calzado") {
+            if (tarifas["calzado"][ciudadDestinoValue] && tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado]) {
+                costoCaja = tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado];
+                costoSeguro = ciudadesCalzadoSeguro1Porciento.includes(ciudadDestinoValue)
+                    ? valorDeclarado * 0.01
+                    : (valorDeclarado <= 1000000 ? valorDeclarado * 0.01 : valorDeclarado * 0.005);
+                costoTotal = (costoCaja * numUnidades) + costoSeguro;
+            }
+        }
+    
         
         resultadoDiv.innerHTML = `
            <h3>Resultados de la Liquidación</h3>
             <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
             <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
-            <p><strong>Peso Total:</strong> ${pesoAplicado} kg</p>
-            <p><strong>Costo Base:</strong> $${(costoCaja * numUnidades).toFixed(2)}</p>
+            <p><strong>Peso Total:</strong> ${pesoUsado} kg</p>
+            <p><strong>Costo Base:</strong> $${costoCaja.toFixed(2)}</p>
             <p><strong>Kilos Adicionales:</strong> $${kilosAdicionales.toFixed(2)}</p>
-            <p><strong>Costo Seguro (${(porcentajeSeguro * 100).toFixed(1)}%):</strong> $${costoSeguro.toFixed(2)}</p>
+            <p><strong>Costo Seguro:</strong> $${costoSeguro.toFixed(2)}</p>
             <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
         `;
     });
