@@ -182,21 +182,17 @@ document.addEventListener('DOMContentLoaded', function () {
         let costoSeguro = 0;
         let kilosAdicionales = 0;
 
-        // Validación para cajas normales con seguro mínimo de 500,000
+        // Cálculo para cajas normales
         if (tipoCaja === "normal") {
             if (valorDeclarado < 500000) {
                 mostrarError('El valor asegurado no puede ser menor a $500,000 para caja normal.');
                 return;
             }
-            if (valorDeclarado <= 1000000) {
-                costoSeguro = valorDeclarado * 0.01; // 1% de seguro entre 500,000 y 1,000,000
-            } else {
-                costoSeguro = valorDeclarado * 0.005; // 0.5% de seguro por encima de 1,000,000
-            }
+            costoSeguro = valorDeclarado <= 1000000 ? valorDeclarado * 0.01 : valorDeclarado * 0.005;
 
             if (tarifas["normal"] && tarifas["normal"][ciudadDestinoValue]) {
                 costoCaja = tarifas["normal"][ciudadDestinoValue];
-                 const pesoPorUnidad = 30 * numUnidades;
+                const pesoPorUnidad = 30 * numUnidades;
                 if (pesoUsado > pesoPorUnidad) {
                     kilosAdicionales = (pesoUsado - pesoPorUnidad) * (costoCaja / 30);
                 }
@@ -204,19 +200,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 mostrarError(`No se encontraron tarifas para la ciudad seleccionada.`);
                 return;
             }
-        } else if (tipoCaja === "calzado") {
+        }
+        // Cálculo para calzado
+        else if (tipoCaja === "calzado") {
             if (ciudadesCalzadoSeguro1Porciento.includes(ciudadDestinoValue)) {
                 if (valorDeclarado < 1000000) {
                     mostrarError('El valor asegurado no puede ser menor a $1,000,000 para esta ciudad.');
                     return;
                 }
-                costoSeguro = valorDeclarado * 0.01; // 1% para ciudades específicas
+                costoSeguro = valorDeclarado * 0.01;
             } else {
                 if (valorDeclarado < 500000) {
                     mostrarError('El valor asegurado no puede ser menor a $500,000 para caja de calzado.');
                     return;
                 }
-                costoSeguro = valorDeclarado * 0.005; // 0.5% para otras ciudades
+                costoSeguro = valorDeclarado * 0.005;
             }
             if (tarifas["calzado"] && tarifas["calzado"][ciudadDestinoValue] && tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado]) {
                 costoCaja = tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado];
