@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let ciudades = [];
     let pesoVolumetricoCalculado = 0;
 
-    // Lista de ciudades con seguro mínimo de 1,000,000 y tasa del 1% solo para calzado
+    // Lista de ciudades seguro mínimo de 1,000,000 y tasa del 1% solo para calzado
     const ciudadesCalzadoSeguro1Porciento = [
         "POPAYAN", "PASTO", "NEIVA", "VILLAVICENCIO", "TUNJA", 
         "TUMACO", "MOCOA", "GARZON", "FLORENCIA", "BUENAVENTURA",
