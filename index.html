@@ -9,71 +9,74 @@
 <body>
     <div class="container">
         <h1>Calculadora de Liquidación de Envío</h1>
- <form id="formulario" onsubmit="return false;">
-    <label for="tipoCaja">Tipo de Caja:</label>
-    <select id="tipoCaja">
-        <option value="" disabled selected>Seleccione un tipo de caja</option>
-        <option value="normal">Caja Normal</option>
-        <option value="calzado">Caja Calzado</option>
-    </select><br>
+        <form id="formulario" onsubmit="return false;">
+            <label for="tipoCaja">Tipo de Caja:</label>
+            <select id="tipoCaja">
+                <option value="" disabled selected>Seleccione un tipo de caja</option>
+                <option value="normal">Caja Normal</option>
+                <option value="calzado">Caja Calzado</option>
+            </select><br>
 
-    <label for="ciudadDestino">Ciudad de Destino:</label>
-    <input type="text" id="ciudadDestino" autocomplete="off">
-    <div id="suggestions" class="suggestions-box"></div><br>
+            <label for="ciudadDestino">Ciudad de Destino:</label>
+            <input type="text" id="ciudadDestino" autocomplete="off">
+            <div id="suggestions" class="suggestions-box"></div><br>
 
-    <label for="numUnidades">Cantidad de Unidades:</label>
-    <input type="number" id="numUnidades" value="1" min="1"><br>
+            <label for="numUnidades">Cantidad de Unidades:</label>
+            <input type="number" id="numUnidades" value="1" min="1"><br>
 
-    <div id="rangoPesoDiv" style="display:none;">
-        <label for="rangoPeso">Rango de Peso:</label>
-        <select id="rangoPeso"></select><br>
+            <div id="rangoPesoDiv" style="display:none;">
+                <label for="rangoPeso">Rango de Peso:</label>
+                <select id="rangoPeso"></select><br>
+            </div>
+
+            <label for="pesoTotal">Peso Total (kg):</label>
+            <input type="number" id="pesoTotal" min="1" disabled><br>
+
+            <!-- Botón para abrir la ventana modal de cálculo volumétrico -->
+            <button type="button" id="calcularVolumetricoBtn">Calcular Peso Volumétrico</button><br>
+
+            <label for="valorDeclarado">Valor Declarado:</label>
+            <input type="text" id="valorDeclarado"><br>
+
+            <button id="calcularBtn">Calcular</button>
+        </form>
+
+        <!-- Modal para mostrar errores -->
+        <div id="errorModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <p id="errorMessage"></p>
+            </div>
+        </div>
+
+        <!-- Modal para cálculo volumétrico -->
+        <div id="volumetricModal" class="modal">
+            <div class="modal-content">
+                <span class="close-volumetric-btn">&times;</span>
+                <h3>Calcular Peso Volumétrico</h3>
+                <label for="alto">Alto (cm):</label>
+                <input type="number" id="alto" min="1"><br>
+
+                <label for="ancho">Ancho (cm):</label>
+                <input type="number" id="ancho" min="1"><br>
+
+                <label for="largo">Largo (cm):</label>
+                <input type="number" id="largo" min="1"><br>
+
+                <button type="button" id="aceptarVolumetrico">Aceptar</button>
+            </div>
+        </div>
+
+        <!-- Modal para mostrar los resultados de la liquidación -->
+        <div id="resultadoModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal-btn">&times;</span>
+                <div id="resultadoContenido"></div>
+            </div>
+        </div>
     </div>
 
-    <label for="pesoTotal">Peso Total (kg):</label>
-    <input type="number" id="pesoTotal" min="1" disabled><br>
-
-    <!-- Botón para abrir la ventana modal de cálculo volumétrico -->
-    <button type="button" id="calcularVolumetricoBtn">Calcular Peso Volumétrico</button><br>
-
-    <label for="valorDeclarado">Valor Declarado:</label>
-    <input type="text" id="valorDeclarado"><br>
-
-    <button id="calcularBtn">Calcular</button>
-</form>
-<div id="resultado"></div>
-
-<!-- Modal para mostrar errores -->
-<div id="errorModal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn">&times;</span>
-        <p id="errorMessage"></p>
-    </div>
-</div>
-
-<!-- Modal para cálculo volumétrico -->
-<div id="volumetricModal" class="modal">
-    <div class="modal-content">
-        <span class="close-volumetric-btn">&times;</span>
-        <h3>Calcular Peso Volumétrico</h3>
-        <label for="alto">Alto (cm):</label>
-        <input type="number" id="alto" min="1"><br>
-
-        <label for="ancho">Ancho (cm):</label>
-        <input type="number" id="ancho" min="1"><br>
-
-        <label for="largo">Largo (cm):</label>
-        <input type="number" id="largo" min="1"><br>
-
-        <button type="button" id="aceptarVolumetrico">Aceptar</button>
-    </div>
-</div>
-       <!-- Modal para mostrar los resultados de la liquidación -->
-<div id="resultadoModal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal-btn">&times;</span>
-        <div id="resultado"></div>
-    </div>
-</div>
     <script src="script.js"></script>
 </body>
 </html>
+
