@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
             <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
             <p><strong>Peso Total:</strong> ${pesoUsado} kg</p>
-            <p><strong>Costo Flete:</strong> $${costoCaja.toFixed(2)}</p>
+            <p><strong>Costo envio:</strong> $${costoCaja.toFixed(2)}</p>
             <p><strong>Descuento Aplicado:</strong> ${descuento > 0 ? `${descuento}%` : "No aplica"}</p>
             <p><strong>Kilos Adicionales:</strong> $${kilosAdicionales.toFixed(2)}</p>
             <p><strong>Costo Seguro:</strong> $${costoSeguro.toFixed(2)}</p>
