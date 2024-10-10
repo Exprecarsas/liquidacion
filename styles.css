@@ -221,7 +221,7 @@ button:hover {
 }
 
 /* Estilo para el botón de cerrar la ventana modal */
-.close-btn {
+.close-modal-btn {
     color: #aaa;
     float: right;
     font-size: 28px;
@@ -229,7 +229,10 @@ button:hover {
     cursor: pointer;
 }
 
-.close-btn:hover {
+.close-modal-btn:hover,
+.close-modal-btn:focus {
     color: #000;
+    text-decoration: none;
+    cursor: pointer;
 }
 
