@@ -16,9 +16,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const errorMessage = document.getElementById('errorMessage');
     const resultadoModal = document.getElementById('resultadoModal');
     const resultadoContenido = document.getElementById('resultadoContenido');
-    const closeErrorBtn = document.querySelector('.close-btn');
-    const closeVolumetricBtn = document.querySelector('.close-volumetric-btn');
-    const closeResultadoBtn = document.querySelector('.close-modal-btn');
+    const closeErrorBtn = document.querySelector('.close-btn'); // Botón de cierre para el modal de error
+    const closeVolumetricBtn = document.querySelector('.close-volumetric-btn'); // Botón de cierre para el modal volumétrico
+    const closeResultadoBtn = document.querySelector('.close-modal-btn'); // Botón de cierre para el modal de resultados
     
     let tarifas = {};
     let ciudades = [];
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Cerrar el modal de error al hacer clic en la 'X'
-    closeModalBtn.addEventListener('click', function () {
+    closeErrorBtn.addEventListener('click', function () {
         errorModal.style.display = "none";
     });
 
