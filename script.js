@@ -6,17 +6,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const rangoPesoDiv = document.getElementById('rangoPesoDiv');
     const rangoPesoSelect = document.getElementById('rangoPeso');
     const valorDeclaradoInput = document.getElementById('valorDeclarado');
-    const resultadoDiv = document.getElementById('resultado');
     const calcularVolumetricoBtn = document.getElementById('calcularVolumetricoBtn');
     const volumetricModal = document.getElementById('volumetricModal');
     const aceptarVolumetrico = document.getElementById('aceptarVolumetrico');
-    const closeModalBtn = document.querySelector('.close-btn');
     const altoInput = document.getElementById('alto');
     const anchoInput = document.getElementById('ancho');
-    const largoInput = document.getElementById('largo');    
+    const largoInput = document.getElementById('largo');
     const errorModal = document.getElementById('errorModal');
     const errorMessage = document.getElementById('errorMessage');
     const closeErrorBtn = document.querySelector('.close-btn');
+    const resultadoDiv = document.getElementById('resultado');
     const resultadoModal = document.getElementById('resultadoModal');
     const closeResultadoBtn = document.querySelector('.close-modal-btn');
 
