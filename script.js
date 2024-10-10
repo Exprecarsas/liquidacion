@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const pesoTotalInput = document.getElementById('pesoTotal');
     const rangoPesoDiv = document.getElementById('rangoPesoDiv');
     const rangoPesoSelect = document.getElementById('rangoPeso');
-    const closeVolumetricBtn = document.querySelector('.close-volumetric-btn');
     const valorDeclaradoInput = document.getElementById('valorDeclarado');
     const calcularVolumetricoBtn = document.getElementById('calcularVolumetricoBtn');
     const volumetricModal = document.getElementById('volumetricModal');
@@ -19,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const resultadoDiv = document.getElementById('resultado');
     const resultadoModal = document.getElementById('resultadoModal');
     const closeResultadoBtn = document.querySelector('.close-modal-btn');
+    const closeVolumetricBtn = document.querySelector('.close-volumetric-btn');
 
     let tarifas = {};
     let ciudades = [];
