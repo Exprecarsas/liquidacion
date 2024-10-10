@@ -5,21 +5,21 @@ document.addEventListener('DOMContentLoaded', function () {
     const pesoTotalInput = document.getElementById('pesoTotal');
     const rangoPesoDiv = document.getElementById('rangoPesoDiv');
     const rangoPesoSelect = document.getElementById('rangoPeso');
-    const valorDeclaradoInput = document.getElementById('valorDeclarado');
     const calcularVolumetricoBtn = document.getElementById('calcularVolumetricoBtn');
     const volumetricModal = document.getElementById('volumetricModal');
     const aceptarVolumetrico = document.getElementById('aceptarVolumetrico');
     const altoInput = document.getElementById('alto');
     const anchoInput = document.getElementById('ancho');
     const largoInput = document.getElementById('largo');
+    const valorDeclaradoInput = document.getElementById('valorDeclarado');
     const errorModal = document.getElementById('errorModal');
     const errorMessage = document.getElementById('errorMessage');
-    const closeErrorBtn = document.querySelector('.close-btn');
-    const resultadoDiv = document.getElementById('resultado');
     const resultadoModal = document.getElementById('resultadoModal');
-    const closeResultadoBtn = document.querySelector('.close-modal-btn');
+    const resultadoContenido = document.getElementById('resultadoContenido');
+    const closeErrorBtn = document.querySelector('.close-btn');
     const closeVolumetricBtn = document.querySelector('.close-volumetric-btn');
-
+    const closeResultadoBtn = document.querySelector('.close-modal-btn');
+    
     let tarifas = {};
     let ciudades = [];
     let pesoVolumetricoCalculado = 0;
