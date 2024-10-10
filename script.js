@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const calcularVolumetricoBtn = document.getElementById('calcularVolumetricoBtn');
     const volumetricModal = document.getElementById('volumetricModal');
     const aceptarVolumetrico = document.getElementById('aceptarVolumetrico');
+    const closeModalBtn = document.querySelector('.close-btn');
     const altoInput = document.getElementById('alto');
     const anchoInput = document.getElementById('ancho');
     const largoInput = document.getElementById('largo');    
