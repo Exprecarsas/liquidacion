@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const costoTotal = costoCaja + kilosAdicionales + costoSeguro;  // Suma de todos los costos sin multiplicar kilos adicionales por unidades
         
         // Mostrar los resultados en el modal
-        resultadoDiv.innerHTML = `
+        resultadoContenido.innerHTML = `
             <h3>Resultados de la Liquidación</h3>
             <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
             <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
