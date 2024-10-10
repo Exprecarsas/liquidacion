@@ -3,7 +3,7 @@
 /* Estilo general de la página */
 body {
     font-family: Arial, sans-serif;
-    background-color: #white;
+    background-color: white;
     padding: 20px;
 }
 
@@ -50,14 +50,14 @@ button {
 }
 
 button:hover {
-    background-color: #4cae4c;
+    background-color: #cc414d;
 }
 
 /* Estilo para mostrar resultados */
 .result {
     margin-top: 20px;
     padding: 15px;
-    background-color: #e9ecef;
+    background-color: #b8dcff;
     border-radius: 4px;
 }
 
@@ -132,7 +132,7 @@ button:hover {
 }
 
 .modal-content button:hover {
-    background-color: #0056b3;
+    background-color: #cc414d;
 }
 
 /* --- Responsividad con Media Queries --- */
