@@ -18,9 +18,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const closeModalBtn = document.querySelector('.close-btn');
     const resultadoDiv = document.getElementById('resultado');
     const calcularBtn = document.getElementById('calcularBtn');
-    const resultModal = document.getElementById('resultModal');
-    const resultContent = document.getElementById('resultContent');
-    const closeResultModal = document.getElementById('closeResultModal');
+    const resultadoModal = document.getElementById('resultadoModal');
+    const closeResultadoBtn = document.querySelector('.close-modal-btn');    
 
     let tarifas = {};
     let ciudades = [];
@@ -169,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Cálculo del costo total (incluye seguro y kilos adicionales)
-    calcularBtn.addEventListener('click', function () {
+    document.getElementById('calcularBtn').addEventListener('click', function () {
         const tipoCaja = tipoCajaSelect.value;
         const numUnidades = parseInt(document.getElementById('numUnidades').value);
         const valorDeclaradoStr = valorDeclaradoInput.value.replace(/\./g, '');
@@ -231,8 +230,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Ajustar los cálculos de costo total
     const costoTotal = costoCaja + kilosAdicionales + costoSeguro;  // Suma de todos los costos sin multiplicar kilos adicionales por unidades
         
+        // Mostrar los resultados en el modal
         resultadoDiv.innerHTML = `
-           <h3>Resultados de la Liquidación</h3>
+            <h3>Resultados de la Liquidación</h3>
             <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
             <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
             <p><strong>Peso Total:</strong> ${pesoUsado} kg</p>
@@ -241,5 +241,17 @@ document.addEventListener('DOMContentLoaded', function () {
             <p><strong>Costo Seguro:</strong> $${costoSeguro.toFixed(2)}</p>
             <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
         `;
+
+        // Abrir el modal
+        resultadoModal.style.display = 'block';
     });
+
+    // Cerrar el modal de resultados
+    closeResultadoBtn.addEventListener('click', function () {
+        resultadoModal.style.display = 'none';
+    });
+
+    function mostrarError(mensaje) {
+        alert(mensaje);
+    }
 });
