@@ -3,7 +3,7 @@
 /* Estilo general de la página */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: #white;
     padding: 20px;
 }
 
@@ -41,7 +41,7 @@ input[type="number"], input[type="text"], select {
 }
 
 button {
-    background-color: #5cb85c;
+    background-color: #cc414d;
     color: white;
     padding: 10px 15px;
     border: none;
@@ -109,7 +109,7 @@ button:hover {
 
 /* Estilo para los botones de cierre de modales */
 .close-btn, .close-volumetric-btn {
-    color: #aaa;
+    color: #cc414d;
     float: right;
     font-size: 28px;
     font-weight: bold;
@@ -122,7 +122,7 @@ button:hover {
 
 /* Botón de aceptar y cálculo volumétrico dentro del modal */
 .modal-content button {
-    background-color: #007bff;
+    background-color: #cc414d;
     color: white;
     padding: 10px 15px;
     border: none;
