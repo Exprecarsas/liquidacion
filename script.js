@@ -17,6 +17,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const errorMessage = document.getElementById('errorMessage');
     const closeModalBtn = document.querySelector('.close-btn');
     const resultadoDiv = document.getElementById('resultado');
+    const calcularBtn = document.getElementById('calcularBtn');
+    const resultModal = document.getElementById('resultModal');
+    const resultContent = document.getElementById('resultContent');
+    const closeResultModal = document.getElementById('closeResultModal');
 
     let tarifas = {};
     let ciudades = [];
@@ -165,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Cálculo del costo total (incluye seguro y kilos adicionales)
-    document.getElementById('calcularBtn').addEventListener('click', function () {
+    calcularBtn.addEventListener('click', function () {
         const tipoCaja = tipoCajaSelect.value;
         const numUnidades = parseInt(document.getElementById('numUnidades').value);
         const valorDeclaradoStr = valorDeclaradoInput.value.replace(/\./g, '');
