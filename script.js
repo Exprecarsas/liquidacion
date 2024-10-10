@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const errorMessage = document.getElementById('errorMessage');
     const resultadoModal = document.getElementById('resultadoModal');
     const resultadoContenido = document.getElementById('resultadoContenido');
+    const descuentoInput = document.getElementById('descuento'); // Campo de descuento opcional
     const closeErrorBtn = document.querySelector('.close-btn'); // Botón de cierre para el modal de error
     const closeVolumetricBtn = document.querySelector('.close-volumetric-btn'); // Botón de cierre para el modal volumétrico
     const closeResultadoBtn = document.querySelector('.close-modal-btn'); // Botón de cierre para el modal de resultados
@@ -175,6 +176,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const ciudadDestinoValue = ciudadDestino.value.trim().toUpperCase();
         let pesoUsado = parseFloat(pesoTotalInput.value) || 0;
         let rangoSeleccionado = tipoCaja === 'calzado' ? rangoPesoSelect.value : null;
+        let descuento = parseFloat(descuentoInput.value) || 0;
+
+        // Se aplicará el descuento solo si se ingresa un valor entre 0 y 10
+        if (descuento < 0 || descuento > 10) {
+            mostrarError('El descuento debe estar entre 0 y 10 %.');
+            return;
+        }
 
         if (!tipoCaja || !ciudadDestinoValue || !ciudades.includes(ciudadDestinoValue)) {
             mostrarError('Seleccione un tipo de caja y una ciudad válida de destino.');
@@ -235,7 +243,8 @@ document.addEventListener('DOMContentLoaded', function () {
             <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
             <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
             <p><strong>Peso Total:</strong> ${pesoUsado} kg</p>
-            <p><strong>Costo Base:</strong> $${costoCaja.toFixed(2)}</p>
+            <p><strong>Costo Flete:</strong> $${costoCaja.toFixed(2)}</p>
+            <p><strong>Descuento Aplicado:</strong> ${descuento > 0 ? `${descuento}%` : "No aplica"}</p>
             <p><strong>Kilos Adicionales:</strong> $${kilosAdicionales.toFixed(2)}</p>
             <p><strong>Costo Seguro:</strong> $${costoSeguro.toFixed(2)}</p>
             <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
