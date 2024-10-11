@@ -235,7 +235,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Ajustar los cálculos de costo total
-    const costoTotal = costoCaja + kilosAdicionales + costoSeguro;  // Suma de todos los costos sin multiplicar kilos adicionales por unidades
+    let costoTotal = costoCaja + kilosAdicionales + costoSeguro;  // Suma de todos los costos
+
+    // Aplicar el descuento al costo total solo si es mayor que 0
+    if (descuento > 0) {
+        const descuentoAplicado = (costoTotal * descuento) / 100;
+        costoTotal -= descuentoAplicado;  // Restar el valor del descuento al costo total
+    }
         
         // Mostrar los resultados en el modal
         resultadoContenido.innerHTML = `
