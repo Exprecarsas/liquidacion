@@ -20,18 +20,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const closeErrorBtn = document.querySelector('.close-btn'); // Botón de cierre para el modal de error
     const closeVolumetricBtn = document.querySelector('.close-volumetric-btn'); // Botón de cierre para el modal volumétrico
     const closeResultadoBtn = document.querySelector('.close-modal-btn'); // Botón de cierre para el modal de resultados
-    
+
     let tarifas = {};
     let ciudades = [];
     let pesoVolumetricoCalculado = 0;
 
     // Lista de ciudades seguro mínimo de 1,000,000 y tasa del 1% solo para calzado
     const ciudadesCalzadoSeguro1Porciento = [
-        "POPAYAN", "PASTO", "NEIVA", "VILLAVICENCIO", "TUNJA", 
+        "POPAYAN", "PASTO", "NEIVA", "VILLAVICENCIO", "TUNJA",
         "TUMACO", "MOCOA", "GARZON", "FLORENCIA", "BUENAVENTURA",
-        "NEPOCLI","APARTADO","CAUCACIA","YOPAL","DUITAMA","MITU",
-        "YARUMAL","TARAZA","PLANETA RICA","SAN MARCO","LORICA",
-        "PLATO","EL CARMEN DE BOLIVAR","ARMOBELETES","TIERRA ALTA","CHINU"
+        "NEPOCLI", "APARTADO", "CAUCACIA", "YOPAL", "DUITAMA", "MITU",
+        "YARUMAL", "TARAZA", "PLANETA RICA", "SAN MARCO", "LORICA",
+        "PLATO", "EL CARMEN DE BOLIVAR", "ARMOBELETES", "TIERRA ALTA", "CHINU"
     ];
 
     // Cargar las tarifas desde el archivo JSON
@@ -91,13 +91,13 @@ document.addEventListener('DOMContentLoaded', function () {
             mostrarError('Debe ingresar dimensiones válidas para calcular el peso volumétrico.');
         }
     });
-    
+
     // Formatear el valor declarado al escribir
     valorDeclaradoInput.addEventListener('input', function () {
         let valor = valorDeclaradoInput.value.replace(/\D/g, '');
         valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);
     });
-    
+
     // Cambiar las ciudades disponibles según el tipo de caja seleccionado
     tipoCajaSelect.addEventListener('change', function () {
         const tipoCaja = tipoCajaSelect.value;
@@ -192,57 +192,57 @@ document.addEventListener('DOMContentLoaded', function () {
         let costoSeguro = 0;
         let kilosAdicionales = 0;
 
-           // Cálculo para cajas normales
-    if (tipoCaja === "normal") {
-        if (valorDeclarado < 500000) {
-            mostrarError('El valor asegurado no puede ser menor a $500,000 para caja normal.');
-            return;
-        }
-        costoSeguro = valorDeclarado <= 1000000 ? valorDeclarado * 0.01 : valorDeclarado * 0.005;
-
-        if (tarifas["normal"] && tarifas["normal"][ciudadDestinoValue]) {
-            costoCaja = tarifas["normal"][ciudadDestinoValue] * numUnidades; // Costo base para todas las unidades
-            const pesoMinimoTotal = 30 * numUnidades; // Peso mínimo total basado en 30 kg por caja
-            if (pesoUsado > pesoMinimoTotal) {
-                kilosAdicionales = (pesoUsado - pesoMinimoTotal) * (tarifas["normal"][ciudadDestinoValue] / 30); // Exceso total en kilos
-            }
-        } else {
-            mostrarError(`No se encontraron tarifas para la ciudad seleccionada.`);
-            return;
-        }
-    }
-    // Cálculo para calzado
-    else if (tipoCaja === "calzado") {
-        if (ciudadesCalzadoSeguro1Porciento.includes(ciudadDestinoValue)) {
-            if (valorDeclarado < 1000000) {
-                mostrarError('El valor asegurado no puede ser menor a $1,000,000 para esta ciudad.');
-                return;
-            }
-            costoSeguro = valorDeclarado * 0.01;
-        } else {
+        // Cálculo para cajas normales
+        if (tipoCaja === "normal") {
             if (valorDeclarado < 500000) {
-                mostrarError('El valor asegurado no puede ser menor a $500,000 para caja de calzado.');
+                mostrarError('El valor asegurado no puede ser menor a $500,000 para caja normal.');
                 return;
             }
-            costoSeguro = valorDeclarado * 0.005;
-        }
-        if (tarifas["calzado"] && tarifas["calzado"][ciudadDestinoValue] && tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado]) {
-            costoCaja = tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado] * numUnidades; // Multiplicar por número de unidades
-        } else {
-            mostrarError('Seleccione un rango de peso válido.');
-            return;
-        }
-    }
+            costoSeguro = valorDeclarado <= 1000000 ? valorDeclarado * 0.01 : valorDeclarado * 0.005;
 
-    // Ajustar los cálculos de costo total
-    let costoTotal = costoCaja + kilosAdicionales + costoSeguro;  // Suma de todos los costos
+            if (tarifas["normal"] && tarifas["normal"][ciudadDestinoValue]) {
+                costoCaja = tarifas["normal"][ciudadDestinoValue] * numUnidades; // Costo base para todas las unidades
+                const pesoMinimoTotal = 30 * numUnidades; // Peso mínimo total basado en 30 kg por caja
+                if (pesoUsado > pesoMinimoTotal) {
+                    kilosAdicionales = (pesoUsado - pesoMinimoTotal) * (tarifas["normal"][ciudadDestinoValue] / 30); // Exceso total en kilos
+                }
+            } else {
+                mostrarError(`No se encontraron tarifas para la ciudad seleccionada.`);
+                return;
+            }
+        }
+        // Cálculo para calzado
+        else if (tipoCaja === "calzado") {
+            if (ciudadesCalzadoSeguro1Porciento.includes(ciudadDestinoValue)) {
+                if (valorDeclarado < 1000000) {
+                    mostrarError('El valor asegurado no puede ser menor a $1,000,000 para esta ciudad.');
+                    return;
+                }
+                costoSeguro = valorDeclarado * 0.01;
+            } else {
+                if (valorDeclarado < 500000) {
+                    mostrarError('El valor asegurado no puede ser menor a $500,000 para caja de calzado.');
+                    return;
+                }
+                costoSeguro = valorDeclarado * 0.005;
+            }
+            if (tarifas["calzado"] && tarifas["calzado"][ciudadDestinoValue] && tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado]) {
+                costoCaja = tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado] * numUnidades; // Multiplicar por número de unidades
+            } else {
+                mostrarError('Seleccione un rango de peso válido.');
+                return;
+            }
+        }
 
-    // Aplicar el descuento al costo total solo si es mayor que 0
-    if (descuento > 0) {
-        const descuentoAplicado = (costoTotal * descuento) / 100;
-        costoTotal -= descuentoAplicado;  // Restar el valor del descuento al costo total
-    }
-        
+        // Ajustar los cálculos de costo total
+        let costoTotal = costoCaja + kilosAdicionales + costoSeguro;  // Suma de todos los costos
+
+        // Aplicar el descuento al costo total solo si es mayor que 0
+        if (descuento > 0) {
+            const descuentoAplicado = (costoTotal * descuento) / 100;
+            costoTotal -= descuentoAplicado;  // Restar el valor del descuento al costo total
+        }
+
         // Mostrar los resultados en el modal
         resultadoContenido.innerHTML = `
             <h3>Resultados de la Liquidación</h3>
@@ -268,15 +268,16 @@ document.addEventListener('DOMContentLoaded', function () {
     function mostrarError(mensaje) {
         alert(mensaje);
     }
-});
+    
 
-// Registrar el Service Worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/liquidaci-n/sw.js').then(registration => {
-      console.log('Service Worker registrado con éxito:', registration);
-    }).catch(error => {
-      console.log('Error al registrar el Service Worker:', error);
-    });
-  });
-}
+    // Registrar el Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/liquidaci-n/sw.js').then(registration => {
+                console.log('Service Worker registrado con éxito:', registration);
+            }).catch(error => {
+                console.log('Error al registrar el Service Worker:', error);
+            });
+        });
+    }
+});
