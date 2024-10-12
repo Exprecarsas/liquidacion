@@ -2,7 +2,7 @@
   "name": "Mi Aplicación de Envío",
   "short_name": "EnviosApp",
   "description": "Una aplicación para calcular envíos",
-  "start_url": "/https://yersonsuarez-b.github.io/liquidaci-n/",
+  "start_url": "/liquidaci-n/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#cc414d",
