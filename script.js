@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Ajustar los cálculos de costo total
-        let costoTotal = costoCaja + kilosAdicionales + costoSeguro;  // Suma de todos los costos
+        const costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
 
         // Aplicar el descuento al costo total solo si es mayor que 0
         if (descuento > 0) {
@@ -249,10 +249,10 @@ resultadoContenido.innerHTML = `
     <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
     <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
     <p><strong>Peso Total:</strong> ${pesoUsado} kg</p>
-    <p><strong>Costo envío:</strong> $${costoCaja.toLocaleString('es-CO')}</p>
-    <p><strong>Descuento Aplicado:</strong> ${descuento > 0 ? `${descuento}%` : "No aplica"}</p>
-    <p><strong>Kilos Adicionales:</strong> $${Math.round(kilosAdicionales).toLocaleString('es-CO')}</p>
-    <p><strong>Costo Seguro:</strong> $${Math.round(costoSeguro).toLocaleString('es-CO')}</p>
+    <p><strong>Costo envío:</strong> $${Math.floor(costoCaja).toLocaleString('es-CO')}</p>
+    ${kilosAdicionales > 0 ? `<p><strong>Kilos Adicionales:</strong> $${Math.floor(kilosAdicionales).toLocaleString('es-CO')}</p>` : ""}
+    ${descuento > 0 ? `<p><strong>Descuento Aplicado:</strong> ${descuento}%</p>` : ""}
+    <p><strong>Costo Seguro:</strong> $${Math.floor(costoSeguro).toLocaleString('es-CO')}</p>
     <p><strong>Costo Total:</strong> $${costoTotal.toLocaleString('es-CO')}</p>
 `;
         // Abrir el modal
