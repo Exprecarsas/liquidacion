@@ -250,11 +250,11 @@ resultadoContenido.innerHTML = `
     <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
     <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
     <p><strong>Peso Total:</strong> ${pesoUsado} kg</p>
-    <p><strong>Costo Envío:</strong> $${Math.trunc(costoCaja)}</p>
-    ${descuento > 0 ? `<p><strong>Descuento Aplicado:</strong> ${descuento}% ($${Math.trunc(descuentoAplicado)})</p>` : ''}
-    ${kilosAdicionales > 0 ? `<p><strong>Kilos Adicionales:</strong> $${Math.trunc(kilosAdicionales)}</p>` : ''}
-    <p><strong>Costo Seguro:</strong> $${Math.trunc(costoSeguro)}</p>
-    <p><strong>Costo Total:</strong> $${Math.trunc(costoTotal)}</p>
+    <p><strong>Costo envío:</strong> $${Math.trunc(costoCaja).toLocaleString('es-CO')}</p>
+    ${descuento > 0 ? `<p><strong>Descuento Aplicado:</strong> ${descuento}% ($${Math.trunc(descuentoAplicado).toLocaleString('es-CO')})</p>` : ''}
+    ${kilosAdicionales > 0 ? `<p><strong>Kilos Adicionales:</strong> $${Math.trunc(kilosAdicionales).toLocaleString('es-CO')}</p>` : ""}
+    <p><strong>Costo Seguro:</strong> $${Math.trunc(costoSeguro).toLocaleString('es-CO')}</p>
+    <p><strong>Costo Total:</strong> $${Math.trunc(costoTotal).toLocaleString('es-CO')}</p>
 `;
         // Abrir el modal
         resultadoModal.style.display = 'block';
