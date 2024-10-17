@@ -244,18 +244,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Mostrar los resultados en el modal
-        resultadoContenido.innerHTML = `
-            <h3>Resultados de la Liquidación</h3>
-            <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
-            <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
-            <p><strong>Peso Total:</strong> ${pesoUsado} kg</p>
-            <p><strong>Costo envio:</strong> $${costoCaja.toFixed(2)}</p>
-            <p><strong>Descuento Aplicado:</strong> ${descuento > 0 ? `${descuento}%` : "No aplica"}</p>
-            <p><strong>Kilos Adicionales:</strong> $${kilosAdicionales.toFixed(2)}</p>
-            <p><strong>Costo Seguro:</strong> $${costoSeguro.toFixed(2)}</p>
-            <p><strong>Costo Total:</strong> $${costoTotal.toFixed(2)}</p>
-        `;
-
+resultadoContenido.innerHTML = `
+    <h3>Resultados de la Liquidación</h3>
+    <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
+    <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
+    <p><strong>Peso Total:</strong> ${pesoUsado} kg</p>
+    <p><strong>Costo envío:</strong> $${costoCaja.toLocaleString('es-CO')}</p>
+    <p><strong>Descuento Aplicado:</strong> ${descuento > 0 ? `${descuento}%` : "No aplica"}</p>
+    <p><strong>Kilos Adicionales:</strong> $${Math.round(kilosAdicionales).toLocaleString('es-CO')}</p>
+    <p><strong>Costo Seguro:</strong> $${Math.round(costoSeguro).toLocaleString('es-CO')}</p>
+    <p><strong>Costo Total:</strong> $${costoTotal.toLocaleString('es-CO')}</p>
+`;
         // Abrir el modal
         resultadoModal.style.display = 'block';
     });
