@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Ajustar los cálculos de costo total
-        const costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
+        let costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
 
         // Aplicar el descuento al costo total solo si es mayor que 0
         if (descuento > 0) {
