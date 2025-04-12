@@ -266,12 +266,7 @@ resultadoContenido.innerHTML = `
     // Cerrar el modal de resultados
     closeResultadoBtn.addEventListener('click', function () {
         resultadoModal.style.display = 'none';
-    });
-
-    function mostrarError(mensaje) {
-        alert(mensaje);
-    }
-    
+    });  
 
     // Registrar el Service Worker
     if ('serviceWorker' in navigator) {
