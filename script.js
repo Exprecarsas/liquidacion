@@ -45,7 +45,6 @@ document.addEventListener('DOMContentLoaded', function () {
     mostrarError('Error al cargar tarifas. Intenta más tarde.');
   });
 
-
     // Mostrar el modal con el mensaje de error
     function mostrarError(mensaje) {
         errorMessage.textContent = mensaje;
