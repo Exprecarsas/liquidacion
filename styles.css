@@ -65,6 +65,11 @@ button {
     background-color: #b8dcff;
     border-radius: 4px;
 }
+button.disabled {
+    background-color: #ccc !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
 
 /* Sugerencias de autocompletado */
 .suggestions {
