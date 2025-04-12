@@ -34,14 +34,17 @@ document.addEventListener('DOMContentLoaded', function () {
         "PLATO", "EL CARMEN DE BOLIVAR", "ARMOBELETES", "TIERRA ALTA", "CHINU"
     ];
 
-    // Cargar las tarifas desde el archivo JSON
-    fetch('tarifas_completas_actualizadas.json')
-        .then(response => response.json())
-        .then(data => {
-            tarifas = data;
-            console.log("Tarifas cargadas:", tarifas);
-        })
-        .catch(error => console.error('Error al cargar el archivo de tarifas:', error));
+    fetch('https://script.google.com/macros/s/AKfycbzWt6zYnozze630yVncH_j11Zjhdo9yD3t1JIxToqZ486QWs9D6Uxx5H6B4wz1KlmY/exec')
+  .then(response => response.json())
+  .then(data => {
+    tarifas = data;
+    console.log("✅ Tarifas cargadas desde Google Sheets:", tarifas);
+  })
+  .catch(error => {
+    console.error("❌ Error al cargar tarifas desde Google Sheets:", error);
+    mostrarError('Error al cargar tarifas. Intenta más tarde.');
+  });
+
 
     // Mostrar el modal con el mensaje de error
     function mostrarError(mensaje) {
