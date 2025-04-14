@@ -1,123 +1,84 @@
-/* --- Código CSS Actualizado para Responsividad --- */
-
-/* Estilo general de la página */
 body {
-    font-family: Arial, sans-serif;
-    background-color: white;
-    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
 }
 
 .container {
     max-width: 600px;
-    margin: 0 auto;
-    background: white;
-    padding: 20px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 600;
+    color: #333;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+input:disabled {
+    background-color: #e0e0e0;
+    cursor: not-allowed;
+}
+
+button {
+    background-color: #1abc9c;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background-color: #16a085;
+}
+
+button.volumetrico:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 
 .hidden {
     display: none;
 }
 
-
-h1 {
-    text-align: center;
-    color: #333;
-}
-
-/* Grupo de formulario */
-.form-group {
-    margin-bottom: 15px;
-    position: relative;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-input[type="number"],
-input[type="text"],
-select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    /* Asegura que el padding y el ancho sean consistentes */
-}
-
-button {
-    background-color: #cc414d;
-    /* Color de fondo del botón */
-    color: white;
-    /* Color del texto */
-    border: none;
-    /* Eliminar borde predeterminado */
-    padding: 10px 20px;
-    /* Tamaño del botón */
-    text-align: center;
-    /* Alinear el texto */
-    text-decoration: none;
-    /* Eliminar subrayado */
-    display: inline-block;
-    /* Mostrar como bloque en línea */
-    font-size: 16px;
-    /* Tamaño del texto */
-    margin: 5px 2px;
-    /* Margen del botón */
-    cursor: pointer;
-    /* Mostrar cursor de puntero al pasar por encima */
-    border-radius: 5px;
-    /* Bordes redondeados */
-}
-
-button:hover {
-    background-color: #b2333e;
-    /* Color al pasar el ratón */
-}
-
-/* Estilo para mostrar resultados */
-.result {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #b8dcff;
-    border-radius: 4px;
-}
-
-button.disabled {
-    background-color: #ccc !important;
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-/* Sugerencias de autocompletado */
-.suggestions {
-    position: absolute;
+.suggestions-box p {
+    background: #f9f9f9;
     border: 1px solid #ddd;
-    background: #fff;
-    z-index: 1000;
-    max-height: 150px;
-    overflow-y: auto;
-    width: 100%;
-}
-
-.suggestions p {
+    padding: 8px;
     margin: 0;
-    padding: 10px;
     cursor: pointer;
-    border-bottom: 1px solid #ddd;
+    transition: background 0.3s;
 }
 
-.suggestions p:hover {
-    background-color: #f0f0f0;
+.suggestions-box p:hover {
+    background: #ecf0f1;
 }
 
-/* Estilos para las Ventanas Modales */
 .modal {
     display: none;
-    /* Ocultar por defecto */
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -125,161 +86,41 @@ button.disabled {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-    /* Fondo oscuro */
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal-content {
     background-color: #fff;
-    margin: 15% auto;
+    margin: 10% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
+    width: 90%;
     max-width: 500px;
-    border-radius: 8px;
-    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Estilo para los botones de cierre de modales */
 .close-btn,
+.close-modal-btn,
 .close-volumetric-btn {
-    color: #cc414d;
     float: right;
-    font-size: 28px;
+    font-size: 24px;
     font-weight: bold;
     cursor: pointer;
+    color: #888;
 }
 
 .close-btn:hover,
-.close-volumetric-btn:hover {
-    color: #000;
-}
-
-/* Botón de aceptar y cálculo volumétrico dentro del modal */
-.modal-content button {
-    background-color: #cc414d;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    margin: 10px;
-    cursor: pointer;
-}
-
-.modal-content button:hover {
-    background-color: #cc414d;
-}
-
-/* --- Responsividad con Media Queries --- */
-
-/* Pantallas pequeñas (teléfonos y móviles) */
-@media (max-width: 768px) {
-    body {
-        padding: 10px;
-    }
-
-    .container {
-        width: 100%;
-        /* Hacer que el contenedor ocupe todo el ancho */
-        margin: 0 auto;
-        padding: 15px;
-    }
-
-    h1 {
-        font-size: 20px;
-        /* Reducir tamaño de fuente */
-    }
-
-    input[type="number"],
-    input[type="text"],
-    select,
-    button {
-        font-size: 14px;
-        /* Reducir el tamaño de los inputs */
-    }
-
-    .modal-content {
-        width: 90%;
-        /* Ajustar el ancho del modal en pantallas pequeñas */
-    }
-
-    .suggestions {
-        width: 95%;
-        /* Ajustar el ancho de la caja de sugerencias */
-    }
-}
-
-/* Pantallas medianas (tabletas) */
-@media (min-width: 768px) and (max-width: 1024px) {
-    .container {
-        width: 90%;
-    }
-
-    .modal-content {
-        width: 70%;
-    }
-
-    h1 {
-        font-size: 22px;
-    }
-}
-
-/* Pantallas grandes (escritorios) */
-@media (min-width: 1024px) {
-    .container {
-        width: 70%;
-    }
-
-    .modal-content {
-        width: 50%;
-    }
-
-    h1 {
-        font-size: 24px;
-    }
-}
-
-/* --- Estilo para la Ventana Modal de Resultados --- */
-.modal {
-    display: none;
-    /* Ocultar por defecto */
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-    /* Fondo transparente */
-}
-
-.modal-content {
-    background-color: white;
-    margin: 10% auto;
-    /* Centrar vertical y horizontalmente */
-    padding: 20px;
-    border: 1px solid #ddd;
-    width: 80%;
-    max-width: 600px;
-    /* Ajustar el ancho máximo */
-    border-radius: 8px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
-    text-align: center;
-}
-
-/* Estilo para el botón de cerrar la ventana modal */
-.close-modal-btn {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
 .close-modal-btn:hover,
-.close-modal-btn:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
+.close-volumetric-btn:hover {
+    color: #e74c3c;
+}
+
+#resultadoContenido ul {
+    padding-left: 20px;
+}
+
+#resultadoContenido li {
+    list-style: disc;
+    margin-bottom: 4px;
 }

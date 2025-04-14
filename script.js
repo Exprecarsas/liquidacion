@@ -245,26 +245,26 @@ document.addEventListener('DOMContentLoaded', function () {
         let detallePeso = '';
 
         if (tipoCaja === 'normal') {
-            detallePeso = `<p><strong>Peso Total:</strong> ${pesoUsado} kg</p>`;
+            detallePeso = `<p><i class="fas fa-weight-hanging"></i> <strong>Peso Total:</strong> ${pesoUsado} kg</p>`;
         } else if (tipoCaja === 'calzado') {
-            detallePeso = `<p><strong>Rangos Usados:</strong></p><ul>
-                ${unidades30 > 0 ? `<li>${unidades30} unidad(es) de 30-60 KG</li>` : ''}
-                ${unidades60 > 0 ? `<li>${unidades60} unidad(es) de 60-90 KG</li>` : ''}
-                ${unidades90 > 0 ? `<li>${unidades90} unidad(es) de 90-120 KG</li>` : ''}
-            </ul>`;
+            detallePeso = `<p><i class="fas fa-boxes-stacked"></i> <strong>Rangos Usados:</strong></p><ul>
+        ${unidades30 > 0 ? `<li><i class="fas fa-box"></i> ${unidades30} unidad(es) de 30-60 KG</li>` : ''}
+        ${unidades60 > 0 ? `<li><i class="fas fa-box"></i> ${unidades60} unidad(es) de 60-90 KG</li>` : ''}
+        ${unidades90 > 0 ? `<li><i class="fas fa-box"></i> ${unidades90} unidad(es) de 90-120 KG</li>` : ''}
+    </ul>`;
         }
 
         resultadoContenido.innerHTML = `
-            <h3>Resultados de la Liquidación</h3>
-            <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
-            <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
-            ${detallePeso}
-            <p><strong>Costo envío:</strong> $${Math.trunc(costoCaja).toLocaleString('es-CO')}</p>
-            ${descuento > 0 ? `<p><strong>Descuento Aplicado:</strong> ${descuento}% ($${Math.trunc(descuentoAplicado).toLocaleString('es-CO')})</p>` : ''}
-            ${kilosAdicionales > 0 ? `<p><strong>Kilos Adicionales:</strong> $${Math.trunc(kilosAdicionales).toLocaleString('es-CO')}</p>` : ""}
-            <p><strong>Costo Seguro:</strong> $${Math.trunc(costoSeguro).toLocaleString('es-CO')}</p>
-            <p><strong>Costo Total:</strong> $${Math.trunc(costoTotal).toLocaleString('es-CO')}</p>
-        `;
+    <h3><i class="fas fa-receipt"></i> Resultados de la Liquidación</h3>
+    <p><i class="fas fa-box-open"></i> <strong>Tipo de Caja:</strong> ${tipoCaja}</p>
+    <p><i class="fas fa-map-marker-alt"></i> <strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
+    ${detallePeso}
+    <p><i class="fas fa-truck"></i> <strong>Costo envío:</strong> $${Math.trunc(costoCaja).toLocaleString('es-CO')}</p>
+    ${descuento > 0 ? `<p><i class="fas fa-percent"></i> <strong>Descuento Aplicado:</strong> ${descuento}% ($${Math.trunc(descuentoAplicado).toLocaleString('es-CO')})</p>` : ''}
+    ${kilosAdicionales > 0 ? `<p><i class="fas fa-balance-scale"></i> <strong>Kilos Adicionales:</strong> $${Math.trunc(kilosAdicionales).toLocaleString('es-CO')}</p>` : ""}
+    <p><i class="fas fa-shield-alt"></i> <strong>Costo Seguro:</strong> $${Math.trunc(costoSeguro).toLocaleString('es-CO')}</p>
+    <p><i class="fas fa-money-bill-wave"></i> <strong>Costo Total:</strong> $${Math.trunc(costoTotal).toLocaleString('es-CO')}</p>
+`;
 
         // Abrir el modal
         resultadoModal.style.display = 'block';
