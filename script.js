@@ -100,38 +100,25 @@ document.addEventListener('DOMContentLoaded', function () {
         valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);
     });
 
-    tipoCajaSelect.addEventListener('change', function () {
-        const tipoCaja = tipoCajaSelect.value;
+    tipoCajaSelect.addEventListener('change', () => {
+        const tipo = tipoCajaSelect.value;
         actualizarCiudades(tipoCaja);
-    
-        // 🔧 Activar/desactivar campos según tipo de caja
-        const camposCalzado = [
-            document.getElementById("calzado_30_60"),
-            document.getElementById("calzado_60_90"),
-            document.getElementById("calzado_90_120")
-        ];
-    
-        if (tipoCaja === "calzado") {
-            calcularVolumetricoBtn.disabled = true;
-            calcularVolumetricoBtn.classList.add('disabled');
+
+        if (tipo === 'calzado') {
+            document.getElementById('camposCalzado').classList.remove('hidden');
+            document.getElementById('camposNormal').classList.add('hidden');
             pesoTotalInput.disabled = true;
-    
-            // Activar campos calzado
-            camposCalzado.forEach(input => {
-                if (input) input.disabled = false;
-            });
-    
-        } else if (tipoCaja === "normal") {
-            calcularVolumetricoBtn.disabled = false;
-            calcularVolumetricoBtn.classList.remove('disabled');
+            calcularVolumetricoBtn.disabled = true;
+        } else if (tipo === 'normal') {
+            document.getElementById('camposNormal').classList.remove('hidden');
+            document.getElementById('camposCalzado').classList.add('hidden');
             pesoTotalInput.disabled = false;
-    
-            // Desactivar campos calzado
-            camposCalzado.forEach(input => {
-                if (input) input.disabled = true;
-            });
+            calcularVolumetricoBtn.disabled = false;
+        } else {
+            document.getElementById('camposNormal').classList.add('hidden');
+            document.getElementById('camposCalzado').classList.add('hidden');
         }
-    });   
+    });
 
     function actualizarCiudades(tipoCaja) {
         if (tipoCaja === "calzado") {
@@ -255,13 +242,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 costoSeguro = valorDeclarado * 0.005;
             }
-            if (tarifas["calzado"] && tarifas["calzado"][ciudadDestinoValue] && tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado]) {
-                costoCaja = tarifas["calzado"][ciudadDestinoValue][rangoSeleccionado] * numUnidades; // Multiplicar por número de unidades
-            } else {
-                mostrarError('Seleccione un rango de peso válido.');
-                return;
-            }
+            const unidades30 = parseInt(document.getElementById('calzado_30_60').value) || 0;
+            const unidades60 = parseInt(document.getElementById('calzado_60_90').value) || 0;
+            const unidades90 = parseInt(document.getElementById('calzado_90_120').value) || 0;
+
+            const tarifasCiudad = tarifas["calzado"][ciudadDestinoValue];
+            costoCaja =
+                (tarifasCiudad["30-60 KG"] || 0) * unidades30 +
+                (tarifasCiudad["60-90 KG"] || 0) * unidades60 +
+                (tarifasCiudad["90-120 KG"] || 0) * unidades90;
+
+        } else {
+            mostrarError('Seleccione un rango de peso válido.');
+            return;
         }
+
 
         // Ajustar los cálculos de costo total
         let costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
