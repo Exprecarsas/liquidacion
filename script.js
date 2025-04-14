@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const suggestionsBox = document.getElementById('suggestions');
     const tipoCajaSelect = document.getElementById('tipoCaja');
     const pesoTotalInput = document.getElementById('pesoTotal');
-    const rangoPesoDiv = document.getElementById('rangoPesoDiv');
     const rangoPesoSelect = document.getElementById('rangoPeso');
     const calcularVolumetricoBtn = document.getElementById('calcularVolumetricoBtn');
     const volumetricModal = document.getElementById('volumetricModal');
@@ -123,12 +122,10 @@ document.addEventListener('DOMContentLoaded', function () {
     function actualizarCiudades(tipoCaja) {
         if (tipoCaja === "calzado") {
             ciudades = Object.keys(tarifas["calzado"] || {});
-            rangoPesoDiv.style.display = "block";
             pesoTotalInput.disabled = true;
             pesoTotalInput.value = "";
         } else if (tipoCaja === "normal") {
             ciudades = Object.keys(tarifas["normal"] || {});
-            rangoPesoDiv.style.display = "none";
             pesoTotalInput.disabled = false;
         } else {
             ciudades = [];
@@ -136,33 +133,6 @@ document.addEventListener('DOMContentLoaded', function () {
         ciudadDestino.value = '';
         suggestionsBox.innerHTML = '';
     }
-
-    // Actualizar los rangos de peso según la ciudad seleccionada
-    ciudadDestino.addEventListener('change', function () {
-        const ciudadSeleccionada = ciudadDestino.value.trim().toUpperCase();
-        const tipoCaja = tipoCajaSelect.value;
-
-        if (tipoCaja === "calzado" && ciudadSeleccionada) {
-            let rangosPeso = [];
-
-            if (tarifas["calzado"][ciudadSeleccionada]) {
-                rangosPeso = Object.keys(tarifas["calzado"][ciudadSeleccionada]).filter(r => r !== 'valorSeguro');
-            }
-
-            if (rangosPeso.length > 0) {
-                rangoPesoSelect.innerHTML = '<option value="" disabled selected>Seleccione un rango de peso</option>';
-                rangosPeso.forEach(rango => {
-                    rangoPesoSelect.innerHTML += `<option value="${rango.trim()}">${rango.trim()}</option>`;
-                });
-                rangoPesoDiv.style.display = "block";
-            } else {
-                rangoPesoDiv.style.display = "none";
-                mostrarError(`No se encontraron rangos de peso para la ciudad seleccionada: ${ciudadSeleccionada}.`);
-            }
-        } else {
-            rangoPesoDiv.style.display = "none";
-        }
-    });
 
     // Autocompletado de ciudad
     ciudadDestino.addEventListener('input', function () {
