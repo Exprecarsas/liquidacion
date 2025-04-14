@@ -107,12 +107,12 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('camposCalzado').classList.remove('hidden');
             document.getElementById('camposNormal').classList.add('hidden');
             pesoTotalInput.disabled = true;
-            calcularVolumetricoBtn.disabled = true;
+            calcularVolumetricoBtn.classList.add('hidden'); // 👈 esconder el botón
         } else if (tipo === 'normal') {
             document.getElementById('camposNormal').classList.remove('hidden');
             document.getElementById('camposCalzado').classList.add('hidden');
             pesoTotalInput.disabled = false;
-            calcularVolumetricoBtn.disabled = false;
+            calcularVolumetricoBtn.classList.remove('hidden'); // 👈 mostrar el botón
         } else {
             document.getElementById('camposNormal').classList.add('hidden');
             document.getElementById('camposCalzado').classList.add('hidden');
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
         ciudadDestino.value = '';
         suggestionsBox.innerHTML = '';
     }
-    
+
     // Autocompletado de ciudad
     ciudadDestino.addEventListener('input', function () {
         const inputValue = this.value.toLowerCase();
@@ -239,18 +239,30 @@ document.addEventListener('DOMContentLoaded', function () {
             costoTotal = costoTotal - descuentoAplicado;
         }
 
-        // Mostrar los resultados en el modal sin decimales
+        let detallePeso = '';
+
+        if (tipoCaja === 'normal') {
+            detallePeso = `<p><strong>Peso Total:</strong> ${pesoUsado} kg</p>`;
+        } else if (tipoCaja === 'calzado') {
+            detallePeso = `<p><strong>Rangos Usados:</strong></p><ul>
+                ${unidades30 > 0 ? `<li>${unidades30} unidad(es) de 30-60 KG</li>` : ''}
+                ${unidades60 > 0 ? `<li>${unidades60} unidad(es) de 60-90 KG</li>` : ''}
+                ${unidades90 > 0 ? `<li>${unidades90} unidad(es) de 90-120 KG</li>` : ''}
+            </ul>`;
+        }
+
         resultadoContenido.innerHTML = `
-    <h3>Resultados de la Liquidación</h3>
-    <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
-    <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
-    <p><strong>Peso Total:</strong> ${pesoUsado} kg</p>
-    <p><strong>Costo envío:</strong> $${Math.trunc(costoCaja).toLocaleString('es-CO')}</p>
-    ${descuento > 0 ? `<p><strong>Descuento Aplicado:</strong> ${descuento}% ($${Math.trunc(descuentoAplicado).toLocaleString('es-CO')})</p>` : ''}
-    ${kilosAdicionales > 0 ? `<p><strong>Kilos Adicionales:</strong> $${Math.trunc(kilosAdicionales).toLocaleString('es-CO')}</p>` : ""}
-    <p><strong>Costo Seguro:</strong> $${Math.trunc(costoSeguro).toLocaleString('es-CO')}</p>
-    <p><strong>Costo Total:</strong> $${Math.trunc(costoTotal).toLocaleString('es-CO')}</p>
-`;
+            <h3>Resultados de la Liquidación</h3>
+            <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
+            <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
+            ${detallePeso}
+            <p><strong>Costo envío:</strong> $${Math.trunc(costoCaja).toLocaleString('es-CO')}</p>
+            ${descuento > 0 ? `<p><strong>Descuento Aplicado:</strong> ${descuento}% ($${Math.trunc(descuentoAplicado).toLocaleString('es-CO')})</p>` : ''}
+            ${kilosAdicionales > 0 ? `<p><strong>Kilos Adicionales:</strong> $${Math.trunc(kilosAdicionales).toLocaleString('es-CO')}</p>` : ""}
+            <p><strong>Costo Seguro:</strong> $${Math.trunc(costoSeguro).toLocaleString('es-CO')}</p>
+            <p><strong>Costo Total:</strong> $${Math.trunc(costoTotal).toLocaleString('es-CO')}</p>
+        `;
+
         // Abrir el modal
         resultadoModal.style.display = 'block';
     });
