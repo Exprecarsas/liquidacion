@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     tipoCajaSelect.addEventListener('change', () => {
         const tipo = tipoCajaSelect.value;
-        actualizarCiudades(tipoCaja);
+        actualizarCiudades(tipo);
 
         if (tipo === 'calzado') {
             document.getElementById('camposCalzado').classList.remove('hidden');

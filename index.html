@@ -30,9 +30,10 @@
             <input type="text" id="ciudadDestino" autocomplete="off">
             <div id="suggestions" class="suggestions-box"></div><br>
 
+            <!-- Caja Normal -->
             <div id="camposNormal" class="hidden">
                 <label for="numUnidades">Cantidad de Unidades:</label>
-                <input type="number" id="numUnidades" value="" min="1"><br>
+                <input type="number" id="numUnidades" value="1" min="1"><br>
 
                 <label for="pesoTotal">Peso Total (kg):</label>
                 <input type="number" id="pesoTotal" min="1"><br>
@@ -41,13 +42,13 @@
             <!-- Caja Calzado -->
             <div id="camposCalzado" class="hidden">
                 <label for="calzado_30_60">Unidades 30-60 KG:</label>
-                <input type="number" id="calzado_30_60" min="0" value=""><br>
+                <input id="calzado_30_60" type="number" min="0" value="0"><br>
 
                 <label for="calzado_60_90">Unidades 60-90 KG:</label>
-                <input type="number" id="calzado_60_90" min="0" value=""><br>
+                <input id="calzado_60_90" type="number" min="0" value="0"><br>
 
                 <label for="calzado_90_120">Unidades 90-120 KG:</label>
-                <input type="number" id="calzado_90_120" min="0" value=""><br>
+                <input id="calzado_90_120" type="number" min="0" value="0"><br>
             </div>
 
             <!-- Botón para abrir la ventana modal de cálculo volumétrico -->
