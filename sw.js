@@ -9,8 +9,7 @@ self.addEventListener('install', function(event) {
         '/icon-192.png',
         '/icon-512.png',
         '/somos de aqui.pgn',
-        '/LOGO EXPRECAR2.pgn',
-        '/tarifas_completas_actualizadas.json'
+        '/LOGO EXPRECAR2.pgn'
       ]);
     })
   );
