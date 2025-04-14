@@ -1,3 +1,70 @@
+/* 🔷 Modal animación suave */
+#resultadoModal .modal-content {
+    animation: fadeInUp 0.5s ease-out;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* 💫 Keyframes de entrada */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 💡 Íconos y contenido más destacado */
+.resultado-box h3 {
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.resultado-box p {
+    font-size: 16px;
+    margin: 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.resultado-box i {
+    color: #0066cc;
+    font-size: 18px;
+}
+
+.precio {
+    font-weight: bold;
+    color: #2e7d32;
+}
+
+.total {
+    font-weight: bold;
+    color: #d84315;
+    font-size: 18px;
+}
+
+.resultado-box ul {
+    margin-top: 5px;
+    margin-left: 20px;
+    padding-left: 10px;
+}
+
+.resultado-box ul li {
+    list-style-type: '📦 ';
+    padding-left: 6px;
+    margin-bottom: 4px;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f4f4f4;
@@ -27,7 +94,9 @@ label {
     color: #333;
 }
 
-input, select, button {
+input,
+select,
+button {
     width: 100%;
     padding: 10px;
     margin-top: 6px;
