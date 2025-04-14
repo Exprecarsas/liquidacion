@@ -161,7 +161,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const valorDeclarado = parseFloat(valorDeclaradoStr);
         const ciudadDestinoValue = ciudadDestino.value.trim().toUpperCase();
         let pesoUsado = parseFloat(pesoTotalInput.value) || 0;
-        let rangoSeleccionado = tipoCaja === 'calzado' ? rangoPesoSelect.value : null;
         let descuento = parseFloat(descuentoInput.value) || 0;
 
         // Se aplicará el descuento solo si se ingresa un valor entre 0 y 10
