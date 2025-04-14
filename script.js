@@ -122,12 +122,10 @@ document.addEventListener('DOMContentLoaded', function () {
     function actualizarCiudades(tipoCaja) {
         if (tipoCaja === "calzado") {
             ciudades = Object.keys(tarifas["calzado"] || {});
-            console.log("📦 Ciudades calzado:", ciudades); // 👈 Agrega esto
             pesoTotalInput.disabled = true;
             pesoTotalInput.value = "";
         } else if (tipoCaja === "normal") {
             ciudades = Object.keys(tarifas["normal"] || {});
-            console.log("📦 Ciudades normal:", ciudades); // 👈 Opcional
             pesoTotalInput.disabled = false;
         } else {
             ciudades = [];
