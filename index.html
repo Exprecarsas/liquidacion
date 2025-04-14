@@ -30,20 +30,24 @@
             <input type="text" id="ciudadDestino" autocomplete="off">
             <div id="suggestions" class="suggestions-box"></div><br>
 
-            <label for="numUnidades">Cantidad de Unidades:</label>
-            <input type="number" id="numUnidades" value="1" min="1"><br>
+            <div id="camposNormal" class="hidden">
+                <label for="numUnidades">Cantidad de Unidades:</label>
+                <input type="number" id="numUnidades" value="1" min="1"><br>
 
-            <input id="calzado_30_60" type="number" min="0" value="0">
-            <input id="calzado_60_90" type="number" min="0" value="0">
-            <input id="calzado_90_120" type="number" min="0" value="0">
-
-            <div id="rangoPesoDiv" style="display:none;">
-                <label for="rangoPeso">Rango de Peso:</label>
-                <select id="rangoPeso"></select><br>
+                <label for="pesoTotal">Peso Total (kg):</label>
+                <input type="number" id="pesoTotal" min="1"><br>
             </div>
 
-            <label for="pesoTotal">Peso Total (kg):</label>
-            <input type="number" id="pesoTotal" min="1" disabled><br>
+            <div id="camposCalzado" class="hidden">
+                <label for="calzado_30_60">Unidades 30-60 KG:</label>
+                <input id="calzado_30_60" type="number" min="0" value="0"><br>
+
+                <label for="calzado_60_90">Unidades 60-90 KG:</label>
+                <input id="calzado_60_90" type="number" min="0" value="0"><br>
+
+                <label for="calzado_90_120">Unidades 90-120 KG:</label>
+                <input id="calzado_90_120" type="number" min="0" value="0"><br>
+            </div>
 
             <!-- Botón para abrir la ventana modal de cálculo volumétrico -->
             <button type="button" id="calcularVolumetricoBtn">Calcular Peso Volumétrico</button><br>
@@ -94,7 +98,6 @@
     </div>
 
     <script src="script.js"></script>
-
 </body>
 
 </html>
