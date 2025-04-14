@@ -23,6 +23,11 @@ document.addEventListener('DOMContentLoaded', function () {
     let tarifas = {};
     let ciudades = [];
     let pesoVolumetricoCalculado = 0;
+    // 🔁 Variables de calzado: deben declararse arriba para que estén disponibles luego
+    let unidades30 = 0;
+    let unidades60 = 0;
+    let unidades90 = 0;
+
 
     // Lista de ciudades seguro mínimo de 1,000,000 y tasa del 1% solo para calzado
     const ciudadesCalzadoSeguro1Porciento = [
@@ -211,9 +216,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 costoSeguro = valorDeclarado * 0.005;
             }
-            const unidades30 = parseInt(document.getElementById('calzado_30_60').value) || 0;
-            const unidades60 = parseInt(document.getElementById('calzado_60_90').value) || 0;
-            const unidades90 = parseInt(document.getElementById('calzado_90_120').value) || 0;
+            unidades30 = parseInt(document.getElementById('calzado_30_60').value) || 0;
+            unidades60 = parseInt(document.getElementById('calzado_60_90').value) || 0;
+            unidades90 = parseInt(document.getElementById('calzado_90_120').value) || 0;
 
             const tarifasCiudad = tarifas["calzado"][ciudadDestinoValue];
             costoCaja =
