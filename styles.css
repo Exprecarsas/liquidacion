@@ -112,7 +112,7 @@ input:disabled {
 }
 
 button {
-    background-color: #1abc9c;
+    background-color: #e74c3c;
     color: white;
     font-weight: bold;
     cursor: pointer;
@@ -121,7 +121,7 @@ button {
 }
 
 button:hover {
-    background-color: #16a085;
+    background-color: #e74c3c;
 }
 
 button.volumetrico:disabled {
