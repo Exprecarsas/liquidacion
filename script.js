@@ -35,15 +35,15 @@ document.addEventListener('DOMContentLoaded', function () {
     ];
 
     fetch('https://script.google.com/macros/s/AKfycbzWt6zYnozze630yVncH_j11Zjhdo9yD3t1JIxToqZ486QWs9D6Uxx5H6B4wz1KlmY/exec')
-  .then(response => response.json())
-  .then(data => {
-    tarifas = data;
-    console.log("✅ Tarifas cargadas desde Google Sheets:", tarifas);
-  })
-  .catch(error => {
-    console.error("❌ Error al cargar tarifas desde Google Sheets:", error);
-    mostrarError('Error al cargar tarifas. Intenta más tarde.');
-  });
+        .then(response => response.json())
+        .then(data => {
+            tarifas = data;
+            console.log("✅ Tarifas cargadas desde Google Sheets:", tarifas);
+        })
+        .catch(error => {
+            console.error("❌ Error al cargar tarifas desde Google Sheets:", error);
+            mostrarError('Error al cargar tarifas. Intenta más tarde.');
+        });
 
     // Mostrar el modal con el mensaje de error
     function mostrarError(mensaje) {
@@ -100,11 +100,38 @@ document.addEventListener('DOMContentLoaded', function () {
         valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);
     });
 
-    // Cambiar las ciudades disponibles según el tipo de caja seleccionado
     tipoCajaSelect.addEventListener('change', function () {
         const tipoCaja = tipoCajaSelect.value;
         actualizarCiudades(tipoCaja);
-    });
+    
+        // 🔧 Activar/desactivar campos según tipo de caja
+        const camposCalzado = [
+            document.getElementById("calzado_30_60"),
+            document.getElementById("calzado_60_90"),
+            document.getElementById("calzado_90_120")
+        ];
+    
+        if (tipoCaja === "calzado") {
+            calcularVolumetricoBtn.disabled = true;
+            calcularVolumetricoBtn.classList.add('disabled');
+            pesoTotalInput.disabled = true;
+    
+            // Activar campos calzado
+            camposCalzado.forEach(input => {
+                if (input) input.disabled = false;
+            });
+    
+        } else if (tipoCaja === "normal") {
+            calcularVolumetricoBtn.disabled = false;
+            calcularVolumetricoBtn.classList.remove('disabled');
+            pesoTotalInput.disabled = false;
+    
+            // Desactivar campos calzado
+            camposCalzado.forEach(input => {
+                if (input) input.disabled = true;
+            });
+        }
+    });   
 
     function actualizarCiudades(tipoCaja) {
         if (tipoCaja === "calzado") {
@@ -132,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
             let rangosPeso = [];
 
             if (tarifas["calzado"][ciudadSeleccionada]) {
-                rangosPeso = Object.keys(tarifas["calzado"][ciudadSeleccionada]);
+                rangosPeso = Object.keys(tarifas["calzado"][ciudadSeleccionada]).filter(r => r !== 'valorSeguro');
             }
 
             if (rangosPeso.length > 0) {
@@ -240,14 +267,14 @@ document.addEventListener('DOMContentLoaded', function () {
         let costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
 
         // Si hay descuento, aplicarlo
-let descuentoAplicado = 0;
-if (descuento > 0) {
-    descuentoAplicado = (costoTotal * descuento) / 100;
-    costoTotal = costoTotal - descuentoAplicado;
-}
+        let descuentoAplicado = 0;
+        if (descuento > 0) {
+            descuentoAplicado = (costoTotal * descuento) / 100;
+            costoTotal = costoTotal - descuentoAplicado;
+        }
 
         // Mostrar los resultados en el modal sin decimales
-resultadoContenido.innerHTML = `
+        resultadoContenido.innerHTML = `
     <h3>Resultados de la Liquidación</h3>
     <p><strong>Tipo de Caja:</strong> ${tipoCaja}</p>
     <p><strong>Ciudad de Destino:</strong> ${ciudadDestinoValue}</p>
@@ -265,7 +292,7 @@ resultadoContenido.innerHTML = `
     // Cerrar el modal de resultados
     closeResultadoBtn.addEventListener('click', function () {
         resultadoModal.style.display = 'none';
-    });  
+    });
 
     // Registrar el Service Worker
     if ('serviceWorker' in navigator) {
