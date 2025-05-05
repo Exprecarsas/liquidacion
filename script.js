@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const valor = parseFloat(valorDeclaradoInput.value.replace(/\./g, '').replace(/\D/g, '')) || 0;
 
         if ([
-            validarCampo(ciudadDestino, ciudades.includes(ciudad), 'Ciudad inválida'),
+            validarCampo(ciudadDestino, ciudadValida(ciudad), 'Ciudad inválida')
             validarCampo(numUnidadesInput, unidades > 0, 'Unidades requeridas'),
             pesoTotalInput.disabled || validarCampo(pesoTotalInput, peso > 0, 'Peso requerido'),
             (validarCampo(descuentoInput, descuento === 0 || (descuento >= 0 && descuento <= 10), 'Descuento inválido')),
