@@ -103,12 +103,13 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function ciudadValida(ciudadIngresada) {
+        if (!ciudadIngresada.trim()) return false; // ❌ Si está vacío, no es válido
         const normalizada = ciudadIngresada.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '');
         return ciudades.some(c => {
             const cNormalizada = c.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '');
             return cNormalizada === normalizada;
         });
-    }
+    }   
     
     function validarCampo(input, condicion, mensaje) {
         let error = input.nextElementSibling;
@@ -134,13 +135,32 @@ document.addEventListener('DOMContentLoaded', function () {
         return validarCampo(valorDeclaradoInput, valor >= minimo, `Mínimo $${minimo.toLocaleString('es-CO')}`);
     }
 
-    descuentoInput.oninput = () => validarCampo(descuentoInput, parseFloat(descuentoInput.value) <= 10, 'Máximo 10%');
-    ciudadDestino.oninput = () =>  validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad inválida');    
-    pesoTotalInput.oninput = () => {
-        if (!pesoTotalInput.disabled) validarCampo(pesoTotalInput, parseFloat(pesoTotalInput.value) > 0, 'Peso inválido');
-    };
-    numUnidadesInput.oninput = () => validarCampo(numUnidadesInput, parseInt(numUnidadesInput.value) > 0, 'Debe ingresar al menos una unidad');
+    // ✅ Validaciones al salir del campo (blur)
+ciudadDestino.addEventListener('blur', () => {
+    validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad inválida');
+});
 
+valorDeclaradoInput.addEventListener('blur', () => {
+    validarValorDeclarado();
+});
+
+descuentoInput.addEventListener('blur', () => {
+    const val = parseFloat(descuentoInput.value);
+    validarCampo(descuentoInput, val >= 0 && val <= 10, 'Máximo 10%');
+});
+
+// ✅ Validaciones en tiempo real (input)
+pesoTotalInput.addEventListener('input', () => {
+    if (!pesoTotalInput.disabled) {
+        validarCampo(pesoTotalInput, parseFloat(pesoTotalInput.value) > 0, 'Peso inválido');
+    }
+});
+
+numUnidadesInput.addEventListener('input', () => {
+    validarCampo(numUnidadesInput, parseInt(numUnidadesInput.value) > 0, 'Debe ingresar al menos una unidad');
+});
+
+    
     document.getElementById('calcularBtn').addEventListener('click', function () {
         const ciudad = ciudadDestino.value.trim().toUpperCase();
         const tipo = tipoCajaSelect.value;
