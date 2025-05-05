@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/liquidaci-n/sw.js').catch(console.error);
+            navigator.serviceWorker.register('/liquidacion/sw.js').catch(console.error);
         });
     }
 });
