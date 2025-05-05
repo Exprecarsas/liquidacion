@@ -48,6 +48,49 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error("❌ Error al cargar tarifas desde Google Sheets:", error);
             mostrarError('Error al cargar tarifas. Intenta más tarde.');
         });
+        
+    function validarCampo(input, condicion, mensaje) {
+        let error = input.nextElementSibling;
+        if (!error || !error.classList.contains("error-msg")) {
+            error = document.createElement("div");
+            error.className = "error-msg";
+            input.parentNode.insertBefore(error, input.nextSibling);
+        }
+
+        if (condicion) {
+            input.classList.remove("input-error");
+            input.classList.add("input-ok");
+            error.textContent = '';
+            return true;
+        } else {
+            input.classList.remove("input-ok");
+            input.classList.add("input-error");
+            error.textContent = mensaje;
+            return false;
+        }
+    }
+    descuentoInput.addEventListener('input', () => {
+        const val = parseFloat(descuentoInput.value);
+        validarCampo(descuentoInput, val >= 0 && val <= 10, 'Debe estar entre 0% y 10%');
+    });
+
+    ciudadDestino.addEventListener('input', () => {
+        const ciudad = ciudadDestino.value.trim().toUpperCase();
+        validarCampo(ciudadDestino, ciudades.includes(ciudad), 'Ciudad no válida para el tipo de caja');
+    });
+
+    pesoTotalInput.addEventListener('input', () => {
+        const peso = parseFloat(pesoTotalInput.value);
+        if (!pesoTotalInput.disabled) {
+            validarCampo(pesoTotalInput, peso > 0, 'Debe ser un peso válido');
+        }
+    });
+
+    document.getElementById('numUnidades').addEventListener('input', () => {
+        const unidades = parseInt(document.getElementById('numUnidades').value);
+        validarCampo(document.getElementById('numUnidades'), unidades > 0, 'Debe ingresar al menos una unidad');
+    });
+
 
     // Mostrar el modal con el mensaje de error
     function mostrarError(mensaje) {
@@ -122,47 +165,6 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('camposNormal').classList.add('hidden');
             document.getElementById('camposCalzado').classList.add('hidden');
         }
-    });
-    function validarCampo(input, condicion, mensaje) {
-        let error = input.nextElementSibling;
-        if (!error || !error.classList.contains("error-msg")) {
-            error = document.createElement("div");
-            error.className = "error-msg";
-            input.parentNode.insertBefore(error, input.nextSibling);
-        }
-
-        if (condicion) {
-            input.classList.remove("input-error");
-            input.classList.add("input-ok");
-            error.textContent = '';
-            return true;
-        } else {
-            input.classList.remove("input-ok");
-            input.classList.add("input-error");
-            error.textContent = mensaje;
-            return false;
-        }
-    }
-    descuentoInput.addEventListener('input', () => {
-        const val = parseFloat(descuentoInput.value);
-        validarCampo(descuentoInput, val >= 0 && val <= 10, 'Debe estar entre 0% y 10%');
-    });
-
-    ciudadDestino.addEventListener('input', () => {
-        const ciudad = ciudadDestino.value.trim().toUpperCase();
-        validarCampo(ciudadDestino, ciudades.includes(ciudad), 'Ciudad no válida para el tipo de caja');
-    });
-
-    pesoTotalInput.addEventListener('input', () => {
-        const peso = parseFloat(pesoTotalInput.value);
-        if (!pesoTotalInput.disabled) {
-            validarCampo(pesoTotalInput, peso > 0, 'Debe ser un peso válido');
-        }
-    });
-
-    document.getElementById('numUnidades').addEventListener('input', () => {
-        const unidades = parseInt(document.getElementById('numUnidades').value);
-        validarCampo(document.getElementById('numUnidades'), unidades > 0, 'Debe ingresar al menos una unidad');
     });
 
     function actualizarCiudades(tipoCaja) {
