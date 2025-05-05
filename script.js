@@ -195,13 +195,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     </ul>
                 </div>`}
                 <hr>
-                <p><strong>Costo Envío:</strong> <span class="precio">$${Math.trunc(costoCaja).toLocaleString('es-CO')}</span></p>
-                ${descuento ? `<p><strong>Descuento:</strong> ${descuento}% (-$${Math.trunc(descuentoAplicado).toLocaleString('es-CO')})</p>` : ''}
-                ${kilosAdicionales ? `<p><strong>Kilos Adicionales:</strong> $${Math.trunc(kilosAdicionales).toLocaleString('es-CO')}</p>` : ''}
-                <p><strong>Costo Seguro:</strong> <span class="seguro"> $${Math.trunc(costoSeguro).toLocaleString('es-CO')}</p>
-                <p><strong>Total a Pagar:</strong> <span class="total">$${Math.trunc(costoTotal).toLocaleString('es-CO')}</span></p>
+                <p><i class="fas fa-truck"></i> <strong>Costo Envío:</strong> <span class="precio">$${Math.trunc(costoCaja).toLocaleString('es-CO')}</span></p>
+                ${descuento ? `<p><i class="fas fa-tag"></i><strong>Descuento:</strong> ${descuento}% (-$${Math.trunc(descuentoAplicado).toLocaleString('es-CO')})</p>` : ''}
+                ${kilosAdicionales ? `<p><i class="fas fa-balance-scale"></i><strong>Kilos Adicionales:</strong> <span class="precio">$${Math.trunc(kilosAdicionales).toLocaleString('es-CO')}</p>` : ''}
+                <p><i class="fas fa-shield-alt"></i><strong>Costo Seguro:</strong> <span class="seguro"> $${Math.trunc(costoSeguro).toLocaleString('es-CO')}</p>
+                <p><i class="fas fa-coins"></i><strong>Total a Pagar:</strong> <span class="total">$${Math.trunc(costoTotal).toLocaleString('es-CO')}</span></p>
             </div>`;
         resultadoModal.style.display = 'block';
+    });
+    // Cerrar el modal de resultados
+    closeResultadoBtn.addEventListener('click', function () {
+        resultadoModal.style.display = 'none';
     });
 
     if ('serviceWorker' in navigator) {
