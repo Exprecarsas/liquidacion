@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error("❌ Error al cargar tarifas desde Google Sheets:", error);
             mostrarError('Error al cargar tarifas. Intenta más tarde.');
         });
-        
+
     function validarCampo(input, condicion, mensaje) {
         let error = input.nextElementSibling;
         if (!error || !error.classList.contains("error-msg")) {
@@ -57,18 +57,38 @@ document.addEventListener('DOMContentLoaded', function () {
             input.parentNode.insertBefore(error, input.nextSibling);
         }
 
+        // Íconos ✔ / ❌
+        const wrapper = input.closest('.input-icon-wrapper');
+        const icon = wrapper ? wrapper.querySelector('.estado-icono') : null;
+        if (icon) {
+            icon.textContent = condicion ? '✔' : '❌';
+            icon.style.color = condicion ? 'green' : 'red';
+        }
+
         if (condicion) {
-            input.classList.remove("input-error");
-            input.classList.add("input-ok");
             error.textContent = '';
             return true;
         } else {
-            input.classList.remove("input-ok");
-            input.classList.add("input-error");
             error.textContent = mensaje;
             return false;
         }
     }
+    function validarValorDeclarado() {
+        const tipo = tipoCajaSelect.value;
+        const ciudad = ciudadDestino.value.trim().toUpperCase();
+        const valorStr = valorDeclaradoInput.value.replace(/\./g, '').replace(/\D/g, '');
+        const valor = parseFloat(valorStr) || 0;
+
+        let minimo = 0;
+        if (tipo === "normal") minimo = 500000;
+        else if (tipo === "calzado") {
+            minimo = ciudadesCalzadoSeguro1Porciento.includes(ciudad) ? 1000000 : 500000;
+        }
+
+        return validarCampo(valorDeclaradoInput, valor >= minimo, `Mínimo $${minimo.toLocaleString('es-CO')}`);
+    }
+
+
     descuentoInput.addEventListener('input', () => {
         const val = parseFloat(descuentoInput.value);
         validarCampo(descuentoInput, val >= 0 && val <= 10, 'Debe estar entre 0% y 10%');
@@ -203,13 +223,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Cálculo del costo total (incluye seguro y kilos adicionales)
     document.getElementById('calcularBtn').addEventListener('click', function () {
-        const tipoCaja = tipoCajaSelect.value;
-        const numUnidades = parseInt(document.getElementById('numUnidades').value);
-        const valorDeclaradoStr = valorDeclaradoInput.value.replace(/\./g, '');
-        const valorDeclarado = parseFloat(valorDeclaradoStr);
         const ciudadDestinoValue = ciudadDestino.value.trim().toUpperCase();
-        let pesoUsado = parseFloat(pesoTotalInput.value) || 0;
-        let descuento = parseFloat(descuentoInput.value) || 0;
+        const tipoCaja = tipoCajaSelect.value;
+        const unidades = parseInt(document.getElementById('numUnidades').value);
+        const peso = parseFloat(pesoTotalInput.value);
+        const descuento = parseFloat(descuentoInput.value);
+        const valorStr = valorDeclaradoInput.value.replace(/\./g, '').replace(/\D/g, '');
+        const valorDeclarado = parseFloat(valorStr) || 0;
+    
+        // Validaciones previas (visual + lógica)
+        const validaciones = [
+            validarCampo(ciudadDestino, ciudades.includes(ciudadDestinoValue), 'Ciudad no válida'),
+            validarCampo(document.getElementById('numUnidades'), unidades > 0, 'Debe ingresar al menos una unidad'),
+            pesoTotalInput.disabled || validarCampo(pesoTotalInput, peso > 0, 'Debe ser un peso válido'),
+            validarCampo(descuentoInput, descuento >= 0 && descuento <= 10, 'Debe estar entre 0% y 10%'),
+            validarValorDeclarado() // función definida aparte
+        ];
+    
+        if (validaciones.includes(false)) {
+            mostrarError('⚠️ Por favor completa todos los campos correctamente antes de calcular.');
+            return;
+        }
 
         // Se aplicará el descuento solo si se ingresa un valor entre 0 y 10
         if (descuento < 0 || descuento > 10) {
@@ -325,6 +359,10 @@ document.addEventListener('DOMContentLoaded', function () {
     closeResultadoBtn.addEventListener('click', function () {
         resultadoModal.style.display = 'none';
     });
+    valorDeclaradoInput.addEventListener('input', validarValorDeclarado);
+    tipoCajaSelect.addEventListener('change', validarValorDeclarado);
+    ciudadDestino.addEventListener('input', validarValorDeclarado);
+
 
     // Registrar el Service Worker
     if ('serviceWorker' in navigator) {

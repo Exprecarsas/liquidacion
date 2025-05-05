@@ -2,25 +2,27 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Prototipo Liquidación</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 
 <body>
     <div align="left">
-        <img src="LOGO EXPRECAR2.png" width="130" height="50" alt="logo">
+        <img src="LOGO EXPRECAR2.png" width="130" height="50" alt="logo" />
     </div>
     <div align="right">
-        <img src="somos de aqui.png" width="120" height="120" alt="LOGO">
+        <img src="somos de aqui.png" width="120" height="120" alt="LOGO" />
     </div>
+
     <div class="container">
         <h1><i class="fas fa-calculator"></i> Calculadora de Liquidación</h1>
 
         <form id="formulario" onsubmit="return false;">
+
             <label for="tipoCaja"><i class="fas fa-box"></i> Tipo de Caja:</label>
             <select id="tipoCaja">
                 <option value="" disabled selected>Seleccione un tipo de caja</option>
@@ -29,45 +31,59 @@
             </select><br>
 
             <label for="ciudadDestino"><i class="fas fa-map-marker-alt"></i> Ciudad de Destino:</label>
-            <input type="text" id="ciudadDestino" autocomplete="off">
+            <div class="input-icon-wrapper">
+                <input type="text" id="ciudadDestino" autocomplete="off" />
+                <span class="estado-icono"></span>
+            </div>
             <div id="suggestions" class="suggestions-box"></div><br>
 
             <!-- Caja Normal -->
             <div id="camposNormal" class="hidden">
                 <label for="numUnidades"><i class="fas fa-boxes"></i> Cantidad de Unidades:</label>
-                <input type="number" id="numUnidades" value="1" min="1"><br>
+                <div class="input-icon-wrapper">
+                    <input type="number" id="numUnidades" value="1" min="1" />
+                    <span class="estado-icono"></span>
+                </div>
 
                 <label for="pesoTotal"><i class="fas fa-weight-hanging"></i> Peso Total (kg):</label>
-                <input type="number" id="pesoTotal" min="1"><br>
+                <div class="input-icon-wrapper">
+                    <input type="number" id="pesoTotal" min="1" />
+                    <span class="estado-icono"></span>
+                </div>
             </div>
 
             <!-- Caja Calzado -->
             <div id="camposCalzado" class="hidden">
                 <label for="calzado_30_60"><i class="fas fa-box-open"></i> Unidades 30-60 KG:</label>
-                <input id="calzado_30_60" type="number" min="0" value="0"><br>
+                <input id="calzado_30_60" type="number" min="0" value="0" /><br>
 
                 <label for="calzado_60_90"><i class="fas fa-box-open"></i> Unidades 60-90 KG:</label>
-                <input id="calzado_60_90" type="number" min="0" value="0"><br>
+                <input id="calzado_60_90" type="number" min="0" value="0" /><br>
 
                 <label for="calzado_90_120"><i class="fas fa-box-open"></i> Unidades 90-120 KG:</label>
-                <input id="calzado_90_120" type="number" min="0" value="0"><br>
+                <input id="calzado_90_120" type="number" min="0" value="0" /><br>
             </div>
 
-            <!-- Botón para abrir la ventana modal de cálculo volumétrico -->
             <button type="button" id="calcularVolumetricoBtn" class="volumetrico">
                 <i class="fas fa-ruler-combined"></i> Calcular Peso Volumétrico
             </button><br><br>
 
             <label for="valorDeclarado"><i class="fas fa-money-check-alt"></i> Valor Declarado:</label>
-            <input type="text" id="valorDeclarado"><br>
+            <div class="input-icon-wrapper">
+                <input type="text" id="valorDeclarado" />
+                <span class="estado-icono"></span>
+            </div>
 
             <label for="descuento"><i class="fas fa-percent"></i> Descuento (% - Opcional):</label>
-            <input type="number" id="descuento" value="" min="0" max="10"><br>
+            <div class="input-icon-wrapper">
+                <input type="number" id="descuento" value="" min="0" max="10" />
+                <span class="estado-icono"></span>
+            </div>
 
             <button id="calcularBtn"><i class="fas fa-receipt"></i> Calcular</button>
         </form>
 
-        <!-- Modal para mostrar errores -->
+        <!-- Modal para errores -->
         <div id="errorModal" class="modal">
             <div class="modal-content">
                 <span class="close-btn">&times;</span>
@@ -75,25 +91,28 @@
             </div>
         </div>
 
-        <!-- Modal para cálculo volumétrico -->
+        <!-- Modal para peso volumétrico -->
         <div id="volumetricModal" class="modal">
             <div class="modal-content">
                 <span class="close-volumetric-btn">&times;</span>
                 <h3><i class="fas fa-ruler-combined"></i> Calcular Peso Volumétrico</h3>
+
                 <label for="alto">Alto (cm):</label>
-                <input type="number" id="alto" min="1"><br>
+                <input type="number" id="alto" min="1" /><br>
 
                 <label for="ancho">Ancho (cm):</label>
-                <input type="number" id="ancho" min="1"><br>
+                <input type="number" id="ancho" min="1" /><br>
 
                 <label for="largo">Largo (cm):</label>
-                <input type="number" id="largo" min="1"><br>
+                <input type="number" id="largo" min="1" /><br>
 
-                <button type="button" id="aceptarVolumetrico"><i class="fas fa-check"></i> Aceptar</button>
+                <button type="button" id="aceptarVolumetrico">
+                    <i class="fas fa-check"></i> Aceptar
+                </button>
             </div>
         </div>
 
-        <!-- Modal para mostrar los resultados de la liquidación -->
+        <!-- Modal de resultados -->
         <div id="resultadoModal" class="modal">
             <div class="modal-content">
                 <span class="close-modal-btn">&times;</span>
@@ -104,5 +123,4 @@
 
     <script src="script.js"></script>
 </body>
-
 </html>
