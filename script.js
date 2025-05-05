@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <p><strong>Costo Envío:</strong> <span class="precio">$${Math.trunc(costoCaja).toLocaleString('es-CO')}</span></p>
                 ${descuento ? `<p><strong>Descuento:</strong> ${descuento}% (-$${Math.trunc(descuentoAplicado).toLocaleString('es-CO')})</p>` : ''}
                 ${kilosAdicionales ? `<p><strong>Kilos Adicionales:</strong> $${Math.trunc(kilosAdicionales).toLocaleString('es-CO')}</p>` : ''}
-                <p><strong>Costo Seguro:</strong> $${Math.trunc(costoSeguro).toLocaleString('es-CO')}</p>
+                <p><strong>Costo Seguro:</strong> <span class="seguro"> $${Math.trunc(costoSeguro).toLocaleString('es-CO')}</p>
                 <p><strong>Total a Pagar:</strong> <span class="total">$${Math.trunc(costoTotal).toLocaleString('es-CO')}</span></p>
             </div>`;
         resultadoModal.style.display = 'block';
