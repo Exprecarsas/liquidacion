@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
         valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);
     };
 
+    
     tipoCajaSelect.onchange = () => {
         const tipo = tipoCajaSelect.value;
         actualizarCiudades(tipo);
@@ -101,6 +102,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    function ciudadValida(ciudadIngresada) {
+        const normalizada = ciudadIngresada.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '');
+        return ciudades.some(c => {
+            const cNormalizada = c.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '');
+            return cNormalizada === normalizada;
+        });
+    }
+    
     function validarCampo(input, condicion, mensaje) {
         let error = input.nextElementSibling;
         if (!error || !error.classList.contains("error-msg")) {
@@ -126,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     descuentoInput.oninput = () => validarCampo(descuentoInput, parseFloat(descuentoInput.value) <= 10, 'Máximo 10%');
-    ciudadDestino.oninput = () => validarCampo(ciudadDestino, ciudades.includes(ciudadDestino.value.trim().toUpperCase()), 'Ciudad inválida');
+    ciudadDestino.oninput = () =>  validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad inválida');    
     pesoTotalInput.oninput = () => {
         if (!pesoTotalInput.disabled) validarCampo(pesoTotalInput, parseFloat(pesoTotalInput.value) > 0, 'Peso inválido');
     };
