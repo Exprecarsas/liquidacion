@@ -193,3 +193,18 @@ button.volumetrico:disabled {
     list-style: disc;
     margin-bottom: 4px;
 }
+.input-error {
+    border: 2px solid red;
+    background-color: #ffe6e6;
+}
+
+.input-ok {
+    border: 2px solid green;
+    background-color: #e6ffe6;
+}
+
+.error-msg {
+    color: red;
+    font-size: 12px;
+    margin-top: 4px;
+}

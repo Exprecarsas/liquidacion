@@ -123,6 +123,47 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('camposCalzado').classList.add('hidden');
         }
     });
+    function validarCampo(input, condicion, mensaje) {
+        let error = input.nextElementSibling;
+        if (!error || !error.classList.contains("error-msg")) {
+            error = document.createElement("div");
+            error.className = "error-msg";
+            input.parentNode.insertBefore(error, input.nextSibling);
+        }
+
+        if (condicion) {
+            input.classList.remove("input-error");
+            input.classList.add("input-ok");
+            error.textContent = '';
+            return true;
+        } else {
+            input.classList.remove("input-ok");
+            input.classList.add("input-error");
+            error.textContent = mensaje;
+            return false;
+        }
+    }
+    descuentoInput.addEventListener('input', () => {
+        const val = parseFloat(descuentoInput.value);
+        validarCampo(descuentoInput, val >= 0 && val <= 10, 'Debe estar entre 0% y 10%');
+    });
+
+    ciudadDestino.addEventListener('input', () => {
+        const ciudad = ciudadDestino.value.trim().toUpperCase();
+        validarCampo(ciudadDestino, ciudades.includes(ciudad), 'Ciudad no válida para el tipo de caja');
+    });
+
+    pesoTotalInput.addEventListener('input', () => {
+        const peso = parseFloat(pesoTotalInput.value);
+        if (!pesoTotalInput.disabled) {
+            validarCampo(pesoTotalInput, peso > 0, 'Debe ser un peso válido');
+        }
+    });
+
+    document.getElementById('numUnidades').addEventListener('input', () => {
+        const unidades = parseInt(document.getElementById('numUnidades').value);
+        validarCampo(document.getElementById('numUnidades'), unidades > 0, 'Debe ingresar al menos una unidad');
+    });
 
     function actualizarCiudades(tipoCaja) {
         if (tipoCaja === "calzado") {
@@ -271,7 +312,8 @@ document.addEventListener('DOMContentLoaded', function () {
         <p><i class="fas fa-shield-alt"></i> <strong>Costo Seguro:</strong> <span class="precio">$${Math.trunc(costoSeguro).toLocaleString('es-CO')}</span></p>
         <p><i class="fas fa-coins"></i> <strong>Costo Total:</strong> <span class="total">$${Math.trunc(costoTotal).toLocaleString('es-CO')}</span></p>
     </div>
-`;
+`
+            ;
 
         // Abrir el modal
         resultadoModal.style.display = 'block';
