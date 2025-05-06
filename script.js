@@ -263,14 +263,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('calzado_60_90')?.value = datos.unidades60 || '';
         document.getElementById('calzado_90_120')?.value = datos.unidades90 || '';
     }
-    nuevaLiquidacionBtn.addEventListener('click', () => {
-        document.querySelector('form').reset();
-        document.querySelectorAll('.estado-icono').forEach(e => e.textContent = '');
-        document.querySelectorAll('.error-msg').forEach(e => e.textContent = '');
-        suggestionsBox.innerHTML = '';
-        resultadoModal.style.display = 'none';
-        localStorage.clear();
-    });
+    
 
     document.getElementById('btnNuevaLiquidacion').addEventListener('click', reiniciarAplicativo);
 
