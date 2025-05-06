@@ -259,12 +259,16 @@ document.addEventListener('DOMContentLoaded', function () {
         descuentoToggle.checked = datos.activarDescuento || false;
         descuentoWrapper.classList.toggle('hidden', !descuentoToggle.checked);
         numUnidadesInput.value = datos.numUnidades || '';
-        document.getElementById('calzado_30_60')?.value = datos.unidades30 || '';
-        document.getElementById('calzado_60_90')?.value = datos.unidades60 || '';
-        document.getElementById('calzado_90_120')?.value = datos.unidades90 || '';
+        
+        const u30 = document.getElementById('calzado_30_60');
+        const u60 = document.getElementById('calzado_60_90');
+        const u90 = document.getElementById('calzado_90_120');
+        
+        if (u30) u30.value = datos.unidades30 || '';
+        if (u60) u60.value = datos.unidades60 || '';
+        if (u90) u90.value = datos.unidades90 || '';
     }
-    
-
+  
     document.getElementById('btnNuevaLiquidacion').addEventListener('click', reiniciarAplicativo);
 
     function reiniciarAplicativo() {
