@@ -15,27 +15,31 @@ document.addEventListener('DOMContentLoaded', function () {
     const resultadoModal = document.getElementById('resultadoModal');
     const resultadoContenido = document.getElementById('resultadoContenido');
     const descuentoInput = document.getElementById('descuento');
-    const aplicarDescuentoCheckbox = document.getElementById('aplicarDescuento');
+    const descuentoToggle = document.getElementById('activarDescuento');
     const descuentoWrapper = document.getElementById('descuentoWrapper');
     const closeErrorBtn = document.querySelector('.close-btn');
     const closeVolumetricBtn = document.querySelector('.close-volumetric-btn');
     const closeResultadoBtn = document.querySelector('.close-modal-btn');
     const numUnidadesInput = document.getElementById('numUnidades');
+    const nuevaLiquidacionBtn = document.getElementById('nuevaLiquidacionBtn');
 
     let tarifas = {}, ciudades = [], pesoVolumetricoCalculado = 0;
     let unidades30 = 0, unidades60 = 0, unidades90 = 0;
 
     const ciudadesCalzadoSeguro1Porciento = [
-        "POPAYAN", "PASTO", "NEIVA", "VILLAVICENCIO", "TUNJA",
-        "TUMACO", "MOCOA", "GARZON", "FLORENCIA", "BUENAVENTURA",
-        "NEPOCLI", "APARTADO", "CAUCACIA", "YOPAL", "DUITAMA", "MITU",
-        "YARUMAL", "TARAZA", "PLANETA RICA", "SAN MARCO", "LORICA",
-        "PLATO", "EL CARMEN DE BOLIVAR", "ARMOBELETES", "TIERRA ALTA", "CHINU"
+        "POPAYAN", "PASTO", "NEIVA", "VILLAVICENCIO", "TUNJA", "TUMACO", "MOCOA", "GARZON", "FLORENCIA", "BUENAVENTURA",
+        "NEPOCLI", "APARTADO", "CAUCACIA", "YOPAL", "DUITAMA", "MITU", "YARUMAL", "TARAZA", "PLANETA RICA", "SAN MARCO",
+        "LORICA", "PLATO", "EL CARMEN DE BOLIVAR", "ARMOBELETES", "TIERRA ALTA", "CHINU"
     ];
 
     fetch('https://script.google.com/macros/s/AKfycbzWt6zYnozze630yVncH_j11Zjhdo9yD3t1JIxToqZ486QWs9D6Uxx5H6B4wz1KlmY/exec')
         .then(r => r.json())
-        .then(data => tarifas = data)
+        .then(data => {
+            tarifas = data;
+            if (localStorage.getItem('datosFormulario')) {
+                restaurarFormulario();
+            }
+        })
         .catch(() => mostrarError('Error al cargar tarifas. Intenta más tarde.'));
 
     function mostrarError(mensaje) {
@@ -97,8 +101,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 ciudadDestino.value = city;
                 suggestionsBox.innerHTML = '';
                 ciudadDestino.dispatchEvent(new Event('change'));
-                // 🔁 Validación inmediata después de selección
-            validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad inválida');
             };
             suggestionsBox.appendChild(p);
         });
@@ -137,27 +139,15 @@ document.addEventListener('DOMContentLoaded', function () {
         return validarCampo(valorDeclaradoInput, valor >= minimo, `Mínimo $${minimo.toLocaleString('es-CO')}`);
     }
 
-    ciudadDestino.addEventListener('blur', () => {
-        validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad inválida');
-    });
-
+    ciudadDestino.addEventListener('blur', () => validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad inválida'));
     valorDeclaradoInput.addEventListener('blur', validarValorDeclarado);
-
     pesoTotalInput.addEventListener('input', () => {
-        if (!pesoTotalInput.disabled) {
-            validarCampo(pesoTotalInput, parseFloat(pesoTotalInput.value) > 0, 'Peso inválido');
-        }
+        if (!pesoTotalInput.disabled) validarCampo(pesoTotalInput, parseFloat(pesoTotalInput.value) > 0, 'Peso inválido');
     });
+    numUnidadesInput.addEventListener('input', () => validarCampo(numUnidadesInput, parseInt(numUnidadesInput.value) > 0, 'Debe ingresar al menos una unidad'));
 
-    numUnidadesInput.addEventListener('input', () => {
-        validarCampo(numUnidadesInput, parseInt(numUnidadesInput.value) > 0, 'Debe ingresar al menos una unidad');
-    });
-
-    aplicarDescuentoCheckbox.addEventListener('change', () => {
-        descuentoWrapper.style.display = aplicarDescuentoCheckbox.checked ? 'block' : 'none';
-        if (!aplicarDescuentoCheckbox.checked) {
-            descuentoInput.value = '';
-        }
+    descuentoToggle.addEventListener('change', () => {
+        descuentoWrapper.classList.toggle('hidden', !descuentoToggle.checked);
     });
 
     document.getElementById('calcularBtn').addEventListener('click', function () {
@@ -165,15 +155,14 @@ document.addEventListener('DOMContentLoaded', function () {
         const tipo = tipoCajaSelect.value;
         const unidades = parseInt(numUnidadesInput.value);
         const peso = parseFloat(pesoTotalInput.value);
-        const aplicarDescuento = aplicarDescuentoCheckbox.checked;
-        const descuento = aplicarDescuento ? parseFloat(descuentoInput.value) || 0 : 0;
+        const descuento = descuentoToggle.checked ? parseFloat(descuentoInput.value) || 0 : 0;
         const valor = parseFloat(valorDeclaradoInput.value.replace(/\./g, '').replace(/\D/g, '')) || 0;
 
         if ([
             validarCampo(ciudadDestino, ciudadValida(ciudad), 'Ciudad inválida'),
             validarCampo(numUnidadesInput, unidades > 0, 'Unidades requeridas'),
             pesoTotalInput.disabled || validarCampo(pesoTotalInput, peso > 0, 'Peso requerido'),
-            aplicarDescuento ? validarCampo(descuentoInput, descuento >= 0 && descuento <= 10, 'Descuento inválido') : true,
+            descuentoToggle.checked && !validarCampo(descuentoInput, descuento >= 0 && descuento <= 10, 'Descuento inválido'),
             validarValorDeclarado()
         ].includes(false)) return mostrarError('⚠️ Completa todos los campos correctamente.');
 
@@ -193,11 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
             unidades30 = parseInt(document.getElementById('calzado_30_60').value) || 0;
             unidades60 = parseInt(document.getElementById('calzado_60_90').value) || 0;
             unidades90 = parseInt(document.getElementById('calzado_90_120').value) || 0;
-
-            if (unidades30 + unidades60 + unidades90 === 0) {
-                return mostrarError('Debe ingresar al menos una unidad en algún rango de peso.');
-            }
-
+            if (unidades30 + unidades60 + unidades90 === 0) return mostrarError('Debe ingresar al menos una unidad.');
             const tarifasCiudad = tarifas.calzado?.[ciudad] || {};
             costoCaja =
                 (tarifasCiudad["30-60 KG"] || 0) * unidades30 +
@@ -206,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         let costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
-        const descuentoAplicado = aplicarDescuento && descuento > 0 ? (costoTotal * descuento) / 100 : 0;
+        const descuentoAplicado = descuento > 0 ? (costoTotal * descuento) / 100 : 0;
         costoTotal -= descuentoAplicado;
 
         resultadoContenido.innerHTML = `
@@ -231,7 +216,97 @@ document.addEventListener('DOMContentLoaded', function () {
                 <p><i class="fas fa-coins"></i><strong>Total a Pagar:</strong> <span class="total">$${Math.trunc(costoTotal).toLocaleString('es-CO')}</span></p>
             </div>`;
         resultadoModal.style.display = 'block';
+
+
+        guardarEnLocalStorage();
     });
+
+    nuevaLiquidacionBtn.addEventListener('click', () => {
+        localStorage.removeItem('datosFormulario');
+        location.reload();
+    });
+
+    function guardarEnLocalStorage() {
+        const datos = {
+            ciudadDestino: ciudadDestino.value,
+            tipoCaja: tipoCajaSelect.value,
+            pesoTotal: pesoTotalInput.value,
+            alto: altoInput.value,
+            ancho: anchoInput.value,
+            largo: largoInput.value,
+            valorDeclarado: valorDeclaradoInput.value,
+            descuento: descuentoInput.value,
+            activarDescuento: descuentoToggle.checked,
+            numUnidades: numUnidadesInput.value,
+            unidades30: document.getElementById('calzado_30_60')?.value || 0,
+            unidades60: document.getElementById('calzado_60_90')?.value || 0,
+            unidades90: document.getElementById('calzado_90_120')?.value || 0
+        };
+        localStorage.setItem('datosFormulario', JSON.stringify(datos));
+    }
+
+    function restaurarFormulario() {
+        const datos = JSON.parse(localStorage.getItem('datosFormulario'));
+        ciudadDestino.value = datos.ciudadDestino || '';
+        tipoCajaSelect.value = datos.tipoCaja || 'normal';
+        tipoCajaSelect.dispatchEvent(new Event('change'));
+        pesoTotalInput.value = datos.pesoTotal || '';
+        altoInput.value = datos.alto || '';
+        anchoInput.value = datos.ancho || '';
+        largoInput.value = datos.largo || '';
+        valorDeclaradoInput.value = datos.valorDeclarado || '';
+        descuentoInput.value = datos.descuento || '';
+        descuentoToggle.checked = datos.activarDescuento || false;
+        descuentoWrapper.classList.toggle('hidden', !descuentoToggle.checked);
+        numUnidadesInput.value = datos.numUnidades || '';
+        document.getElementById('calzado_30_60')?.value = datos.unidades30 || '';
+        document.getElementById('calzado_60_90')?.value = datos.unidades60 || '';
+        document.getElementById('calzado_90_120')?.value = datos.unidades90 || '';
+    }
+    nuevaLiquidacionBtn.addEventListener('click', () => {
+        document.querySelector('form').reset();
+        document.querySelectorAll('.estado-icono').forEach(e => e.textContent = '');
+        document.querySelectorAll('.error-msg').forEach(e => e.textContent = '');
+        suggestionsBox.innerHTML = '';
+        resultadoModal.style.display = 'none';
+        localStorage.clear();
+    });
+
+    document.getElementById('btnNuevaLiquidacion').addEventListener('click', reiniciarAplicativo);
+
+    function reiniciarAplicativo() {
+        // Borrar campos de texto y numéricos
+        ciudadDestino.value = '';
+        pesoTotalInput.value = '';
+        valorDeclaradoInput.value = '';
+        descuentoInput.value = '';
+        numUnidadesInput.value = '';
+        altoInput.value = '';
+        anchoInput.value = '';
+        largoInput.value = '';
+        document.getElementById('calzado_30_60').value = '';
+        document.getElementById('calzado_60_90').value = '';
+        document.getElementById('calzado_90_120').value = '';
+
+        // Restaurar selección de caja
+        tipoCajaSelect.value = 'normal';
+        tipoCajaSelect.dispatchEvent(new Event('change'));
+
+        // Ocultar modales si están abiertos
+        resultadoModal.style.display = 'none';
+        errorModal.style.display = 'none';
+        volumetricModal.style.display = 'none';
+
+        // Limpiar íconos y errores visuales
+        document.querySelectorAll('.estado-icono').forEach(e => e.textContent = '');
+        document.querySelectorAll('.error-msg').forEach(e => e.textContent = '');
+
+        // Limpiar sugerencias de ciudad
+        suggestionsBox.innerHTML = '';
+
+        // Borrar localStorage completo (o solo las claves si prefieres)
+        localStorage.clear();
+    }
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
