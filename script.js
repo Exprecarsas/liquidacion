@@ -138,18 +138,29 @@ document.addEventListener('DOMContentLoaded', function () {
         const ciudad = ciudadDestino.value.trim().toUpperCase();
         const tipo = tipoCajaSelect.value;
         const unidades = parseInt(numUnidadesInput.value);
-        const peso = parseFloat(pesoTotalInput.value);        
+        const peso = parseFloat(pesoTotalInput.value);
         const valor = parseFloat(valorDeclaradoInput.value.replace(/\./g, '').replace(/\D/g, '')) || 0;
-
-        if ([
+    
+        // Extraer valores de calzado incluso si no se van a usar
+        unidades30 = parseInt(document.getElementById('calzado_30_60').value) || 0;
+        unidades60 = parseInt(document.getElementById('calzado_60_90').value) || 0;
+        unidades90 = parseInt(document.getElementById('calzado_90_120').value) || 0;
+    
+        // Validaciones separadas según tipo de caja
+        const validaciones = [
             validarCampo(ciudadDestino, ciudadValida(ciudad), 'Ciudad inválida'),
-            validarCampo(numUnidadesInput, unidades > 0, 'Unidades requeridas'),
-            pesoTotalInput.disabled || validarCampo(pesoTotalInput, peso > 0, 'Peso requerido'),            
+            tipo === 'normal' ? validarCampo(numUnidadesInput, unidades > 0, 'Unidades requeridas') : true,
+            tipo === 'normal' ? validarCampo(pesoTotalInput, peso > 0, 'Peso requerido') : true,
+            tipo === 'calzado' ? (unidades30 + unidades60 + unidades90 > 0) : true,
             validarValorDeclarado()
-        ].includes(false)) return mostrarError('⚠️ Completa todos los campos correctamente.');
-
+        ];
+    
+        if (validaciones.includes(false)) {
+            return mostrarError('⚠️ Completa todos los campos correctamente.');
+        }
+    
         let costoCaja = 0, costoSeguro = 0, kilosAdicionales = 0;
-
+    
         if (tipo === "normal") {
             costoSeguro = valor <= 1000000 ? valor * 0.01 : valor * 0.005;
             const tarifa = tarifas.normal?.[ciudad];
@@ -161,17 +172,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         } else if (tipo === "calzado") {
             costoSeguro = valor * (ciudadesCalzadoSeguro1Porciento.includes(ciudad) ? 0.01 : 0.005);
-            unidades30 = parseInt(document.getElementById('calzado_30_60').value) || 0;
-            unidades60 = parseInt(document.getElementById('calzado_60_90').value) || 0;
-            unidades90 = parseInt(document.getElementById('calzado_90_120').value) || 0;
-            if (unidades30 + unidades60 + unidades90 === 0) return mostrarError('Debe ingresar al menos una unidad.');
             const tarifasCiudad = tarifas.calzado?.[ciudad] || {};
             costoCaja =
                 (tarifasCiudad["30-60 KG"] || 0) * unidades30 +
                 (tarifasCiudad["60-90 KG"] || 0) * unidades60 +
                 (tarifasCiudad["90-120 KG"] || 0) * unidades90;
         }
-
+    
         let costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
         
         resultadoContenido.innerHTML = `
