@@ -14,9 +14,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const errorMessage = document.getElementById('errorMessage');
     const resultadoModal = document.getElementById('resultadoModal');
     const resultadoContenido = document.getElementById('resultadoContenido');
-    const descuentoInput = document.getElementById('descuento');
-    const descuentoToggle = document.getElementById('activarDescuento');
-    const descuentoWrapper = document.getElementById('descuentoWrapper');
     const closeErrorBtn = document.querySelector('.close-btn');
     const closeVolumetricBtn = document.querySelector('.close-volumetric-btn');
     const closeResultadoBtn = document.querySelector('.close-modal-btn');
@@ -137,23 +134,17 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     numUnidadesInput.addEventListener('input', () => validarCampo(numUnidadesInput, parseInt(numUnidadesInput.value) > 0, 'Debe ingresar al menos una unidad'));
 
-    descuentoToggle.addEventListener('change', () => {
-        descuentoWrapper.classList.toggle('hidden', !descuentoToggle.checked);
-    });
-
     document.getElementById('calcularBtn').addEventListener('click', function () {
         const ciudad = ciudadDestino.value.trim().toUpperCase();
         const tipo = tipoCajaSelect.value;
         const unidades = parseInt(numUnidadesInput.value);
-        const peso = parseFloat(pesoTotalInput.value);
-        const descuento = descuentoToggle.checked ? parseFloat(descuentoInput.value) || 0 : 0;
+        const peso = parseFloat(pesoTotalInput.value);        
         const valor = parseFloat(valorDeclaradoInput.value.replace(/\./g, '').replace(/\D/g, '')) || 0;
 
         if ([
             validarCampo(ciudadDestino, ciudadValida(ciudad), 'Ciudad inválida'),
             validarCampo(numUnidadesInput, unidades > 0, 'Unidades requeridas'),
-            pesoTotalInput.disabled || validarCampo(pesoTotalInput, peso > 0, 'Peso requerido'),
-            descuentoToggle.checked && !validarCampo(descuentoInput, descuento >= 0 && descuento <= 10, 'Descuento inválido'),
+            pesoTotalInput.disabled || validarCampo(pesoTotalInput, peso > 0, 'Peso requerido'),            
             validarValorDeclarado()
         ].includes(false)) return mostrarError('⚠️ Completa todos los campos correctamente.');
 
@@ -182,9 +173,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         let costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
-        const descuentoAplicado = descuento > 0 ? (costoTotal * descuento) / 100 : 0;
-        costoTotal -= descuentoAplicado;
-
+        
         resultadoContenido.innerHTML = `
             <div class="resultado-box">
                 <h3><i class="fas fa-receipt"></i> Resultados de la Liquidación</h3>
@@ -201,7 +190,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>`}
                 <hr>
                 <p><i class="fas fa-truck"></i> <strong>Costo Envío:</strong> <span class="precio">$${Math.trunc(costoCaja).toLocaleString('es-CO')}</span></p>
-                ${descuentoAplicado ? `<p><i class="fas fa-tag"></i><strong>Descuento:</strong> <span class="descuento">${descuento}% (-$${Math.trunc(descuentoAplicado).toLocaleString('es-CO')})</p>` : ''}
                 ${kilosAdicionales ? `<p><i class="fas fa-balance-scale"></i><strong>Kilos Adicionales:</strong><span class="precio"> $${Math.trunc(kilosAdicionales).toLocaleString('es-CO')}</p>` : ''}
                 <p><i class="fas fa-shield-alt"></i><strong>Costo Seguro:</strong><span class="seguro"> $${Math.trunc(costoSeguro).toLocaleString('es-CO')}</p>
                 <p><i class="fas fa-coins"></i><strong>Total a Pagar:</strong> <span class="total">$${Math.trunc(costoTotal).toLocaleString('es-CO')}</span></p>
@@ -218,9 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
             alto: altoInput.value,
             ancho: anchoInput.value,
             largo: largoInput.value,
-            valorDeclarado: valorDeclaradoInput.value,
-            descuento: descuentoInput.value,
-            activarDescuento: descuentoToggle.checked,
+            valorDeclarado: valorDeclaradoInput.value,        
             numUnidades: numUnidadesInput.value,
             unidades30: document.getElementById('calzado_30_60')?.value || '0',
             unidades60: document.getElementById('calzado_60_90')?.value || '0',
@@ -238,10 +224,7 @@ document.addEventListener('DOMContentLoaded', function () {
         altoInput.value = datos.alto || '';
         anchoInput.value = datos.ancho || '';
         largoInput.value = datos.largo || '';
-        valorDeclaradoInput.value = datos.valorDeclarado || '';
-        descuentoInput.value = datos.descuento || '';
-        descuentoToggle.checked = datos.activarDescuento || false;
-        descuentoWrapper.classList.toggle('hidden', !datos.activarDescuento);
+        valorDeclaradoInput.value = datos.valorDeclarado || '';                
         numUnidadesInput.value = datos.numUnidades || '';
         document.getElementById('calzado_30_60').value = datos.unidades30 || '0';
         document.getElementById('calzado_60_90').value = datos.unidades60 || '0';
