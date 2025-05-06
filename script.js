@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const closeVolumetricBtn = document.querySelector('.close-volumetric-btn');
     const closeResultadoBtn = document.querySelector('.close-modal-btn');
     const numUnidadesInput = document.getElementById('numUnidades');
-    const limpiarBtn = document.getElementById('btnLimpiar');
+    const limpiarBtn = document.getElementById('limpiarBtn');
 
     let tarifas = {}, ciudades = [], pesoVolumetricoCalculado = 0;
     let unidades30 = 0, unidades60 = 0, unidades90 = 0;
