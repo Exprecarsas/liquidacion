@@ -97,6 +97,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 ciudadDestino.value = city;
                 suggestionsBox.innerHTML = '';
                 ciudadDestino.dispatchEvent(new Event('change'));
+                // 🔁 Validación inmediata después de selección
+            validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad inválida');
             };
             suggestionsBox.appendChild(p);
         });
