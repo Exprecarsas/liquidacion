@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const resultadoModal = document.getElementById('resultadoModal');
     const resultadoContenido = document.getElementById('resultadoContenido');
     const descuentoInput = document.getElementById('descuento');
+    const aplicarDescuentoCheckbox = document.getElementById('aplicarDescuento');
+    const descuentoWrapper = document.getElementById('descuentoWrapper');
     const closeErrorBtn = document.querySelector('.close-btn');
     const closeVolumetricBtn = document.querySelector('.close-volumetric-btn');
     const closeResultadoBtn = document.querySelector('.close-modal-btn');
@@ -44,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function () {
     closeErrorBtn.onclick = () => errorModal.style.display = "none";
     closeVolumetricBtn.onclick = () => volumetricModal.style.display = 'none';
     closeResultadoBtn.onclick = () => resultadoModal.style.display = 'none';
-
     calcularVolumetricoBtn.onclick = () => volumetricModal.style.display = 'block';
 
     function calcularPesoVolumetrico() {
@@ -70,7 +71,6 @@ document.addEventListener('DOMContentLoaded', function () {
         valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);
     };
 
-    
     tipoCajaSelect.onchange = () => {
         const tipo = tipoCajaSelect.value;
         actualizarCiudades(tipo);
@@ -97,23 +97,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 ciudadDestino.value = city;
                 suggestionsBox.innerHTML = '';
                 ciudadDestino.dispatchEvent(new Event('change'));
-    
-                // 🔁 Validación inmediata después de selección
-                validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad inválida');
             };
             suggestionsBox.appendChild(p);
         });
-    });    
+    });
 
     function ciudadValida(ciudadIngresada) {
-        if (!ciudadIngresada.trim()) return false; // ❌ Si está vacío, no es válido
+        if (!ciudadIngresada.trim()) return false;
         const normalizada = ciudadIngresada.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '');
         return ciudades.some(c => {
             const cNormalizada = c.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '');
             return cNormalizada === normalizada;
         });
-    }   
-    
+    }
+
     function validarCampo(input, condicion, mensaje) {
         let error = input.nextElementSibling;
         if (!error || !error.classList.contains("error-msg")) {
@@ -138,45 +135,43 @@ document.addEventListener('DOMContentLoaded', function () {
         return validarCampo(valorDeclaradoInput, valor >= minimo, `Mínimo $${minimo.toLocaleString('es-CO')}`);
     }
 
-    // ✅ Validaciones al salir del campo (blur)
-ciudadDestino.addEventListener('blur', () => {
-    validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad inválida');
-});
+    ciudadDestino.addEventListener('blur', () => {
+        validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad inválida');
+    });
 
-valorDeclaradoInput.addEventListener('blur', () => {
-    validarValorDeclarado();
-});
+    valorDeclaradoInput.addEventListener('blur', validarValorDeclarado);
 
-descuentoInput.addEventListener('blur', () => {
-    const val = parseFloat(descuentoInput.value);
-    validarCampo(descuentoInput, val >= 0 && val <= 10, 'Máximo 10%');
-});
+    pesoTotalInput.addEventListener('input', () => {
+        if (!pesoTotalInput.disabled) {
+            validarCampo(pesoTotalInput, parseFloat(pesoTotalInput.value) > 0, 'Peso inválido');
+        }
+    });
 
-// ✅ Validaciones en tiempo real (input)
-pesoTotalInput.addEventListener('input', () => {
-    if (!pesoTotalInput.disabled) {
-        validarCampo(pesoTotalInput, parseFloat(pesoTotalInput.value) > 0, 'Peso inválido');
-    }
-});
+    numUnidadesInput.addEventListener('input', () => {
+        validarCampo(numUnidadesInput, parseInt(numUnidadesInput.value) > 0, 'Debe ingresar al menos una unidad');
+    });
 
-numUnidadesInput.addEventListener('input', () => {
-    validarCampo(numUnidadesInput, parseInt(numUnidadesInput.value) > 0, 'Debe ingresar al menos una unidad');
-});
+    aplicarDescuentoCheckbox.addEventListener('change', () => {
+        descuentoWrapper.style.display = aplicarDescuentoCheckbox.checked ? 'block' : 'none';
+        if (!aplicarDescuentoCheckbox.checked) {
+            descuentoInput.value = '';
+        }
+    });
 
-    
     document.getElementById('calcularBtn').addEventListener('click', function () {
         const ciudad = ciudadDestino.value.trim().toUpperCase();
         const tipo = tipoCajaSelect.value;
         const unidades = parseInt(numUnidadesInput.value);
         const peso = parseFloat(pesoTotalInput.value);
-        const descuento = parseFloat(descuentoInput.value) || 0;
+        const aplicarDescuento = aplicarDescuentoCheckbox.checked;
+        const descuento = aplicarDescuento ? parseFloat(descuentoInput.value) || 0 : 0;
         const valor = parseFloat(valorDeclaradoInput.value.replace(/\./g, '').replace(/\D/g, '')) || 0;
 
         if ([
             validarCampo(ciudadDestino, ciudadValida(ciudad), 'Ciudad inválida'),
             validarCampo(numUnidadesInput, unidades > 0, 'Unidades requeridas'),
             pesoTotalInput.disabled || validarCampo(pesoTotalInput, peso > 0, 'Peso requerido'),
-            (validarCampo(descuentoInput, descuento === 0 || (descuento >= 0 && descuento <= 10), 'Descuento inválido')),
+            aplicarDescuento ? validarCampo(descuentoInput, descuento >= 0 && descuento <= 10, 'Descuento inválido') : true,
             validarValorDeclarado()
         ].includes(false)) return mostrarError('⚠️ Completa todos los campos correctamente.');
 
@@ -209,7 +204,7 @@ numUnidadesInput.addEventListener('input', () => {
         }
 
         let costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
-        const descuentoAplicado = descuento > 0 ? (costoTotal * descuento) / 100 : 0;
+        const descuentoAplicado = aplicarDescuento && descuento > 0 ? (costoTotal * descuento) / 100 : 0;
         costoTotal -= descuentoAplicado;
 
         resultadoContenido.innerHTML = `
@@ -228,16 +223,12 @@ numUnidadesInput.addEventListener('input', () => {
                 </div>`}
                 <hr>
                 <p><i class="fas fa-truck"></i> <strong>Costo Envío:</strong> <span class="precio">$${Math.trunc(costoCaja).toLocaleString('es-CO')}</span></p>
-                ${descuento ? `<p><i class="fas fa-tag"></i><strong>Descuento:</strong> ${descuento}% (-$${Math.trunc(descuentoAplicado).toLocaleString('es-CO')})</p>` : ''}
-                ${kilosAdicionales ? `<p><i class="fas fa-balance-scale"></i><strong>Kilos Adicionales:</strong> <span class="precio">$${Math.trunc(kilosAdicionales).toLocaleString('es-CO')}</p>` : ''}
-                <p><i class="fas fa-shield-alt"></i><strong>Costo Seguro:</strong> <span class="seguro"> $${Math.trunc(costoSeguro).toLocaleString('es-CO')}</p>
+                ${descuentoAplicado ? `<p><i class="fas fa-tag"></i><strong>Descuento:</strong> ${descuento}% (-$${Math.trunc(descuentoAplicado).toLocaleString('es-CO')})</p>` : ''}
+                ${kilosAdicionales ? `<p><i class="fas fa-balance-scale"></i><strong>Kilos Adicionales:</strong> $${Math.trunc(kilosAdicionales).toLocaleString('es-CO')}</p>` : ''}
+                <p><i class="fas fa-shield-alt"></i><strong>Costo Seguro:</strong> $${Math.trunc(costoSeguro).toLocaleString('es-CO')}</p>
                 <p><i class="fas fa-coins"></i><strong>Total a Pagar:</strong> <span class="total">$${Math.trunc(costoTotal).toLocaleString('es-CO')}</span></p>
             </div>`;
         resultadoModal.style.display = 'block';
-    });
-    // Cerrar el modal de resultados
-    closeResultadoBtn.addEventListener('click', function () {
-        resultadoModal.style.display = 'none';
     });
 
     if ('serviceWorker' in navigator) {

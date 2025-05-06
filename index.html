@@ -74,11 +74,13 @@
                 <span class="estado-icono"></span>
             </div>
 
-          <!-- <label for="descuento"><i class="fas fa-percent"></i> Descuento (% - Opcional):</label>
-            <div class="input-icon-wrapper">
-                <input type="number" id="descuento" value="" min="0" max="10" />
-                <span class="estado-icono"></span>
-            </div>  -->
+            <label>
+                <input type="checkbox" id="aplicarDescuento"> ¿Aplicar descuento?
+            </label>
+            <div id="descuentoWrapper" style="display: none;">
+                <label for="descuento">Descuento (%):</label>
+                <input type="number" id="descuento" min="0" max="10">
+            </div>
 
             <button id="calcularBtn"><i class="fas fa-receipt"></i> Calcular</button>
         </form>
@@ -123,4 +125,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
