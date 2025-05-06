@@ -50,7 +50,10 @@
     font-weight: bold;
     color: #35589b;
 }
-
+.descuento {
+    font-weight: bold;
+    color: #f5bc00;
+}
 .total {
     font-weight: bold;
     color: #d84315;
