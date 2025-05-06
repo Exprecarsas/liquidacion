@@ -8,8 +8,8 @@ self.addEventListener('install', function(event) {
         '/manifest.json',
         '/icon-192.png',
         '/icon-512.png',
-        '/somos de aqui.pgn',
-        '/LOGO EXPRECAR2.pgn'
+        '/somos_de_aqui.pgn',
+        '/LOGO_EXPRECAR2.pgn'
       ]);
     })
   );
