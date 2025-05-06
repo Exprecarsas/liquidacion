@@ -21,10 +21,10 @@
     <div class="container">
         <h1><i class="fas fa-calculator"></i> Calculadora de Liquidación</h1>
 
-        <form id="formulario" onsubmit="return false;">
+        <form id="formulario" onsubmit="return false;" novalidate>
 
             <label for="tipoCaja"><i class="fas fa-box"></i> Tipo de Caja:</label>
-            <select id="tipoCaja">
+            <select id="tipoCaja" name="tipoCaja">
                 <option value="" disabled selected>Seleccione un tipo de caja</option>
                 <option value="normal">Caja Normal</option>
                 <option value="calzado">Caja Calzado</option>
@@ -32,7 +32,7 @@
 
             <label for="ciudadDestino"><i class="fas fa-map-marker-alt"></i> Ciudad de Destino:</label>
             <div class="input-icon-wrapper">
-                <input type="text" id="ciudadDestino" autocomplete="off" />
+                <input type="text" id="ciudadDestino" name="ciudadDestino" autocomplete="off" />
                 <span class="estado-icono"></span>
             </div>
             <div id="suggestions" class="suggestions-box"></div><br>
@@ -41,13 +41,13 @@
             <div id="camposNormal" class="hidden">
                 <label for="numUnidades"><i class="fas fa-boxes"></i> Cantidad de Unidades:</label>
                 <div class="input-icon-wrapper">
-                    <input type="number" id="numUnidades" value="0" min="1" />
+                    <input type="number" id="numUnidades" name="numUnidades" value="0" min="1" />
                     <span class="estado-icono"></span>
                 </div>
 
                 <label for="pesoTotal"><i class="fas fa-weight-hanging"></i> Peso Total (kg):</label>
                 <div class="input-icon-wrapper">
-                    <input type="number" id="pesoTotal" min="1" />
+                    <input type="number" id="pesoTotal" name="pesoTotal" min="1" />
                     <span class="estado-icono"></span>
                 </div>
             </div>
@@ -55,13 +55,13 @@
             <!-- Caja Calzado -->
             <div id="camposCalzado" class="hidden">
                 <label for="calzado_30_60"><i class="fas fa-box-open"></i> Unidades 30-60 KG:</label>
-                <input id="calzado_30_60" type="number" min="0" value="0" /><br>
+                <input id="calzado_30_60" name="calzado_30_60" type="number" min="0" value="0" /><br>
 
                 <label for="calzado_60_90"><i class="fas fa-box-open"></i> Unidades 60-90 KG:</label>
-                <input id="calzado_60_90" type="number" min="0" value="0" /><br>
+                <input id="calzado_60_90" name="calzado_60_90" type="number" min="0" value="0" /><br>
 
                 <label for="calzado_90_120"><i class="fas fa-box-open"></i> Unidades 90-120 KG:</label>
-                <input id="calzado_90_120" type="number" min="0" value="0" /><br>
+                <input id="calzado_90_120" name="calzado_90_120" type="number" min="0" value="0" /><br>
             </div>
 
             <button type="button" id="calcularVolumetricoBtn" class="volumetrico">
@@ -70,13 +70,14 @@
 
             <label for="valorDeclarado"><i class="fas fa-money-check-alt"></i> Valor Declarado:</label>
             <div class="input-icon-wrapper">
-                <input type="text" id="valorDeclarado" />
+                <input type="text" id="valorDeclarado" name="valorDeclarado" />
                 <span class="estado-icono"></span>
             </div>
 
             <button id="calcularBtn"><i class="fas fa-receipt"></i> Calcular</button>
             <button id="limpiarBtn" class="btn btn-warning">🧹 Limpiar</button>
         </form>
+
 
         <!-- Modal para errores -->
         <div id="errorModal" class="modal">
