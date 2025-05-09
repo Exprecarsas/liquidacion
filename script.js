@@ -19,6 +19,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const closeResultadoBtn = document.querySelector('.close-modal-btn');
     const numUnidadesInput = document.getElementById('numUnidades');
     const limpiarBtn = document.getElementById('limpiarBtn');
+    const nombreInput = document.getElementById('nombreUsuario');
+    const guardarNombreBtn = document.getElementById('guardarNombreBtn');
+    const seccionNombre = document.getElementById('nombreSeccion');
+    const formularioCampos = document.getElementById('formularioCampos');
 
     let tarifas = {}, ciudades = [], pesoVolumetricoCalculado = 0;
     let unidades30 = 0, unidades60 = 0, unidades90 = 0;
@@ -46,6 +50,32 @@ document.addEventListener('DOMContentLoaded', function () {
     [altoInput, anchoInput, largoInput].forEach(i => i.addEventListener('input', () => {
         pesoVolumetricoCalculado = (parseFloat(altoInput.value) || 0) * (parseFloat(anchoInput.value) || 0) * (parseFloat(largoInput.value) || 0) / 2500;
     }));
+
+    guardarNombreBtn.addEventListener('click', () => {
+        const nombre = nombreInput.value.trim();
+        if (nombre.length >= 3) {
+            localStorage.setItem('nombreUsuario', nombre);
+            seccionNombre.style.display = 'none';
+            formularioCampos.style.display = 'block';
+        } else {
+            alert('Por favor escribe un nombre válido (mínimo 3 letras).');
+        }
+    });
+    const nombreGuardado = localStorage.getItem('nombreUsuario');
+    if (nombreGuardado) {
+        seccionNombre.style.display = 'none';
+        formularioCampos.style.display = 'block';
+    }
+
+
+    // Mostrar u ocultar según si ya está guardado
+    document.addEventListener('DOMContentLoaded', () => {
+        const nombre = localStorage.getItem('nombreUsuario');
+        if (nombre) {
+            seccionNombre.style.display = 'none';
+            formularioCampos.style.display = 'block';
+        }
+    });
 
     aceptarVolumetrico.onclick = () => {
         if (pesoVolumetricoCalculado > 0) {
@@ -140,12 +170,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const unidades = parseInt(numUnidadesInput.value);
         const peso = parseFloat(pesoTotalInput.value);
         const valor = parseFloat(valorDeclaradoInput.value.replace(/\./g, '').replace(/\D/g, '')) || 0;
-    
+        const nombreUsuario = localStorage.getItem('nombreUsuario') || 'Anónimo';
         // Extraer valores de calzado incluso si no se van a usar
         unidades30 = parseInt(document.getElementById('calzado_30_60').value) || 0;
         unidades60 = parseInt(document.getElementById('calzado_60_90').value) || 0;
         unidades90 = parseInt(document.getElementById('calzado_90_120').value) || 0;
-    
+
         // Validaciones separadas según tipo de caja
         const validaciones = [
             validarCampo(ciudadDestino, ciudadValida(ciudad), 'Ciudad inválida'),
@@ -154,13 +184,13 @@ document.addEventListener('DOMContentLoaded', function () {
             tipo === 'calzado' ? (unidades30 + unidades60 + unidades90 > 0) : true,
             validarValorDeclarado()
         ];
-    
+
         if (validaciones.includes(false)) {
             return mostrarError('⚠️ Completa todos los campos correctamente.');
         }
-    
+
         let costoCaja = 0, costoSeguro = 0, kilosAdicionales = 0;
-    
+
         if (tipo === "normal") {
             costoSeguro = valor <= 1000000 ? valor * 0.01 : valor * 0.005;
             const tarifa = tarifas.normal?.[ciudad];
@@ -178,9 +208,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 (tarifasCiudad["60-90 KG"] || 0) * unidades60 +
                 (tarifasCiudad["90-120 KG"] || 0) * unidades90;
         }
-    
+
         let costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
-        
+
         resultadoContenido.innerHTML = `
             <div class="resultado-box">
                 <h3><i class="fas fa-receipt"></i> Resultados de la Liquidación</h3>
@@ -202,7 +232,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 <p><i class="fas fa-coins"></i><strong>Total a Pagar:</strong> <span class="total">$${Math.trunc(costoTotal).toLocaleString('es-CO')}</span></p>
             </div>`;
         resultadoModal.style.display = 'block';
+        registrarEvento(
+            nombreUsuario,
+            ciudad,
+            tipo,
+            peso || '',
+            tipo === "normal"
+                ? unidades
+                : unidades30 + unidades60 + unidades90,
+            valor,
+            Math.trunc(costoCaja),
+            Math.trunc(costoSeguro),
+            Math.trunc(kilosAdicionales),
+            Math.trunc(costoTotal)
+        );
         guardarEnLocalStorage();
+
     });
 
     function guardarEnLocalStorage() {
@@ -213,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function () {
             alto: altoInput.value,
             ancho: anchoInput.value,
             largo: largoInput.value,
-            valorDeclarado: valorDeclaradoInput.value,        
+            valorDeclarado: valorDeclaradoInput.value,
             numUnidades: numUnidadesInput.value,
             unidades30: document.getElementById('calzado_30_60')?.value || '0',
             unidades60: document.getElementById('calzado_60_90')?.value || '0',
@@ -231,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function () {
         altoInput.value = datos.alto || '';
         anchoInput.value = datos.ancho || '';
         largoInput.value = datos.largo || '';
-        valorDeclaradoInput.value = datos.valorDeclarado || '';                
+        valorDeclaradoInput.value = datos.valorDeclarado || '';
         numUnidadesInput.value = datos.numUnidades || '';
         document.getElementById('calzado_30_60').value = datos.unidades30 || '0';
         document.getElementById('calzado_60_90').value = datos.unidades60 || '0';
@@ -242,6 +287,33 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.removeItem('datosFormulario');
         location.reload();
     });
+
+    function registrarEvento(nombre, ciudad, tipoCaja, peso, unidades, valor, costoEnvio, costoSeguro, kilosAdicionales, total) {
+        const params = new URLSearchParams();
+        params.append("nombre", nombre);
+        params.append("ciudad", ciudad);
+        params.append("tipoCaja", tipoCaja);
+        params.append("peso", peso);
+        params.append("unidades", unidades);
+        params.append("valor", valor);
+        params.append("costoEnvio", costoEnvio);
+        params.append("costoSeguro", costoSeguro);
+        params.append("kilosAdicionales", kilosAdicionales);
+        params.append("total", total);
+
+        fetch("https://script.google.com/macros/s/AKfycbwyqXzq06rKm7OcixVtTBa2SfB-QkMwYe1nG84uU5IsBTU3a8ChbN6lj4n-daRCV7JwEg/exec", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: params.toString()
+        })
+            .then(res => res.text())
+            .then(data => console.log('Registro enviado:', data))
+            .catch(err => console.error('Error registrando:', err));
+    }
+
+
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
