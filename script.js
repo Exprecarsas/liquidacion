@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const nombreInput = document.getElementById('nombreUsuario');
     const guardarNombreBtn = document.getElementById('guardarNombreBtn');
     const seccionNombre = document.getElementById('nombreSeccion');
-    const formularioCampos = document.getElementById('formularioCampos');
+    const encabezado = document.getElementById('encabezado');
 
     let tarifas = {}, ciudades = [], pesoVolumetricoCalculado = 0;
     let unidades30 = 0, unidades60 = 0, unidades90 = 0;
@@ -53,29 +53,36 @@ document.addEventListener('DOMContentLoaded', function () {
 
     guardarNombreBtn.addEventListener('click', () => {
         const nombre = nombreInput.value.trim();
-        if (nombre.length >= 3) {
+        const origenSelect = document.getElementById('origenUsuario');
+        const origen = origenSelect.options[origenSelect.selectedIndex].text;
+
+        if (nombre.length >= 3 && origen) {
             localStorage.setItem('nombreUsuario', nombre);
+            localStorage.setItem('origenUsuario', origen);
             seccionNombre.style.display = 'none';
-            formularioCampos.style.display = 'block';
+            encabezado.style.display = 'block';
+            document.getElementById('origenActual').innerText = `${origen}`;
         } else {
-            alert('Por favor escribe un nombre válido (mínimo 3 letras).');
+            alert('Por favor escribe tu nombre y selecciona una ciudad de origen.');
         }
     });
+
     const nombreGuardado = localStorage.getItem('nombreUsuario');
-    if (nombreGuardado) {
+    const origenGuardado = localStorage.getItem('origenUsuario');
+
+    if (nombreGuardado && !origenGuardado) {
+        // Mostrar campo solo para ciudad
+        nombreInput.value = nombreGuardado; // Prellenar nombre
+        seccionNombre.style.display = 'block';
+        encabezado.style.display = 'none';
+    } else if (nombreGuardado && origenGuardado) {
+        document.getElementById('origenActual').innerText = `${origenGuardado}`;
         seccionNombre.style.display = 'none';
-        formularioCampos.style.display = 'block';
+        encabezado.style.display = 'block';
+    } else {
+        seccionNombre.style.display = 'block';
+        encabezado.style.display = 'none';
     }
-
-
-    // Mostrar u ocultar según si ya está guardado
-    document.addEventListener('DOMContentLoaded', () => {
-        const nombre = localStorage.getItem('nombreUsuario');
-        if (nombre) {
-            seccionNombre.style.display = 'none';
-            formularioCampos.style.display = 'block';
-        }
-    });
 
     aceptarVolumetrico.onclick = () => {
         if (pesoVolumetricoCalculado > 0) {
@@ -193,9 +200,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (tipo === "normal") {
             costoSeguro = valor <= 1000000 ? valor * 0.01 : valor * 0.005;
-            const tarifa = tarifas.normal?.[ciudad];
-            if (!tarifa) return mostrarError('Ciudad no encontrada.');
+
+            const origen = localStorage.getItem('origenUsuario')?.toUpperCase();
+            const tarifaCiudad = tarifas.normal?.[ciudad];
+
+            if (!tarifaCiudad || !tarifaCiudad[origen]) {
+                return mostrarError('Tarifa no encontrada para esta ciudad y origen.');
+            }
+
+            const tarifa = tarifaCiudad[origen];
             costoCaja = tarifa * unidades;
+
             const pesoMinimo = unidades * 30;
             if (peso > pesoMinimo) {
                 kilosAdicionales = (peso - pesoMinimo) * (tarifa / 30);
@@ -211,10 +226,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         let costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
 
+        const origen = localStorage.getItem('origenUsuario')?.toUpperCase() || 'NO DEFINIDO';
+
         resultadoContenido.innerHTML = `
             <div class="resultado-box">
                 <h3><i class="fas fa-receipt"></i> Resultados de la Liquidación</h3>
                 <p><i class="fas fa-box"></i> <strong>Tipo de Caja:</strong> ${tipo}</p>
+                <p><i class="fas fa-map-marker-alt"></i> <strong>Origen:</strong> ${origen}</p>
                 <p><i class="fas fa-map-marker-alt"></i> <strong>Ciudad de Destino:</strong> ${ciudad}</p>
                 ${tipo === 'normal' ? `<p><i class="fas fa-weight-hanging"></i> <strong>Peso Total:</strong> ${peso} kg</p>` : `
                 <div class="rangos">
@@ -232,8 +250,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 <p><i class="fas fa-coins"></i><strong>Total a Pagar:</strong> <span class="total">$${Math.trunc(costoTotal).toLocaleString('es-CO')}</span></p>
             </div>`;
         resultadoModal.style.display = 'block';
+        const origenUsuario = localStorage.getItem('origenUsuario') || 'SIN ORIGEN';
         registrarEvento(
             nombreUsuario,
+            origenUsuario,
             ciudad,
             tipo,
             peso || '',
@@ -288,9 +308,10 @@ document.addEventListener('DOMContentLoaded', function () {
         location.reload();
     });
 
-    function registrarEvento(nombre, ciudad, tipoCaja, peso, unidades, valor, costoEnvio, costoSeguro, kilosAdicionales, total) {
+    function registrarEvento(nombre, origen, ciudad, tipoCaja, peso, unidades, valor, costoEnvio, costoSeguro, kilosAdicionales, total) {
         const params = new URLSearchParams();
         params.append("nombre", nombre);
+        params.append("origen", origen);
         params.append("ciudad", ciudad);
         params.append("tipoCaja", tipoCaja);
         params.append("peso", peso);

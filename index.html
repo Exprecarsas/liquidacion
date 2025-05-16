@@ -12,23 +12,40 @@
 
 <body>
 
-    <div id="nombreSeccion" class="nombre-box">
-        <h2>👋 <strong>¡Bienvenido!</strong></h2>
-        <p>Por favor escribe tu nombre para comenzar a usar la herramienta:</p>
-        <div class="input-group">
-            <input type="text" id="nombreUsuario" placeholder="Escribe tu nombre..." />
-            <button id="guardarNombreBtn">Iniciar</button>
+    <div id="nombreSeccion" class="formulario-exprecar">
+        <img src="logo_exprecar.svg" alt="Logo Exprecar" class="logo-formulario" />
+        <h2>Bienvenido a Exprecar</h2>
+        <p>Ingresa tu nombre y ciudad de origen para iniciar una liquidación.</p>
+
+        <div class="grupo-formulario">
+            <label for="nombreUsuario">🙍‍♂️ Tu nombre:</label>
+            <input type="text" id="nombreUsuario" placeholder="Ej: Juan Pérez" />
         </div>
+
+        <div class="grupo-formulario">
+            <label for="origenUsuario">📍 Ciudad de origen:</label>
+            <select id="origenUsuario">
+                <option value="" disabled selected>Selecciona ciudad</option>
+                <option value="BUCARAMANGA">Bucaramanga</option>
+                <option value="BOGOTA">Bogotá</option>
+                <option value="CUCUTA">Cúcuta</option>
+            </select>
+        </div>
+
+        <button id="guardarNombreBtn">✅ Iniciar</button>
     </div>
 
+    <div id="encabezado" class="encabezado-exprecar">
+        <img src="logo_exprecar.svg" alt="Logo Exprecar" class="logo-exprecar" />
+        <div class="origen-jaguar-bloque">
+            <div class="origen-corporativo">
+                <span class="origen-label" style="color: rgb(255, 255, 255);">Origen:</span>
+                <span id="origenActual" class="origen-ciudad">BUCARAMANGA</span>
+            </div>
+            <img src="somos_de_aqui.png" alt="Jaguar Exprecar" class="jaguar-img" />
+        </div>
 
-    <div id="formularioCampos">
-        <div align="left">
-            <img src="LOGO_EXPRECAR2.png" width="130" height="50" alt="logo" />
-        </div>
-        <div align="right">
-            <img src="somos_de_aqui.png" width="120" height="120" alt="LOGO" />
-        </div>
+
 
         <div class="container">
             <h1><i class="fas fa-calculator"></i> Calculadora de Liquidación</h1>
@@ -90,44 +107,44 @@
                 <button id="limpiarBtn" class="btn btn-warning">🧹 Limpiar</button>
             </form>
 
-
-            <!-- Modal para errores -->
-            <div id="errorModal" class="modal">
-                <div class="modal-content">
-                    <span class="close-btn">&times;</span>
-                    <p id="errorMessage"></p>
-                </div>
-            </div>
-
-            <!-- Modal para peso volumétrico -->
-            <div id="volumetricModal" class="modal">
-                <div class="modal-content">
-                    <span class="close-volumetric-btn">&times;</span>
-                    <h3><i class="fas fa-ruler-combined"></i> Calcular Peso Volumétrico</h3>
-
-                    <label for="alto">Alto (cm):</label>
-                    <input type="number" id="alto" min="1" /><br>
-
-                    <label for="ancho">Ancho (cm):</label>
-                    <input type="number" id="ancho" min="1" /><br>
-
-                    <label for="largo">Largo (cm):</label>
-                    <input type="number" id="largo" min="1" /><br>
-
-                    <button type="button" id="aceptarVolumetrico">
-                        <i class="fas fa-check"></i> Aceptar
-                    </button>
-                </div>
-            </div>
-
-            <!-- Modal de resultados -->
-            <div id="resultadoModal" class="modal">
-                <div class="modal-content">
-                    <span class="close-modal-btn">&times;</span>
-                    <div id="resultadoContenido"></div>
-                </div>
+        </div>
+        <!-- Modal para errores -->
+        <div id="errorModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <p id="errorMessage"></p>
             </div>
         </div>
+
+        <!-- Modal para peso volumétrico -->
+        <div id="volumetricModal" class="modal">
+            <div class="modal-content">
+                <span class="close-volumetric-btn">&times;</span>
+                <h3><i class="fas fa-ruler-combined"></i> Calcular Peso Volumétrico</h3>
+
+                <label for="alto">Alto (cm):</label>
+                <input type="number" id="alto" min="1" /><br>
+
+                <label for="ancho">Ancho (cm):</label>
+                <input type="number" id="ancho" min="1" /><br>
+
+                <label for="largo">Largo (cm):</label>
+                <input type="number" id="largo" min="1" /><br>
+
+                <button type="button" id="aceptarVolumetrico">
+                    <i class="fas fa-check"></i> Aceptar
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal de resultados -->
+        <div id="resultadoModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal-btn">&times;</span>
+                <div id="resultadoContenido"></div>
+            </div>
+        </div>
+    </div>
     </div>
 
     <script src="script.js"></script>
