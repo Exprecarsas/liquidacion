@@ -19,6 +19,22 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     font-family: 'Segoe UI', sans-serif;
 }
+.mensaje-error {
+    background-color: #ffe2e2;
+    color: #da2727e7;
+    padding: 12px 16px;
+    border-left: 6px solid #da2727e7;
+    border-radius: 8px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    text-align: left;
+    font-size: 14px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.hidden {
+    display: none;
+}
 
 .logo-formulario {
     height: 50px;

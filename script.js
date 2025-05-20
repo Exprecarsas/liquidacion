@@ -54,21 +54,35 @@ document.addEventListener('DOMContentLoaded', function () {
     guardarNombreBtn.addEventListener('click', () => {
         const nombre = nombreInput.value.trim();
         const origenSelect = document.getElementById('origenUsuario');
-        const origen = origenSelect.options[origenSelect.selectedIndex].text;
+        const origenValue = origenSelect.value;
+        const origenTexto = origenSelect.options[origenSelect.selectedIndex].text;
 
-        if (nombre.length >= 3 && origen) {
+        if (nombre.length >= 3 && origenValue !== "") {
             localStorage.setItem('nombreUsuario', nombre);
-            localStorage.setItem('origenUsuario', origen);
+            localStorage.setItem('origenUsuario', origenTexto);
             seccionNombre.style.display = 'none';
             encabezado.style.display = 'block';
-            document.getElementById('origenActual').innerText = `${origen}`;
+            document.getElementById('origenActual').innerText = origenTexto;
         } else {
-            alert('Por favor escribe tu nombre y selecciona una ciudad de origen.');
+            alert('⚠️ Por favor ingresa tu nombre y selecciona una ciudad de origen antes de continuar.');
         }
     });
 
     const nombreGuardado = localStorage.getItem('nombreUsuario');
     const origenGuardado = localStorage.getItem('origenUsuario');
+    const origenInvalido = !origenGuardado || origenGuardado === "Selecciona ciudad";
+
+    if (origenInvalido) {
+        localStorage.removeItem('origenUsuario');
+        seccionNombre.style.display = 'block';
+        encabezado.style.display = 'none';
+        document.getElementById('mensajeOrigenInvalido').classList.remove('hidden');
+    } else {
+        document.getElementById('origenActual').innerText = origenGuardado;
+        seccionNombre.style.display = 'none';
+        encabezado.style.display = 'block';
+    }
+
 
     if (nombreGuardado && !origenGuardado) {
         // Mostrar campo solo para ciudad
