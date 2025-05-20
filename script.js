@@ -185,70 +185,82 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     numUnidadesInput.addEventListener('input', () => validarCampo(numUnidadesInput, parseInt(numUnidadesInput.value) > 0, 'Debe ingresar al menos una unidad'));
 
-    document.getElementById('calcularBtn').addEventListener('click', function () {
-        const ciudad = ciudadDestino.value.trim().toUpperCase();
-        const tipo = tipoCajaSelect.value;
-        const unidades = parseInt(numUnidadesInput.value);
-        const peso = parseFloat(pesoTotalInput.value);
-        const valor = parseFloat(valorDeclaradoInput.value.replace(/\./g, '').replace(/\D/g, '')) || 0;
-        const nombreUsuario = localStorage.getItem('nombreUsuario') || 'Anónimo';
-        // Extraer valores de calzado incluso si no se van a usar
-        unidades30 = parseInt(document.getElementById('calzado_30_60').value) || 0;
-        unidades60 = parseInt(document.getElementById('calzado_60_90').value) || 0;
-        unidades90 = parseInt(document.getElementById('calzado_90_120').value) || 0;
+document.getElementById('calcularBtn').addEventListener('click', function () {
+    const ciudad = ciudadDestino.value.trim().toUpperCase();
+    const tipo = tipoCajaSelect.value;
+    const unidades = parseInt(numUnidadesInput.value);
+    const peso = parseFloat(pesoTotalInput.value);
+    const valor = parseFloat(valorDeclaradoInput.value.replace(/\./g, '').replace(/\D/g, '')) || 0;
+    const nombreUsuario = localStorage.getItem('nombreUsuario') || 'Anónimo';
 
-        // Validaciones separadas según tipo de caja
-        const validaciones = [
-            validarCampo(ciudadDestino, ciudadValida(ciudad), 'Ciudad inválida'),
-            tipo === 'normal' ? validarCampo(numUnidadesInput, unidades > 0, 'Unidades requeridas') : true,
-            tipo === 'normal' ? validarCampo(pesoTotalInput, peso > 0, 'Peso requerido') : true,
-            tipo === 'calzado' ? (unidades30 + unidades60 + unidades90 > 0) : true,
-            validarValorDeclarado()
-        ];
+    // Extraer valores de calzado incluso si no se van a usar
+    unidades30 = parseInt(document.getElementById('calzado_30_60').value) || 0;
+    unidades60 = parseInt(document.getElementById('calzado_60_90').value) || 0;
+    unidades90 = parseInt(document.getElementById('calzado_90_120').value) || 0;
 
-        if (validaciones.includes(false)) {
-            return mostrarError('⚠️ Completa todos los campos correctamente.');
+    // Validaciones separadas según tipo de caja
+    const validaciones = [
+        validarCampo(ciudadDestino, ciudadValida(ciudad), 'Ciudad inválida'),
+        tipo === 'normal' ? validarCampo(numUnidadesInput, unidades > 0, 'Unidades requeridas') : true,
+        tipo === 'normal' ? validarCampo(pesoTotalInput, peso > 0, 'Peso requerido') : true,
+        tipo === 'calzado' ? (unidades30 + unidades60 + unidades90 > 0) : true,
+        validarValorDeclarado()
+    ];
+
+    if (validaciones.includes(false)) {
+        return mostrarError('⚠️ Completa todos los campos correctamente.');
+    }
+
+    // 🔄 Función para normalizar texto (quita tildes, mayúsculas y espacios)
+    function normalizarTexto(txt) {
+        return txt.normalize("NFD").replace(/[\u0300-\u036f]/g, '').toUpperCase().trim();
+    }
+
+    let costoCaja = 0, costoSeguro = 0, kilosAdicionales = 0;
+
+    if (tipo === "normal") {
+        costoSeguro = valor <= 1000000 ? valor * 0.01 : valor * 0.005;
+
+        const origen = localStorage.getItem('origenUsuario') || '';
+        const ciudadNormalizada = normalizarTexto(ciudad);
+        const origenNormalizado = normalizarTexto(origen);
+
+        const tarifaCiudad = tarifas.normal?.[ciudadNormalizada];
+
+        console.log('🔍 Diagnóstico tarifaCiudad:', {
+            ciudad,
+            ciudadNormalizada,
+            origen,
+            origenNormalizado,
+            tarifaCiudad,
+            tarifaPorOrigen: tarifaCiudad?.[origenNormalizado]
+        });
+
+        if (!tarifaCiudad || !tarifaCiudad[origenNormalizado]) {
+            return mostrarError(`Tarifa no encontrada para "${ciudad}" desde "${origen}".`);
         }
 
-        let costoCaja = 0, costoSeguro = 0, kilosAdicionales = 0;
+        const tarifa = tarifaCiudad[origenNormalizado];
+        costoCaja = tarifa * unidades;
 
-        if (tipo === "normal") {
-            costoSeguro = valor <= 1000000 ? valor * 0.01 : valor * 0.005;
-
-            const origen = localStorage.getItem('origenUsuario')?.toUpperCase();
-            const tarifaCiudad = tarifas.normal?.[ciudad];
-
-            console.log('🔍 Diagnóstico tarifaCiudad:', {
-                ciudad,
-                origen,
-                tarifaCiudad: tarifas.normal?.[ciudad],
-                tarifaPorOrigen: tarifas.normal?.[ciudad]?.[origen]
-            });
-
-
-            if (!tarifaCiudad || !tarifaCiudad[origen]) {
-                return mostrarError('Tarifa no encontrada para esta ciudad y origen.');
-            }
-
-            const tarifa = tarifaCiudad[origen];
-            costoCaja = tarifa * unidades;
-
-            const pesoMinimo = unidades * 30;
-            if (peso > pesoMinimo) {
-                kilosAdicionales = (peso - pesoMinimo) * (tarifa / 30);
-            }
-        } else if (tipo === "calzado") {
-            costoSeguro = valor * (ciudadesCalzadoSeguro1Porciento.includes(ciudad) ? 0.01 : 0.005);
-            const tarifasCiudad = tarifas.calzado?.[ciudad] || {};
-            costoCaja =
-                (tarifasCiudad["30-60 KG"] || 0) * unidades30 +
-                (tarifasCiudad["60-90 KG"] || 0) * unidades60 +
-                (tarifasCiudad["90-120 KG"] || 0) * unidades90;
+        const pesoMinimo = unidades * 30;
+        if (peso > pesoMinimo) {
+            kilosAdicionales = (peso - pesoMinimo) * (tarifa / 30);
         }
+    } else if (tipo === "calzado") {
+        costoSeguro = valor * (ciudadesCalzadoSeguro1Porciento.includes(ciudad) ? 0.01 : 0.005);
+        const ciudadNormalizada = normalizarTexto(ciudad);
+        const tarifasCiudad = tarifas.calzado?.[ciudadNormalizada] || {};
 
-        let costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
+        costoCaja =
+            (tarifasCiudad["30-60 KG"] || 0) * unidades30 +
+            (tarifasCiudad["60-90 KG"] || 0) * unidades60 +
+            (tarifasCiudad["90-120 KG"] || 0) * unidades90;
+    }
 
-        const origen = localStorage.getItem('origenUsuario')?.toUpperCase() || 'NO DEFINIDO';
+    let costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
+
+    const origen = localStorage.getItem('origenUsuario')?.toUpperCase() || 'NO DEFINIDO';
 
         resultadoContenido.innerHTML = `
             <div class="resultado-box">
