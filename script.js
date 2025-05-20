@@ -218,6 +218,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const origen = localStorage.getItem('origenUsuario')?.toUpperCase();
             const tarifaCiudad = tarifas.normal?.[ciudad];
 
+            console.log('🔍 Diagnóstico tarifaCiudad:', {
+                ciudad,
+                origen,
+                tarifaCiudad: tarifas.normal?.[ciudad],
+                tarifaPorOrigen: tarifas.normal?.[ciudad]?.[origen]
+            });
+
+
             if (!tarifaCiudad || !tarifaCiudad[origen]) {
                 return mostrarError('Tarifa no encontrada para esta ciudad y origen.');
             }
