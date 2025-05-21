@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 suggestionsBox.innerHTML = '';
                 ciudadDestino.dispatchEvent(new Event('change'));
                 // 🔁 Validación inmediata después de selección
-                validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad no encontrada. Verifique la escritura o contacte a sistemas: 3212728425 Yerson Suarez');
+                validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad no encontrada. Revise la escritura o contacte a Sistemas: Yerson 3212728425');
             };
             suggestionsBox.appendChild(p);
         });
@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return validarCampo(valorDeclaradoInput, valor >= minimo, `Mínimo $${minimo.toLocaleString('es-CO')}`);
     }
 
-    ciudadDestino.addEventListener('blur', () => validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad no encontrada. Verifique la escritura o contacte a sistemas: 3212728425 Yerson Suarez'));
+    ciudadDestino.addEventListener('blur', () => validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad no encontrada. Revise la escritura o contacte a Sistemas: Yerson 3212728425'));
     valorDeclaradoInput.addEventListener('blur', validarValorDeclarado);
     pesoTotalInput.addEventListener('input', () => {
         if (!pesoTotalInput.disabled) validarCampo(pesoTotalInput, parseFloat(pesoTotalInput.value) > 0, 'Peso inválido');
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Validaciones separadas según tipo de caja
         const validaciones = [
-            validarCampo(ciudadDestino, ciudadValida(ciudad), 'Ciudad no encontrada. Verifique la escritura o contacte a sistemas: 3212728425 Yerson Suarez'),
+            validarCampo(ciudadDestino, ciudadValida(ciudad), 'Ciudad no encontrada. Revise la escritura o contacte a Sistemas: Yerson 3212728425'),
             tipo === 'normal' ? validarCampo(numUnidadesInput, unidades > 0, 'Unidades requeridas') : true,
             tipo === 'normal' ? validarCampo(pesoTotalInput, peso > 0, 'Peso requerido') : true,
             tipo === 'calzado' ? (unidades30 + unidades60 + unidades90 > 0) : true,
