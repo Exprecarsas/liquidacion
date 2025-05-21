@@ -535,12 +535,6 @@ button.volumetrico:disabled {
     margin-bottom: 4px;
 }
 
-.error-msg {
-    color: red;
-    font-size: 12px;
-    margin-top: 4px;
-}
-
 .input-icon-wrapper {
     position: relative;
 }
