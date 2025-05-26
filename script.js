@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const nombreGuardado = localStorage.getItem('nombreUsuario');
     const origenGuardado = localStorage.getItem('origenUsuario');
-    
+
     if (!origenGuardado || origenGuardado === "Selecciona ciudad") {
         localStorage.removeItem('origenUsuario');
         seccionNombre.style.display = 'block';
@@ -208,10 +208,14 @@ document.addEventListener('DOMContentLoaded', function () {
             return mostrarError('⚠️ Completa todos los campos correctamente.');
         }
 
-        // 🔄 Función para normalizar texto (quita tildes, mayúsculas y espacios)
         function normalizarTexto(txt) {
-            return txt.normalize("NFD").replace(/[\u0300-\u036f]/g, '').toUpperCase().trim();
+            return txt
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, '') // quita tildes pero no toca la Ñ
+                .toUpperCase()
+                .trim();
         }
+
 
         let costoCaja = 0, costoSeguro = 0, kilosAdicionales = 0;
 
