@@ -33,6 +33,9 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(r => r.json())
         .then(data => {
             tarifas = data;
+            // 🔍 Mostrar ciudades que contienen la letra Ñ
+            const ciudadesConEnie = Object.keys(tarifas.normal || {}).filter(ciudad => ciudad.includes('Ñ'));
+            console.log('📍 Ciudades con "Ñ" en tarifas.normal:', ciudadesConEnie);
             if (localStorage.getItem('datosFormulario')) restaurarFormulario();
         })
         .catch(() => mostrarError('Error al cargar tarifas. Intenta más tarde.'));
