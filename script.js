@@ -214,12 +214,12 @@ document.addEventListener('DOMContentLoaded', function () {
         function normalizarTexto(txt) {
             return txt
                 .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, '') // quita tildes pero no toca la Ñ
+                .replace(/[\u0300-\u036f]/g, '')   // quita tildes como Á, É...
+                .replace(/Ñ/g, 'Ñ')                // asegura que Ñ quede intacta (mayúscula)
+                .replace(/ñ/g, 'ñ')                // asegura que ñ quede intacta (minúscula)
                 .toUpperCase()
                 .trim();
         }
-
-
         let costoCaja = 0, costoSeguro = 0, kilosAdicionales = 0;
 
         if (tipo === "normal") {
