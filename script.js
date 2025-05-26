@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const tarifaCiudad = tarifas.normal?.[ciudadNormalizada];
 
             if (!tarifaCiudad || !tarifaCiudad[origenNormalizado]) {
-                return mostrarError(`Ciudad sin tarifa. Contacto: Yerson 3212728425`);
+                return mostrarError(`Ciudad sin tarifa. Contacto: Javier 3002099331 Para confirma tarifa`);
             }
 
             const tarifa = tarifaCiudad[origenNormalizado];
