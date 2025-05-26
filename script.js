@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return mostrarError('⚠️ Completa todos los campos correctamente.');
         }
 
-        // ✅ Normalizador de texto
+        // ✅ Normalizador de texto base
         function normalizarTexto(txt) {
             return txt
                 .toUpperCase()
@@ -221,9 +221,31 @@ document.addEventListener('DOMContentLoaded', function () {
                 .trim();
         }
 
-        // ✅ Internamente convertir Ñ → N solo para buscar tarifas
-        function ciudadParaTarifa(nombre) {
-            return normalizarTexto(nombre.replace(/Ñ/g, 'N').replace(/ñ/g, 'n'));
+        // ✅ Generar mapa de excepciones una vez (si aún no existe)
+        if (!window.excepcionesCiudades) {
+            window.excepcionesCiudades = {};
+            Object.keys(tarifas.normal).forEach(ciudad => {
+                const claveNormalizada = ciudad
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/Ñ/g, 'N')
+                    .replace(/\s+/g, ' ')
+                    .toUpperCase()
+                    .trim();
+                window.excepcionesCiudades[claveNormalizada] = ciudad;
+            });
+        }
+
+        // ✅ Normalización con corrección de Ñ para ciudad y origen
+        let ciudadNormalizada = normalizarTexto(ciudad).replace(/Ñ/g, 'N');
+        if (window.excepcionesCiudades[ciudadNormalizada]) {
+            ciudadNormalizada = window.excepcionesCiudades[ciudadNormalizada];
+        }
+
+        let origen = localStorage.getItem('origenUsuario') || '';
+        let origenNormalizado = normalizarTexto(origen).replace(/Ñ/g, 'N');
+        if (window.excepcionesCiudades[origenNormalizado]) {
+            origenNormalizado = window.excepcionesCiudades[origenNormalizado];
         }
 
         let costoCaja = 0, costoSeguro = 0, kilosAdicionales = 0;
@@ -231,15 +253,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (tipo === "normal") {
             costoSeguro = valor <= 1000000 ? valor * 0.01 : valor * 0.005;
 
-            const origen = localStorage.getItem('origenUsuario') || '';
-            const ciudadNormalizada = ciudadParaTarifa(ciudad);
-            const origenNormalizado = ciudadParaTarifa(origen);
-
-            let tarifaCiudad = tarifas.normal?.[ciudadNormalizada];
+            const tarifaCiudad = tarifas.normal?.[ciudadNormalizada];
 
             if (!tarifaCiudad || !tarifaCiudad[origenNormalizado]) {
-                console.warn('❌ No se encontró tarifa con:', ciudadNormalizada, origenNormalizado);
-                return mostrarError(`Ciudad no encontrada o sin tarifa. Contacto: Yerson 3212728425`);
+                return mostrarError(`Ciudad sin tarifa. Contacto: Yerson 3212728425`);
             }
 
             const tarifa = tarifaCiudad[origenNormalizado];
@@ -253,8 +270,8 @@ document.addEventListener('DOMContentLoaded', function () {
         } else if (tipo === "calzado") {
             costoSeguro = valor * (ciudadesCalzadoSeguro1Porciento.includes(ciudad) ? 0.01 : 0.005);
 
-            const ciudadNormalizada = ciudadParaTarifa(ciudad);
-            const tarifasCiudad = tarifas.calzado?.[ciudadNormalizada] || {};
+            const ciudadCorrCalzado = window.excepcionesCiudades[normalizarTexto(ciudad).replace(/Ñ/g, 'N')] || ciudad;
+            const tarifasCiudad = tarifas.calzado?.[ciudadCorrCalzado] || {};
 
             costoCaja =
                 (tarifasCiudad["30-60 KG"] || 0) * unidades30 +
@@ -263,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
-        const origen = localStorage.getItem('origenUsuario')?.toUpperCase() || 'NO DEFINIDO';
+        origen = localStorage.getItem('origenUsuario')?.toUpperCase() || 'NO DEFINIDO';
 
         resultadoContenido.innerHTML = `
             <div class="resultado-box">
