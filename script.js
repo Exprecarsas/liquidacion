@@ -318,12 +318,11 @@ document.addEventListener('DOMContentLoaded', async function () {
 
 
             // ✅ Buscamos por ORIGEN primero
-            const tarifasOrigen = tarifas.normal?.[origenNormalizado];
-            if (!tarifasOrigen || !(ciudadNormalizada in tarifasOrigen)) {
+            const tarifaCiudad = tarifas.normal?.[ciudadNormalizada];
+            if (!tarifaCiudad || !tarifaCiudad[origenNormalizado]) {
                 return mostrarError('Ciudad sin tarifa. Contacto: Javier 3002099331 Para confirma tarifa');
             }
-
-            const tarifa = tarifasOrigen[ciudadNormalizada];
+            const tarifa = tarifaCiudad[origenNormalizado];
             costoCaja = tarifa * unidades;
             const pesoMinimo = unidades * 30;
             if (peso > pesoMinimo) {
