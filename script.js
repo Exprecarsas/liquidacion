@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         "PLANETA RICA","SAN MARCO","LORICA","PLATO","EL CARMEN DE BOLIVAR","ARMOBELETES","TIERRA ALTA","CHINU"
     ];
 
-    const urlBase = 'https://script.google.com/macros/s/AKfycbzWt6zYnozze630yVncH_j11Zjhdo9yD3t1JIxToqZ486QWs9D6Uxx5H6B4wz1KlmY/exec';
+    const urlBase = 'https://script.google.com/macros/s/AKfycbyi4l3Nbm8kdcT17IKkGk4SOJM0DcwUxNzzZpOLnsgNICal9Kg_rx8N0tqPUyUjHYUb/exec';
 
     function normalizarTexto(txt) {
         return txt
