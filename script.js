@@ -37,6 +37,17 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     const urlBase = 'https://script.google.com/macros/s/AKfycbzWt6zYnozze630yVncH_j11Zjhdo9yD3t1JIxToqZ486QWs9D6Uxx5H6B4wz1KlmY/exec';
 
+    // Función de normalización
+    function normalizarTexto(txt) {
+        return txt
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/Ñ/g, 'N')
+            .toUpperCase()
+            .trim()
+            .replace(/\s+/g, ' ');
+    }
+
     async function obtenerTarifas() {
         const versionGuardada = localStorage.getItem('tarifasVersion');
         const tarifasGuardadas = localStorage.getItem('tarifas');
@@ -148,7 +159,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     };
 
     function actualizarCiudades(tipoCaja) {
-        ciudades = Object.keys(tarifas[tipoCaja] || {});
+        const prefix = tipoCaja === 'calzado' ? 'CALZ_' : 'NORM_';
+        ciudades = Object.keys(tarifas[tipoCaja] || {})
+            .map(k => k.replace(prefix, ''));
         pesoTotalInput.value = '';
         ciudadDestino.value = '';
         suggestionsBox.innerHTML = '';
@@ -223,7 +236,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         unidades90 = parseInt(document.getElementById('calzado_90_120')?.value) || 0;
 
         const validaciones = [
-            validarCampo(ciudadDestino, ciudadValida(ciudad), 'Ciudad no encontrada. Contacto: Yerson 3212728425'),
+            validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad no encontrada. Contacto: Yerson 3212728425'),
             tipo === 'normal' ? validarCampo(numUnidadesInput, unidades > 0, 'Unidades requeridas') : true,
             tipo === 'normal' ? validarCampo(pesoTotalInput, peso > 0, 'Peso requerido') : true,
             tipo === 'calzado' ? (unidades30 + unidades60 + unidades90 > 0) : true,
@@ -234,38 +247,18 @@ document.addEventListener('DOMContentLoaded', async function () {
             return mostrarError('⚠️ Completa todos los campos correctamente.');
         }
 
-        function normalizarTexto(txt) {
-            return txt
-                .toUpperCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .replace(/\s+/g, ' ')
-                .trim();
-        }
-
-        if (!window.excepcionesCiudades) {
-            window.excepcionesCiudades = {};
-            Object.keys(tarifas.normal || {}).forEach(ciudad => {
-                const claveNormalizada = ciudad
-                    .normalize("NFD")
-                    .replace(/[\u0300-\u036f]/g, '')
-                    .replace(/Ñ/g, 'N')
-                    .replace(/\s+/g, ' ')
-                    .toUpperCase()
-                    .trim();
-                window.excepcionesCiudades[claveNormalizada] = ciudad;
-            });
-        }
-
-        let ciudadNormalizada = normalizarTexto(ciudad).replace(/Ñ/g, 'N');
-        if (window.excepcionesCiudades[ciudadNormalizada]) {
-            ciudadNormalizada = window.excepcionesCiudades[ciudadNormalizada];
+        // ✅ Normaliza y agrega prefijo según el tipo
+        let ciudadNormalizada = normalizarTexto(ciudad);
+        if (tipo === 'calzado') {
+            ciudadNormalizada = 'CALZ_' + ciudadNormalizada;
+        } else {
+            ciudadNormalizada = 'NORM_' + ciudadNormalizada;
         }
 
         let origen = localStorage.getItem('origenUsuario') || '';
-        let origenNormalizado = normalizarTexto(origen).replace(/Ñ/g, 'N');
-        if (window.excepcionesCiudades[origenNormalizado]) {
-            origenNormalizado = window.excepcionesCiudades[origenNormalizado];
+        let origenNormalizado = normalizarTexto(origen);
+        if (origen) {
+            origenNormalizado = 'NORM_' + origenNormalizado;
         }
 
         let costoCaja = 0, costoSeguro = 0, kilosAdicionales = 0;
@@ -286,8 +279,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             }
         } else if (tipo === "calzado") {
             costoSeguro = valor * (ciudadesCalzadoSeguro1Porciento.includes(ciudad) ? 0.01 : 0.005);
-            const ciudadCorrCalzado = window.excepcionesCiudades[normalizarTexto(ciudad).replace(/Ñ/g, 'N')] || ciudad;
-            const tarifasCiudad = tarifas.calzado?.[ciudadCorrCalzado] || {};
+            const tarifasCiudad = tarifas.calzado?.[ciudadNormalizada] || {};
             costoCaja =
                 (tarifasCiudad["30-60 KG"] || 0) * unidades30 +
                 (tarifasCiudad["60-90 KG"] || 0) * unidades60 +
@@ -364,9 +356,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         largoInput.value = datos.largo || '';
         valorDeclaradoInput.value = datos.valorDeclarado || '';
         numUnidadesInput.value = datos.numUnidades || '';
-        document.getElementById('calzado_30_60').value = datos.unidades30 || '0';
-        document.getElementById('calzado_60_90').value = datos.unidades60 || '0';
-        document.getElementById('calzado_90_120').value = datos.unidades90 || '0';
+        document.getElementById('calzado_30_60').value = parseInt(datos.unidades30) || 0;
+        document.getElementById('calzado_60_90').value = parseInt(datos.unidades60) || 0;
+        document.getElementById('calzado_90_120').value = parseInt(datos.unidades90) || 0;
     }
 
     limpiarBtn.addEventListener('click', () => {
