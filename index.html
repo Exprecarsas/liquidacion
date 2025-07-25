@@ -11,12 +11,17 @@
 </head>
 
 <body>
+    <!-- 1️⃣ Reemplaza el <div id="cargando"> por este spinner discreto -->
+    <div id="spinner" style="position:fixed; top:15px; right:15px; z-index:9999;">
+        <i class="fas fa-spinner fa-spin" style="font-size:1.3rem; color:#007bff;"></i>
+    </div>
 
+    <!-- Sección para solicitar nombre y origen -->
     <div id="nombreSeccion" class="formulario-exprecar">
         <img src="logo_exprecar.svg" alt="Logo Exprecar" class="logo-formulario" />
         <h2>Bienvenido a Exprecar</h2>
         <p>Ingresa tu nombre y ciudad de origen para iniciar una liquidación.</p>
-       
+
         <div class="grupo-formulario">
             <label for="nombreUsuario">🙍‍♂️ Tu nombre:</label>
             <input type="text" id="nombreUsuario" placeholder="Ej: Juan Pérez" />
@@ -35,7 +40,8 @@
         <button id="guardarNombreBtn">✅ Iniciar</button>
     </div>
 
-    <div id="encabezado" class="encabezado-exprecar">
+    <!-- Interfaz principal (oculta hasta validar usuario) -->
+    <div id="encabezado" class="encabezado-exprecar" style="display:none;">
         <img src="logo_exprecar.svg" alt="Logo Exprecar" class="logo-exprecar" />
         <div class="origen-jaguar-bloque">
             <div class="origen-corporativo">
@@ -45,13 +51,10 @@
             <img src="somos_de_aqui.png" alt="Jaguar Exprecar" class="jaguar-img" />
         </div>
 
-
-
         <div class="container">
             <h1><i class="fas fa-calculator"></i> Calculadora de Liquidación</h1>
 
             <form id="formulario" onsubmit="return false;" novalidate>
-
                 <label for="tipoCaja"><i class="fas fa-box"></i> Tipo de Caja:</label>
                 <select id="tipoCaja" name="tipoCaja">
                     <option value="" disabled selected>Seleccione un tipo de caja</option>
@@ -70,7 +73,7 @@
                 <div id="camposNormal" class="hidden">
                     <label for="numUnidades"><i class="fas fa-boxes"></i> Cantidad de Unidades:</label>
                     <div class="input-icon-wrapper">
-                        <input type="number" id="numUnidades" name="numUnidades" value="0" min="1" />
+                        <input type="number" id="numUnidades" name="numUnidades" value="1" min="1" />
                         <span class="estado-icono"></span>
                     </div>
 
@@ -107,44 +110,37 @@
                 <button id="limpiarBtn" class="btn btn-warning">🧹 Limpiar</button>
             </form>
 
-        </div>
-        <!-- Modal para errores -->
-        <div id="errorModal" class="modal">
-            <div class="modal-content">
-                <span class="close-btn">&times;</span>
-                <p id="errorMessage"></p>
+            <!-- Modal para errores -->
+            <div id="errorModal" class="modal">
+                <div class="modal-content">
+                    <span class="close-btn">&times;</span>
+                    <p id="errorMessage"></p>
+                </div>
+            </div>
+
+            <!-- Modal para peso volumétrico -->
+            <div id="volumetricModal" class="modal">
+                <div class="modal-content">
+                    <span class="close-volumetric-btn">&times;</span>
+                    <h3><i class="fas fa-ruler-combined"></i> Calcular Peso Volumétrico</h3>
+                    <label for="alto">Alto (cm):</label>
+                    <input type="number" id="alto" min="1" /><br>
+                    <label for="ancho">Ancho (cm):</label>
+                    <input type="number" id="ancho" min="1" /><br>
+                    <label for="largo">Largo (cm):</label>
+                    <input type="number" id="largo" min="1" /><br>
+                    <button type="button" id="aceptarVolumetrico"><i class="fas fa-check"></i> Aceptar</button>
+                </div>
+            </div>
+
+            <!-- Modal de resultados -->
+            <div id="resultadoModal" class="modal">
+                <div class="modal-content">
+                    <span class="close-modal-btn">&times;</span>
+                    <div id="resultadoContenido"></div>
+                </div>
             </div>
         </div>
-
-        <!-- Modal para peso volumétrico -->
-        <div id="volumetricModal" class="modal">
-            <div class="modal-content">
-                <span class="close-volumetric-btn">&times;</span>
-                <h3><i class="fas fa-ruler-combined"></i> Calcular Peso Volumétrico</h3>
-
-                <label for="alto">Alto (cm):</label>
-                <input type="number" id="alto" min="1" /><br>
-
-                <label for="ancho">Ancho (cm):</label>
-                <input type="number" id="ancho" min="1" /><br>
-
-                <label for="largo">Largo (cm):</label>
-                <input type="number" id="largo" min="1" /><br>
-
-                <button type="button" id="aceptarVolumetrico">
-                    <i class="fas fa-check"></i> Aceptar
-                </button>
-            </div>
-        </div>
-
-        <!-- Modal de resultados -->
-        <div id="resultadoModal" class="modal">
-            <div class="modal-content">
-                <span class="close-modal-btn">&times;</span>
-                <div id="resultadoContenido"></div>
-            </div>
-        </div>
-    </div>
     </div>
 
     <script src="script.js"></script>

@@ -28,9 +28,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     let unidades30 = 0, unidades60 = 0, unidades90 = 0;
 
     const ciudadesCalzadoSeguro1Porciento = [
-        "POPAYAN","PASTO","NEIVA","VILLAVICENCIO","TUNJA","TUMACO","MOCOA","GARZON","FLORENCIA",
-        "BUENAVENTURA","NEPOCLI","APARTADO","CAUCACIA","YOPAL","DUITAMA","MITU","YARUMAL","TARAZA",
-        "PLANETA RICA","SAN MARCO","LORICA","PLATO","EL CARMEN DE BOLIVAR","ARMOBELETES","TIERRA ALTA","CHINU"
+        "POPAYAN", "PASTO", "NEIVA", "VILLAVICENCIO", "TUNJA", "TUMACO", "MOCOA", "GARZON", "FLORENCIA",
+        "BUENAVENTURA", "NEPOCLI", "APARTADO", "CAUCACIA", "YOPAL", "DUITAMA", "MITU", "YARUMAL", "TARAZA",
+        "PLANETA RICA", "SAN MARCO", "LORICA", "PLATO", "EL CARMEN DE BOLIVAR", "ARMOBELETES", "TIERRA ALTA", "CHINU"
     ];
 
     const urlBase = 'https://script.google.com/macros/s/AKfycbyi4l3Nbm8kdcT17IKkGk4SOJM0DcwUxNzzZpOLnsgNICal9Kg_rx8N0tqPUyUjHYUb/exec';
@@ -80,11 +80,41 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     tarifas = await obtenerTarifas();
 
+    // ---------- INICIO cambios ----------
+    // 1. Spinner discreto
+    const spinner = document.createElement('div');
+    spinner.id = 'spinner';
+    spinner.style.cssText = 'position:fixed;top:15px;right:15px;z-index:9999;font-size:1.3rem;color:#007bff;';
+    spinner.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    document.body.appendChild(spinner);
+
+    // 2. Deshabilita la interacción
+    document.body.classList.add('loading');
+
+    // 3. Decide qué sección mostrar
+    const nombreGuardado = localStorage.getItem('nombreUsuario');
+    const origenGuardado = localStorage.getItem('origenUsuario');
+    const seccionNombre = document.getElementById('nombreSeccion');
+    const encabezado = document.getElementById('encabezado');
+
+    if (!origenGuardado || origenGuardado === "Selecciona ciudad") {
+        seccionNombre.style.display = 'block';
+    } else {
+        document.getElementById('origenActual').innerText = origenGuardado;
+        encabezado.style.display = 'block';
+    }
+
+    // 4. Restaura formulario si existe
+    if (localStorage.getItem('datosFormulario')) restaurarFormulario();
+
+    // 5. Activa la página
+    document.body.classList.remove('loading');
+    spinner.remove();
+    // ---------- FIN cambios ----------
+
     // 🔍 Logs para verificar CALZ y NORM
     console.log('📦 Tarifas cargadas:', tarifas);
-    console.log('🔍 Ciudades CALZADO:', Object.keys(tarifas.calzado || {}));
-    console.log('🔍 Ciudades NORMAL:', Object.keys(tarifas.normal || {}));
-
+    
     if (localStorage.getItem('datosFormulario')) restaurarFormulario();
 
     function mostrarError(mensaje) {
@@ -258,16 +288,12 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         // ✅ Normaliza y agrega prefijo según el tipo
         let ciudadNormalizada = normalizarTexto(ciudad);
-        console.log('🔍 Ciudad ingresada:', ciudad);
-        console.log('🔍 Ciudad normalizada (antes de prefijo):', ciudadNormalizada);
-
+        
         if (tipo === 'calzado') {
             ciudadNormalizada = 'CALZ_' + ciudadNormalizada;
         } else {
             ciudadNormalizada = 'NORM_' + ciudadNormalizada;
         }
-
-        console.log('🔍 Ciudad con prefijo:', ciudadNormalizada);
 
         let origen = localStorage.getItem('origenUsuario') || '';
         let origenNormalizado = normalizarTexto(origen);
@@ -275,14 +301,11 @@ document.addEventListener('DOMContentLoaded', async function () {
             origenNormalizado = 'NORM_' + origenNormalizado;
         }
 
-        console.log('🔍 Origen normalizado:', origenNormalizado);
-
         let costoCaja = 0, costoSeguro = 0, kilosAdicionales = 0;
 
         if (tipo === "normal") {
             costoSeguro = valor <= 1000000 ? valor * 0.01 : valor * 0.005;
             const tarifaCiudad = tarifas.normal?.[ciudadNormalizada];
-            console.log('🔍 Tarifa ciudad (normal):', tarifaCiudad);
 
             if (!tarifaCiudad || !tarifaCiudad[origenNormalizado]) {
                 return mostrarError('Ciudad sin tarifa. Contacto: Javier 3002099331 Para confirma tarifa');
@@ -297,7 +320,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         } else if (tipo === "calzado") {
             costoSeguro = valor * (ciudadesCalzadoSeguro1Porciento.includes(ciudad) ? 0.01 : 0.005);
             const tarifasCiudad = tarifas.calzado?.[ciudadNormalizada] || {};
-            console.log('🔍 Tarifa ciudad (calzado):', tarifasCiudad);
             costoCaja =
                 (tarifasCiudad["30-60 KG"] || 0) * unidades30 +
                 (tarifasCiudad["60-90 KG"] || 0) * unidades60 +
@@ -307,11 +329,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         const costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
         const origenFinal = localStorage.getItem('origenUsuario')?.toUpperCase() || 'NO DEFINIDO';
 
-        console.log('💰 Costo envío:', Math.trunc(costoCaja));
-        console.log('💰 Costo seguro:', Math.trunc(costoSeguro));
-        console.log('💰 Total:', Math.trunc(costoTotal));
-
-        resultadoContenido.innerHTML = `
+            resultadoContenido.innerHTML = `
             <div class="resultado-box">
                 <h3><i class="fas fa-receipt"></i> Resultados de la Liquidación</h3>
                 <p><i class="fas fa-box"></i> <strong>Tipo de Caja:</strong> ${tipo}</p>

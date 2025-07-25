@@ -7,15 +7,25 @@
     background-color: #fff;
     transition: transform 0.3s ease-in-out;
 }
+
+/* Deshabilita lo que no se debe usar hasta listo */
+body.loading button,
+body.loading input,
+body.loading select {
+    pointer-events: none;
+    opacity: .6;
+}
+
 .error-msg {
-  background-color: #f8d7da; /* rojo claro */
-  color: #721c24;
-  padding: 6px 10px;
-  border-left: 4px solid #f5c6cb;
-  border-radius: 4px;
-  margin-top: 4px;
-  font-size: 13px;
-  font-weight: 500;
+    background-color: #f8d7da;
+    /* rojo claro */
+    color: #721c24;
+    padding: 6px 10px;
+    border-left: 4px solid #f5c6cb;
+    border-radius: 4px;
+    margin-top: 4px;
+    font-size: 13px;
+    font-weight: 500;
 }
 
 .formulario-exprecar {
@@ -29,6 +39,7 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     font-family: 'Segoe UI', sans-serif;
 }
+
 .mensaje-error {
     background-color: #ffe2e2;
     color: #da2727e7;
