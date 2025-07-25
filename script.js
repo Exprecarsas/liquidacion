@@ -374,27 +374,27 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
 
     limpiarBtn.addEventListener('click', () => {
-        // 1. Limpia el formulario sin recargar
-        localStorage.removeItem('datosFormulario');
+    localStorage.removeItem('datosFormulario');
 
-        // 2. Resetea los campos visuales
-        ciudadDestino.value = '';
-        tipoCajaSelect.value = 'normal';
-        tipoCajaSelect.dispatchEvent(new Event('change')); // actualiza visibilidad
-        pesoTotalInput.value = '';
-        altoInput.value = '';
-        anchoInput.value = '';
-        largoInput.value = '';
-        valorDeclaradoInput.value = '';
-        numUnidadesInput.value = '';
-        document.getElementById('calzado_30_60') && (document.getElementById('calzado_30_60').value = 0);
-        document.getElementById('calzado_60_90') && (document.getElementById('calzado_60_90').value = 0);
-        document.getElementById('calzado_90_120') && (document.getElementById('calzado_90_120').value = 0);
+    // Reset de campos
+    ciudadDestino.value = '';
+    tipoCajaSelect.value = 'normal';
+    tipoCajaSelect.dispatchEvent(new Event('change'));
+    pesoTotalInput.value = '';
+    altoInput.value = '';
+    anchoInput.value = '';
+    largoInput.value = '';
+    valorDeclaradoInput.value = '';
+    numUnidadesInput.value = '';
+    document.getElementById('calzado_30_60') && (document.getElementById('calzado_30_60').value = 0);
+    document.getElementById('calzado_60_90') && (document.getElementById('calzado_60_90').value = 0);
+    document.getElementById('calzado_90_120') && (document.getElementById('calzado_90_120').value = 0);
 
-        // 3. Limpia sugerencias y errores
-        suggestionsBox.innerHTML = '';
-        document.querySelectorAll('.error-msg').forEach(e => e.textContent = '');
-    });
+    // Limpieza visual
+    suggestionsBox.innerHTML = '';
+    document.querySelectorAll('.error-msg').forEach(e => e.remove());
+    document.querySelectorAll('.estado-icono').forEach(icon => icon.textContent = '');
+});
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
