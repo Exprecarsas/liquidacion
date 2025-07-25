@@ -28,16 +28,13 @@ document.addEventListener('DOMContentLoaded', async function () {
     let unidades30 = 0, unidades60 = 0, unidades90 = 0;
 
     const ciudadesCalzadoSeguro1Porciento = [
-        "POPAYAN", "PASTO", "NEIVA", "VILLAVICENCIO", "TUNJA", "TUMACO",
-        "MOCOA", "GARZON", "FLORENCIA", "BUENAVENTURA", "NEPOCLI", "APARTADO",
-        "CAUCACIA", "YOPAL", "DUITAMA", "MITU", "YARUMAL", "TARAZA",
-        "PLANETA RICA", "SAN MARCO", "LORICA", "PLATO", "EL CARMEN DE BOLIVAR",
-        "ARMOBELETES", "TIERRA ALTA", "CHINU"
+        "POPAYAN","PASTO","NEIVA","VILLAVICENCIO","TUNJA","TUMACO","MOCOA","GARZON","FLORENCIA",
+        "BUENAVENTURA","NEPOCLI","APARTADO","CAUCACIA","YOPAL","DUITAMA","MITU","YARUMAL","TARAZA",
+        "PLANETA RICA","SAN MARCO","LORICA","PLATO","EL CARMEN DE BOLIVAR","ARMOBELETES","TIERRA ALTA","CHINU"
     ];
 
     const urlBase = 'https://script.google.com/macros/s/AKfycbzWt6zYnozze630yVncH_j11Zjhdo9yD3t1JIxToqZ486QWs9D6Uxx5H6B4wz1KlmY/exec';
 
-    // Función de normalización
     function normalizarTexto(txt) {
         return txt
             .normalize('NFD')
@@ -52,9 +49,13 @@ document.addEventListener('DOMContentLoaded', async function () {
         const versionGuardada = localStorage.getItem('tarifasVersion');
         const tarifasGuardadas = localStorage.getItem('tarifas');
 
+        console.log('🔍 Version guardada:', versionGuardada);
+        console.log('📦 Tarifas guardadas:', tarifasGuardadas ? '✅ Sí' : '❌ No');
+
         try {
             const resVersion = await fetch(`${urlBase}?version=1`);
             const { version } = await resVersion.json();
+            console.log('🆕 Versión remota:', version);
 
             if (version === versionGuardada && tarifasGuardadas) {
                 console.log('✅ Usando tarifas locales');
@@ -65,17 +66,25 @@ document.addEventListener('DOMContentLoaded', async function () {
             const resTarifas = await fetch(urlBase);
             const tarifas = await resTarifas.json();
 
+            console.log('✅ Tarifas descargadas:', tarifas);
+
             localStorage.setItem('tarifas', JSON.stringify(tarifas));
             localStorage.setItem('tarifasVersion', version);
             return tarifas;
         } catch (err) {
+            console.error('❌ Error al obtener tarifas:', err);
             mostrarError('Error al cargar tarifas. Intenta más tarde.');
-            console.error(err);
             return {};
         }
     }
 
     tarifas = await obtenerTarifas();
+
+    // 🔍 Logs para verificar CALZ y NORM
+    console.log('📦 Tarifas cargadas:', tarifas);
+    console.log('🔍 Ciudades CALZADO:', Object.keys(tarifas.calzado || {}));
+    console.log('🔍 Ciudades NORMAL:', Object.keys(tarifas.normal || {}));
+
     if (localStorage.getItem('datosFormulario')) restaurarFormulario();
 
     function mostrarError(mensaje) {
@@ -249,11 +258,16 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         // ✅ Normaliza y agrega prefijo según el tipo
         let ciudadNormalizada = normalizarTexto(ciudad);
+        console.log('🔍 Ciudad ingresada:', ciudad);
+        console.log('🔍 Ciudad normalizada (antes de prefijo):', ciudadNormalizada);
+
         if (tipo === 'calzado') {
             ciudadNormalizada = 'CALZ_' + ciudadNormalizada;
         } else {
             ciudadNormalizada = 'NORM_' + ciudadNormalizada;
         }
+
+        console.log('🔍 Ciudad con prefijo:', ciudadNormalizada);
 
         let origen = localStorage.getItem('origenUsuario') || '';
         let origenNormalizado = normalizarTexto(origen);
@@ -261,14 +275,17 @@ document.addEventListener('DOMContentLoaded', async function () {
             origenNormalizado = 'NORM_' + origenNormalizado;
         }
 
+        console.log('🔍 Origen normalizado:', origenNormalizado);
+
         let costoCaja = 0, costoSeguro = 0, kilosAdicionales = 0;
 
         if (tipo === "normal") {
             costoSeguro = valor <= 1000000 ? valor * 0.01 : valor * 0.005;
             const tarifaCiudad = tarifas.normal?.[ciudadNormalizada];
+            console.log('🔍 Tarifa ciudad (normal):', tarifaCiudad);
 
             if (!tarifaCiudad || !tarifaCiudad[origenNormalizado]) {
-                return mostrarError(`Ciudad sin tarifa. Contacto: Javier 3002099331 Para confirma tarifa`);
+                return mostrarError('Ciudad sin tarifa. Contacto: Javier 3002099331 Para confirma tarifa');
             }
 
             const tarifa = tarifaCiudad[origenNormalizado];
@@ -280,6 +297,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         } else if (tipo === "calzado") {
             costoSeguro = valor * (ciudadesCalzadoSeguro1Porciento.includes(ciudad) ? 0.01 : 0.005);
             const tarifasCiudad = tarifas.calzado?.[ciudadNormalizada] || {};
+            console.log('🔍 Tarifa ciudad (calzado):', tarifasCiudad);
             costoCaja =
                 (tarifasCiudad["30-60 KG"] || 0) * unidades30 +
                 (tarifasCiudad["60-90 KG"] || 0) * unidades60 +
@@ -288,6 +306,10 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         const costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
         const origenFinal = localStorage.getItem('origenUsuario')?.toUpperCase() || 'NO DEFINIDO';
+
+        console.log('💰 Costo envío:', Math.trunc(costoCaja));
+        console.log('💰 Costo seguro:', Math.trunc(costoSeguro));
+        console.log('💰 Total:', Math.trunc(costoTotal));
 
         resultadoContenido.innerHTML = `
             <div class="resultado-box">
