@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
     const ciudadDestino = document.getElementById('ciudadDestino');
     const suggestionsBox = document.getElementById('suggestions');
     const tipoCajaSelect = document.getElementById('tipoCaja');
@@ -27,18 +27,45 @@ document.addEventListener('DOMContentLoaded', function () {
     let tarifas = {}, ciudades = [], pesoVolumetricoCalculado = 0;
     let unidades30 = 0, unidades60 = 0, unidades90 = 0;
 
-    const ciudadesCalzadoSeguro1Porciento = ["POPAYAN", "PASTO", "NEIVA", "VILLAVICENCIO", "TUNJA", "TUMACO", "MOCOA", "GARZON", "FLORENCIA", "BUENAVENTURA", "NEPOCLI", "APARTADO", "CAUCACIA", "YOPAL", "DUITAMA", "MITU", "YARUMAL", "TARAZA", "PLANETA RICA", "SAN MARCO", "LORICA", "PLATO", "EL CARMEN DE BOLIVAR", "ARMOBELETES", "TIERRA ALTA", "CHINU"];
+    const ciudadesCalzadoSeguro1Porciento = [
+        "POPAYAN", "PASTO", "NEIVA", "VILLAVICENCIO", "TUNJA", "TUMACO",
+        "MOCOA", "GARZON", "FLORENCIA", "BUENAVENTURA", "NEPOCLI", "APARTADO",
+        "CAUCACIA", "YOPAL", "DUITAMA", "MITU", "YARUMAL", "TARAZA",
+        "PLANETA RICA", "SAN MARCO", "LORICA", "PLATO", "EL CARMEN DE BOLIVAR",
+        "ARMOBELETES", "TIERRA ALTA", "CHINU"
+    ];
 
-    fetch('https://script.google.com/macros/s/AKfycbzWt6zYnozze630yVncH_j11Zjhdo9yD3t1JIxToqZ486QWs9D6Uxx5H6B4wz1KlmY/exec')
-        .then(r => r.json())
-        .then(data => {
-            tarifas = data;
-            // 🔍 Mostrar ciudades que contienen la letra Ñ
-            const ciudadesConEnie = Object.keys(tarifas.normal || {}).filter(ciudad => ciudad.includes('Ñ'));
-            console.log('📍 Ciudades con "Ñ" en tarifas.normal:', ciudadesConEnie);
-            if (localStorage.getItem('datosFormulario')) restaurarFormulario();
-        })
-        .catch(() => mostrarError('Error al cargar tarifas. Intenta más tarde.'));
+    const urlBase = 'https://script.google.com/macros/s/AKfycbzWt6zYnozze630yVncH_j11Zjhdo9yD3t1JIxToqZ486QWs9D6Uxx5H6B4wz1KlmY/exec';
+
+    async function obtenerTarifas() {
+        const versionGuardada = localStorage.getItem('tarifasVersion');
+        const tarifasGuardadas = localStorage.getItem('tarifas');
+
+        try {
+            const resVersion = await fetch(`${urlBase}?version=1`);
+            const { version } = await resVersion.json();
+
+            if (version === versionGuardada && tarifasGuardadas) {
+                console.log('✅ Usando tarifas locales');
+                return JSON.parse(tarifasGuardadas);
+            }
+
+            console.log('🔄 Descargando tarifas...');
+            const resTarifas = await fetch(urlBase);
+            const tarifas = await resTarifas.json();
+
+            localStorage.setItem('tarifas', JSON.stringify(tarifas));
+            localStorage.setItem('tarifasVersion', version);
+            return tarifas;
+        } catch (err) {
+            mostrarError('Error al cargar tarifas. Intenta más tarde.');
+            console.error(err);
+            return {};
+        }
+    }
+
+    tarifas = await obtenerTarifas();
+    if (localStorage.getItem('datosFormulario')) restaurarFormulario();
 
     function mostrarError(mensaje) {
         errorMessage.textContent = mensaje;
@@ -85,8 +112,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (nombreGuardado && !origenGuardado) {
-        // Mostrar campo solo para ciudad
-        nombreInput.value = nombreGuardado; // Prellenar nombre
+        nombreInput.value = nombreGuardado;
         seccionNombre.style.display = 'block';
         encabezado.style.display = 'none';
     } else if (nombreGuardado && origenGuardado) {
@@ -138,7 +164,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 ciudadDestino.value = city;
                 suggestionsBox.innerHTML = '';
                 ciudadDestino.dispatchEvent(new Event('change'));
-                // 🔁 Validación inmediata después de selección
                 validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad no encontrada. Revise la escritura o contacte a Sistemas: Yerson 3212728425');
             };
             suggestionsBox.appendChild(p);
@@ -178,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return validarCampo(valorDeclaradoInput, valor >= minimo, `Mínimo $${minimo.toLocaleString('es-CO')}`);
     }
 
-    ciudadDestino.addEventListener('blur', () => validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad no encontrada. Revise la escritura o contacte a Sistemas: Yerson 3212728425'));
+    ciudadDestino.addEventListener('blur', () => validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad no encontrada. Contacto: Yerson 3212728425'));
     valorDeclaradoInput.addEventListener('blur', validarValorDeclarado);
     pesoTotalInput.addEventListener('input', () => {
         if (!pesoTotalInput.disabled) validarCampo(pesoTotalInput, parseFloat(pesoTotalInput.value) > 0, 'Peso inválido');
@@ -193,12 +218,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const valor = parseFloat(valorDeclaradoInput.value.replace(/\./g, '').replace(/\D/g, '')) || 0;
         const nombreUsuario = localStorage.getItem('nombreUsuario') || 'Anónimo';
 
-        // Extraer valores de calzado
-        unidades30 = parseInt(document.getElementById('calzado_30_60').value) || 0;
-        unidades60 = parseInt(document.getElementById('calzado_60_90').value) || 0;
-        unidades90 = parseInt(document.getElementById('calzado_90_120').value) || 0;
+        unidades30 = parseInt(document.getElementById('calzado_30_60')?.value) || 0;
+        unidades60 = parseInt(document.getElementById('calzado_60_90')?.value) || 0;
+        unidades90 = parseInt(document.getElementById('calzado_90_120')?.value) || 0;
 
-        // Validaciones
         const validaciones = [
             validarCampo(ciudadDestino, ciudadValida(ciudad), 'Ciudad no encontrada. Contacto: Yerson 3212728425'),
             tipo === 'normal' ? validarCampo(numUnidadesInput, unidades > 0, 'Unidades requeridas') : true,
@@ -211,20 +234,18 @@ document.addEventListener('DOMContentLoaded', function () {
             return mostrarError('⚠️ Completa todos los campos correctamente.');
         }
 
-        // ✅ Normalizador de texto base
         function normalizarTexto(txt) {
             return txt
                 .toUpperCase()
                 .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')   // Quita tildes
-                .replace(/\s+/g, ' ')              // Espacios dobles
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/\s+/g, ' ')
                 .trim();
         }
 
-        // ✅ Generar mapa de excepciones una vez (si aún no existe)
         if (!window.excepcionesCiudades) {
             window.excepcionesCiudades = {};
-            Object.keys(tarifas.normal).forEach(ciudad => {
+            Object.keys(tarifas.normal || {}).forEach(ciudad => {
                 const claveNormalizada = ciudad
                     .normalize("NFD")
                     .replace(/[\u0300-\u036f]/g, '')
@@ -236,7 +257,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        // ✅ Normalización con corrección de Ñ para ciudad y origen
         let ciudadNormalizada = normalizarTexto(ciudad).replace(/Ñ/g, 'N');
         if (window.excepcionesCiudades[ciudadNormalizada]) {
             ciudadNormalizada = window.excepcionesCiudades[ciudadNormalizada];
@@ -252,7 +272,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (tipo === "normal") {
             costoSeguro = valor <= 1000000 ? valor * 0.01 : valor * 0.005;
-
             const tarifaCiudad = tarifas.normal?.[ciudadNormalizada];
 
             if (!tarifaCiudad || !tarifaCiudad[origenNormalizado]) {
@@ -261,18 +280,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const tarifa = tarifaCiudad[origenNormalizado];
             costoCaja = tarifa * unidades;
-
             const pesoMinimo = unidades * 30;
             if (peso > pesoMinimo) {
                 kilosAdicionales = (peso - pesoMinimo) * (tarifa / 30);
             }
-
         } else if (tipo === "calzado") {
             costoSeguro = valor * (ciudadesCalzadoSeguro1Porciento.includes(ciudad) ? 0.01 : 0.005);
-
             const ciudadCorrCalzado = window.excepcionesCiudades[normalizarTexto(ciudad).replace(/Ñ/g, 'N')] || ciudad;
             const tarifasCiudad = tarifas.calzado?.[ciudadCorrCalzado] || {};
-
             costoCaja =
                 (tarifasCiudad["30-60 KG"] || 0) * unidades30 +
                 (tarifasCiudad["60-90 KG"] || 0) * unidades60 +
@@ -280,13 +295,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
-        origen = localStorage.getItem('origenUsuario')?.toUpperCase() || 'NO DEFINIDO';
+        const origenFinal = localStorage.getItem('origenUsuario')?.toUpperCase() || 'NO DEFINIDO';
 
         resultadoContenido.innerHTML = `
             <div class="resultado-box">
                 <h3><i class="fas fa-receipt"></i> Resultados de la Liquidación</h3>
                 <p><i class="fas fa-box"></i> <strong>Tipo de Caja:</strong> ${tipo}</p>
-                <p><i class="fas fa-map-marker-alt"></i> <strong>Origen:</strong> ${origen}</p>
+                <p><i class="fas fa-map-marker-alt"></i> <strong>Origen:</strong> ${origenFinal}</p>
                 <p><i class="fas fa-map-marker-alt"></i> <strong>Ciudad de Destino:</strong> ${ciudad}</p>
                 ${tipo === 'normal' ? `<p><i class="fas fa-weight-hanging"></i> <strong>Peso Total:</strong> ${peso} kg</p>` : `
                 <div class="rangos">
@@ -311,9 +326,7 @@ document.addEventListener('DOMContentLoaded', function () {
             ciudad,
             tipo,
             peso || '',
-            tipo === "normal"
-                ? unidades
-                : unidades30 + unidades60 + unidades90,
+            tipo === "normal" ? unidades : unidades30 + unidades60 + unidades90,
             valor,
             Math.trunc(costoCaja),
             Math.trunc(costoSeguro),
@@ -321,7 +334,6 @@ document.addEventListener('DOMContentLoaded', function () {
             Math.trunc(costoTotal)
         );
         guardarEnLocalStorage();
-
     });
 
     function guardarEnLocalStorage() {
@@ -378,17 +390,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         fetch("https://script.google.com/macros/s/AKfycbwyqXzq06rKm7OcixVtTBa2SfB-QkMwYe1nG84uU5IsBTU3a8ChbN6lj4n-daRCV7JwEg/exec", {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: params.toString()
         })
             .then(res => res.text())
             .then(data => console.log('Registro enviado:', data))
             .catch(err => console.error('Error registrando:', err));
     }
-
-
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
