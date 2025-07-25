@@ -1,335 +1,325 @@
 document.addEventListener('DOMContentLoaded', async function () {
-    const ciudadDestino = document.getElementById('ciudadDestino');
-    const suggestionsBox = document.getElementById('suggestions');
-    const tipoCajaSelect = document.getElementById('tipoCaja');
-    const pesoTotalInput = document.getElementById('pesoTotal');
-    const calcularVolumetricoBtn = document.getElementById('calcularVolumetricoBtn');
-    const volumetricModal = document.getElementById('volumetricModal');
-    const aceptarVolumetrico = document.getElementById('aceptarVolumetrico');
-    const altoInput = document.getElementById('alto');
-    const anchoInput = document.getElementById('ancho');
-    const largoInput = document.getElementById('largo');
-    const valorDeclaradoInput = document.getElementById('valorDeclarado');
-    const errorModal = document.getElementById('errorModal');
-    const errorMessage = document.getElementById('errorMessage');
-    const resultadoModal = document.getElementById('resultadoModal');
-    const resultadoContenido = document.getElementById('resultadoContenido');
-    const closeErrorBtn = document.querySelector('.close-btn');
-    const closeVolumetricBtn = document.querySelector('.close-volumetric-btn');
-    const closeResultadoBtn = document.querySelector('.close-modal-btn');
-    const numUnidadesInput = document.getElementById('numUnidades');
-    const limpiarBtn = document.getElementById('limpiarBtn');
-    const nombreInput = document.getElementById('nombreUsuario');
-    const guardarNombreBtn = document.getElementById('guardarNombreBtn');
-    const seccionNombre = document.getElementById('nombreSeccion');
-    const encabezado = document.getElementById('encabezado');
+        const ciudadDestino = document.getElementById('ciudadDestino');
+        const suggestionsBox = document.getElementById('suggestions');
+        const tipoCajaSelect = document.getElementById('tipoCaja');
+        const pesoTotalInput = document.getElementById('pesoTotal');
+        const calcularVolumetricoBtn = document.getElementById('calcularVolumetricoBtn');
+        const volumetricModal = document.getElementById('volumetricModal');
+        const aceptarVolumetrico = document.getElementById('aceptarVolumetrico');
+        const altoInput = document.getElementById('alto');
+        const anchoInput = document.getElementById('ancho');
+        const largoInput = document.getElementById('largo');
+        const valorDeclaradoInput = document.getElementById('valorDeclarado');
+        const errorModal = document.getElementById('errorModal');
+        const errorMessage = document.getElementById('errorMessage');
+        const resultadoModal = document.getElementById('resultadoModal');
+        const resultadoContenido = document.getElementById('resultadoContenido');
+        const closeErrorBtn = document.querySelector('.close-btn');
+        const closeVolumetricBtn = document.querySelector('.close-volumetric-btn');
+        const closeResultadoBtn = document.querySelector('.close-modal-btn');
+        const numUnidadesInput = document.getElementById('numUnidades');
+        const limpiarBtn = document.getElementById('limpiarBtn');
+        const nombreInput = document.getElementById('nombreUsuario');
+        const guardarNombreBtn = document.getElementById('guardarNombreBtn');
+        const seccionNombre = document.getElementById('nombreSeccion');
+        const encabezado = document.getElementById('encabezado');
 
-    let tarifas = {}, ciudades = [], pesoVolumetricoCalculado = 0;
-    let unidades30 = 0, unidades60 = 0, unidades90 = 0;
+        let tarifas = {}, ciudades = [], pesoVolumetricoCalculado = 0;
+        let unidades30 = 0, unidades60 = 0, unidades90 = 0;
 
-    const ciudadesCalzadoSeguro1Porciento = [
-        "POPAYAN", "PASTO", "NEIVA", "VILLAVICENCIO", "TUNJA", "TUMACO", "MOCOA", "GARZON", "FLORENCIA",
-        "BUENAVENTURA", "NEPOCLI", "APARTADO", "CAUCACIA", "YOPAL", "DUITAMA", "MITU", "YARUMAL", "TARAZA",
-        "PLANETA RICA", "SAN MARCO", "LORICA", "PLATO", "EL CARMEN DE BOLIVAR", "ARMOBELETES", "TIERRA ALTA", "CHINU"
-    ];
-
-    const urlBase = 'https://script.google.com/macros/s/AKfycbyi4l3Nbm8kdcT17IKkGk4SOJM0DcwUxNzzZpOLnsgNICal9Kg_rx8N0tqPUyUjHYUb/exec';
-
-    function normalizarTexto(txt) {
-        return txt
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .replace(/Ñ/g, 'N')
-            .toUpperCase()
-            .trim()
-            .replace(/\s+/g, ' ');
-    }
-
-    async function obtenerTarifas() {
-        const versionGuardada = localStorage.getItem('tarifasVersion');
-        const tarifasGuardadas = localStorage.getItem('tarifas');
-
-        console.log('🔍 Version guardada:', versionGuardada);
-        console.log('📦 Tarifas guardadas:', tarifasGuardadas ? '✅ Sí' : '❌ No');
-
-        try {
-            const resVersion = await fetch(`${urlBase}?version=1`);
-            const { version } = await resVersion.json();
-            console.log('🆕 Versión remota:', version);
-
-            if (version === versionGuardada && tarifasGuardadas) {
-                console.log('✅ Usando tarifas locales');
-                return JSON.parse(tarifasGuardadas);
-            }
-
-            console.log('🔄 Descargando tarifas...');
-            const resTarifas = await fetch(urlBase);
-            const tarifas = await resTarifas.json();
-
-            console.log('✅ Tarifas descargadas:', tarifas);
-
-            localStorage.setItem('tarifas', JSON.stringify(tarifas));
-            localStorage.setItem('tarifasVersion', version);
-            return tarifas;
-        } catch (err) {
-            console.error('❌ Error al obtener tarifas:', err);
-            mostrarError('Error al cargar tarifas. Intenta más tarde.');
-            return {};
-        }
-    }
-
-    tarifas = await obtenerTarifas();
-
-    // ---------- INICIO cambios ----------
-    // 1. Spinner discreto
-    const spinner = document.createElement('div');
-    spinner.id = 'spinner';
-    spinner.style.cssText = 'position:fixed;top:15px;right:15px;z-index:9999;font-size:1.3rem;color:#007bff;';
-    spinner.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-    document.body.appendChild(spinner);
-
-    // 2. Deshabilita la interacción
-    document.body.classList.add('loading');
-
-    // 3. Decide qué sección mostrar
-    const nombreGuardado = localStorage.getItem('nombreUsuario');
-    const origenGuardado = localStorage.getItem('origenUsuario');
-    const seccionNombre = document.getElementById('nombreSeccion');
-    const encabezado = document.getElementById('encabezado');
-
-    if (!origenGuardado || origenGuardado === "Selecciona ciudad") {
-        seccionNombre.style.display = 'block';
-    } else {
-        document.getElementById('origenActual').innerText = origenGuardado;
-        encabezado.style.display = 'block';
-    }
-
-    // 4. Restaura formulario si existe
-    if (localStorage.getItem('datosFormulario')) restaurarFormulario();
-
-    // 5. Activa la página
-    document.body.classList.remove('loading');
-    spinner.remove();
-    // ---------- FIN cambios ----------
-
-    // 🔍 Logs para verificar CALZ y NORM
-    console.log('📦 Tarifas cargadas:', tarifas);
-    
-    if (localStorage.getItem('datosFormulario')) restaurarFormulario();
-
-    function mostrarError(mensaje) {
-        errorMessage.textContent = mensaje;
-        errorModal.style.display = "block";
-    }
-
-    closeErrorBtn.onclick = () => errorModal.style.display = "none";
-    closeVolumetricBtn.onclick = () => volumetricModal.style.display = 'none';
-    closeResultadoBtn.onclick = () => resultadoModal.style.display = 'none';
-    calcularVolumetricoBtn.onclick = () => volumetricModal.style.display = 'block';
-
-    [altoInput, anchoInput, largoInput].forEach(i => i.addEventListener('input', () => {
-        pesoVolumetricoCalculado = (parseFloat(altoInput.value) || 0) * (parseFloat(anchoInput.value) || 0) * (parseFloat(largoInput.value) || 0) / 2500;
-    }));
-
-    guardarNombreBtn.addEventListener('click', () => {
-        const nombre = nombreInput.value.trim();
-        const origenSelect = document.getElementById('origenUsuario');
-        const origenValue = origenSelect.value;
-        const origenTexto = origenSelect.options[origenSelect.selectedIndex].text;
-
-        if (nombre.length >= 3 && origenValue !== "") {
-            localStorage.setItem('nombreUsuario', nombre);
-            localStorage.setItem('origenUsuario', origenTexto);
-            seccionNombre.style.display = 'none';
-            encabezado.style.display = 'block';
-            document.getElementById('origenActual').innerText = origenTexto;
-        } else {
-            alert('⚠️ Por favor ingresa tu nombre y selecciona una ciudad de origen antes de continuar.');
-        }
-    });
-
-    const nombreGuardado = localStorage.getItem('nombreUsuario');
-    const origenGuardado = localStorage.getItem('origenUsuario');
-
-    if (!origenGuardado || origenGuardado === "Selecciona ciudad") {
-        localStorage.removeItem('origenUsuario');
-        seccionNombre.style.display = 'block';
-        encabezado.style.display = 'none';
-    } else {
-        document.getElementById('origenActual').innerText = origenGuardado;
-        seccionNombre.style.display = 'none';
-        encabezado.style.display = 'block';
-    }
-
-    if (nombreGuardado && !origenGuardado) {
-        nombreInput.value = nombreGuardado;
-        seccionNombre.style.display = 'block';
-        encabezado.style.display = 'none';
-    } else if (nombreGuardado && origenGuardado) {
-        document.getElementById('origenActual').innerText = `${origenGuardado}`;
-        seccionNombre.style.display = 'none';
-        encabezado.style.display = 'block';
-    } else {
-        seccionNombre.style.display = 'block';
-        encabezado.style.display = 'none';
-    }
-
-    aceptarVolumetrico.onclick = () => {
-        if (pesoVolumetricoCalculado > 0) {
-            pesoTotalInput.value = pesoVolumetricoCalculado.toFixed(2);
-            volumetricModal.style.display = 'none';
-        } else {
-            mostrarError('Debe ingresar dimensiones válidas.');
-        }
-    };
-
-    valorDeclaradoInput.oninput = () => {
-        let valor = valorDeclaradoInput.value.replace(/\D/g, '');
-        valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);
-    };
-
-    tipoCajaSelect.onchange = () => {
-        const tipo = tipoCajaSelect.value;
-        actualizarCiudades(tipo);
-        document.getElementById('camposCalzado').classList.toggle('hidden', tipo !== 'calzado');
-        document.getElementById('camposNormal').classList.toggle('hidden', tipo !== 'normal');
-        pesoTotalInput.disabled = tipo === 'calzado';
-        calcularVolumetricoBtn.classList.toggle('hidden', tipo === 'calzado');
-    };
-
-    function actualizarCiudades(tipoCaja) {
-        const prefix = tipoCaja === 'calzado' ? 'CALZ_' : 'NORM_';
-        ciudades = Object.keys(tarifas[tipoCaja] || {})
-            .map(k => k.replace(prefix, ''));
-        pesoTotalInput.value = '';
-        ciudadDestino.value = '';
-        suggestionsBox.innerHTML = '';
-    }
-
-    ciudadDestino.addEventListener('input', function () {
-        const val = this.value.toLowerCase();
-        suggestionsBox.innerHTML = '';
-        ciudades.filter(c => c.toLowerCase().startsWith(val)).forEach(city => {
-            const p = document.createElement('p');
-            p.textContent = city;
-            p.onclick = () => {
-                ciudadDestino.value = city;
-                suggestionsBox.innerHTML = '';
-                ciudadDestino.dispatchEvent(new Event('change'));
-                validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad no encontrada. Revise la escritura o contacte a Sistemas: Yerson 3212728425');
-            };
-            suggestionsBox.appendChild(p);
-        });
-    });
-
-    function ciudadValida(ciudadIngresada) {
-        if (!ciudadIngresada.trim()) return false;
-        const normalizada = ciudadIngresada.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '');
-        return ciudades.some(c => {
-            const cNormalizada = c.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '');
-            return cNormalizada === normalizada;
-        });
-    }
-
-    function validarCampo(input, condicion, mensaje) {
-        let error = input.nextElementSibling;
-        if (!error || !error.classList.contains("error-msg")) {
-            error = document.createElement("div");
-            error.className = "error-msg";
-            input.parentNode.insertBefore(error, input.nextSibling);
-        }
-        const icon = input.closest('.input-icon-wrapper')?.querySelector('.estado-icono');
-        if (icon) {
-            icon.textContent = condicion ? '✔' : '❌';
-            icon.style.color = condicion ? 'green' : 'red';
-        }
-        error.textContent = condicion ? '' : mensaje;
-        return condicion;
-    }
-
-    function validarValorDeclarado() {
-        const tipo = tipoCajaSelect.value;
-        const ciudad = ciudadDestino.value.trim().toUpperCase();
-        const valor = parseFloat(valorDeclaradoInput.value.replace(/\./g, '').replace(/\D/g, '')) || 0;
-        const minimo = tipo === "calzado" && ciudadesCalzadoSeguro1Porciento.includes(ciudad) ? 1000000 : 500000;
-        return validarCampo(valorDeclaradoInput, valor >= minimo, `Mínimo $${minimo.toLocaleString('es-CO')}`);
-    }
-
-    ciudadDestino.addEventListener('blur', () => validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad no encontrada. Contacto: Yerson 3212728425'));
-    valorDeclaradoInput.addEventListener('blur', validarValorDeclarado);
-    pesoTotalInput.addEventListener('input', () => {
-        if (!pesoTotalInput.disabled) validarCampo(pesoTotalInput, parseFloat(pesoTotalInput.value) > 0, 'Peso inválido');
-    });
-    numUnidadesInput.addEventListener('input', () => validarCampo(numUnidadesInput, parseInt(numUnidadesInput.value) > 0, 'Debe ingresar al menos una unidad'));
-
-    document.getElementById('calcularBtn').addEventListener('click', function () {
-        const ciudad = ciudadDestino.value.trim().toUpperCase();
-        const tipo = tipoCajaSelect.value;
-        const unidades = parseInt(numUnidadesInput.value);
-        const peso = parseFloat(pesoTotalInput.value);
-        const valor = parseFloat(valorDeclaradoInput.value.replace(/\./g, '').replace(/\D/g, '')) || 0;
-        const nombreUsuario = localStorage.getItem('nombreUsuario') || 'Anónimo';
-
-        unidades30 = parseInt(document.getElementById('calzado_30_60')?.value) || 0;
-        unidades60 = parseInt(document.getElementById('calzado_60_90')?.value) || 0;
-        unidades90 = parseInt(document.getElementById('calzado_90_120')?.value) || 0;
-
-        const validaciones = [
-            validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad no encontrada. Contacto: Yerson 3212728425'),
-            tipo === 'normal' ? validarCampo(numUnidadesInput, unidades > 0, 'Unidades requeridas') : true,
-            tipo === 'normal' ? validarCampo(pesoTotalInput, peso > 0, 'Peso requerido') : true,
-            tipo === 'calzado' ? (unidades30 + unidades60 + unidades90 > 0) : true,
-            validarValorDeclarado()
+        const ciudadesCalzadoSeguro1Porciento = [
+                "POPAYAN", "PASTO", "NEIVA", "VILLAVICENCIO", "TUNJA", "TUMACO", "MOCOA", "GARZON", "FLORENCIA",
+                "BUENAVENTURA", "NEPOCLI", "APARTADO", "CAUCACIA", "YOPAL", "DUITAMA", "MITU", "YARUMAL", "TARAZA",
+                "PLANETA RICA", "SAN MARCO", "LORICA", "PLATO", "EL CARMEN DE BOLIVAR", "ARMOBELETES", "TIERRA ALTA", "CHINU"
         ];
 
-        if (validaciones.includes(false)) {
-            return mostrarError('⚠️ Completa todos los campos correctamente.');
+        const urlBase = 'https://script.google.com/macros/s/AKfycbyi4l3Nbm8kdcT17IKkGk4SOJM0DcwUxNzzZpOLnsgNICal9Kg_rx8N0tqPUyUjHYUb/exec';
+
+        function normalizarTexto(txt) {
+                return txt
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .replace(/Ñ/g, 'N')
+                        .toUpperCase()
+                        .trim()
+                        .replace(/\s+/g, ' ');
         }
 
-        // ✅ Normaliza y agrega prefijo según el tipo
-        let ciudadNormalizada = normalizarTexto(ciudad);
-        
-        if (tipo === 'calzado') {
-            ciudadNormalizada = 'CALZ_' + ciudadNormalizada;
+        async function obtenerTarifas() {
+                const versionGuardada = localStorage.getItem('tarifasVersion');
+                const tarifasGuardadas = localStorage.getItem('tarifas');
+
+                console.log('🔍 Version guardada:', versionGuardada);
+                console.log('📦 Tarifas guardadas:', tarifasGuardadas ? '✅ Sí' : '❌ No');
+
+                try {
+                        const resVersion = await fetch(`${urlBase}?version=1`);
+                        const { version } = await resVersion.json();
+                        console.log('🆕 Versión remota:', version);
+
+                        if (version === versionGuardada && tarifasGuardadas) {
+                                console.log('✅ Usando tarifas locales');
+                                return JSON.parse(tarifasGuardadas);
+                        }
+
+                        console.log('🔄 Descargando tarifas...');
+                        const resTarifas = await fetch(urlBase);
+                        const tarifas = await resTarifas.json();
+
+                        console.log('✅ Tarifas descargadas:', tarifas);
+
+                        localStorage.setItem('tarifas', JSON.stringify(tarifas));
+                        localStorage.setItem('tarifasVersion', version);
+                        return tarifas;
+                } catch (err) {
+                        console.error('❌ Error al obtener tarifas:', err);
+                        mostrarError('Error al cargar tarifas. Intenta más tarde.');
+                        return {};
+                }
+        }
+        // --- Inicialización ---
+        const spinner = document.createElement('div');
+        spinner.id = 'spinner';
+        spinner.style.cssText = 'position:fixed;top:15px;right:15px;z-index:9999;font-size:1.3rem;color:#007bff;';
+        spinner.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        document.body.appendChild(spinner);
+        document.body.classList.add('loading');
+
+        tarifas = await obtenerTarifas();
+
+        const nombreGuardado = localStorage.getItem('nombreUsuario');
+        const origenGuardado = localStorage.getItem('origenUsuario');
+
+        if (!origenGuardado || origenGuardado === "Selecciona ciudad") {
+                seccionNombre.style.display = 'block';
         } else {
-            ciudadNormalizada = 'NORM_' + ciudadNormalizada;
+                document.getElementById('origenActual').innerText = origenGuardado;
+                encabezado.style.display = 'block';
         }
 
-        let origen = localStorage.getItem('origenUsuario') || '';
-        let origenNormalizado = normalizarTexto(origen);
-        if (origen) {
-            origenNormalizado = 'NORM_' + origenNormalizado;
+        if (localStorage.getItem('datosFormulario')) restaurarFormulario();
+
+        document.body.classList.remove('loading');
+        spinner.remove();
+
+        closeErrorBtn.onclick = () => errorModal.style.display = "none";
+        closeVolumetricBtn.onclick = () => volumetricModal.style.display = 'none';
+        closeResultadoBtn.onclick = () => resultadoModal.style.display = 'none';
+        calcularVolumetricoBtn.onclick = () => volumetricModal.style.display = 'block';
+
+        [altoInput, anchoInput, largoInput].forEach(i => i.addEventListener('input', () => {
+                pesoVolumetricoCalculado = (parseFloat(altoInput.value) || 0) * (parseFloat(anchoInput.value) || 0) * (parseFloat(largoInput.value) || 0) / 2500;
+        }));
+
+        guardarNombreBtn.addEventListener('click', () => {
+                const nombre = nombreInput.value.trim();
+                const origenSelect = document.getElementById('origenUsuario');
+                const origenValue = origenSelect.value;
+                const origenTexto = origenSelect.options[origenSelect.selectedIndex].text;
+
+                if (nombre.length >= 3 && origenValue !== "") {
+                        localStorage.setItem('nombreUsuario', nombre);
+                        localStorage.setItem('origenUsuario', origenTexto);
+                        seccionNombre.style.display = 'none';
+                        encabezado.style.display = 'block';
+                        document.getElementById('origenActual').innerText = origenTexto;
+                } else {
+                        alert('⚠️ Por favor ingresa tu nombre y selecciona una ciudad de origen antes de continuar.');
+                }
+        });
+
+
+        if (!origenGuardado || origenGuardado === "Selecciona ciudad") {
+                localStorage.removeItem('origenUsuario');
+                seccionNombre.style.display = 'block';
+                encabezado.style.display = 'none';
+        } else {
+                document.getElementById('origenActual').innerText = origenGuardado;
+                seccionNombre.style.display = 'none';
+                encabezado.style.display = 'block';
         }
 
-        let costoCaja = 0, costoSeguro = 0, kilosAdicionales = 0;
-
-        if (tipo === "normal") {
-            costoSeguro = valor <= 1000000 ? valor * 0.01 : valor * 0.005;
-            const tarifaCiudad = tarifas.normal?.[ciudadNormalizada];
-
-            if (!tarifaCiudad || !tarifaCiudad[origenNormalizado]) {
-                return mostrarError('Ciudad sin tarifa. Contacto: Javier 3002099331 Para confirma tarifa');
-            }
-
-            const tarifa = tarifaCiudad[origenNormalizado];
-            costoCaja = tarifa * unidades;
-            const pesoMinimo = unidades * 30;
-            if (peso > pesoMinimo) {
-                kilosAdicionales = (peso - pesoMinimo) * (tarifa / 30);
-            }
-        } else if (tipo === "calzado") {
-            costoSeguro = valor * (ciudadesCalzadoSeguro1Porciento.includes(ciudad) ? 0.01 : 0.005);
-            const tarifasCiudad = tarifas.calzado?.[ciudadNormalizada] || {};
-            costoCaja =
-                (tarifasCiudad["30-60 KG"] || 0) * unidades30 +
-                (tarifasCiudad["60-90 KG"] || 0) * unidades60 +
-                (tarifasCiudad["90-120 KG"] || 0) * unidades90;
+        if (nombreGuardado && !origenGuardado) {
+                nombreInput.value = nombreGuardado;
+                seccionNombre.style.display = 'block';
+                encabezado.style.display = 'none';
+        } else if (nombreGuardado && origenGuardado) {
+                document.getElementById('origenActual').innerText = `${origenGuardado}`;
+                seccionNombre.style.display = 'none';
+                encabezado.style.display = 'block';
+        } else {
+                seccionNombre.style.display = 'block';
+                encabezado.style.display = 'none';
         }
 
-        const costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
-        const origenFinal = localStorage.getItem('origenUsuario')?.toUpperCase() || 'NO DEFINIDO';
+        aceptarVolumetrico.onclick = () => {
+                if (pesoVolumetricoCalculado > 0) {
+                        pesoTotalInput.value = pesoVolumetricoCalculado.toFixed(2);
+                        volumetricModal.style.display = 'none';
+                } else {
+                        mostrarError('Debe ingresar dimensiones válidas.');
+                }
+        };
 
-            resultadoContenido.innerHTML = `
+        valorDeclaradoInput.oninput = () => {
+                let valor = valorDeclaradoInput.value.replace(/\D/g, '');
+                valorDeclaradoInput.value = new Intl.NumberFormat('de-DE').format(valor);
+        };
+
+        tipoCajaSelect.onchange = () => {
+                const tipo = tipoCajaSelect.value;
+                actualizarCiudades(tipo);
+                document.getElementById('camposCalzado').classList.toggle('hidden', tipo !== 'calzado');
+                document.getElementById('camposNormal').classList.toggle('hidden', tipo !== 'normal');
+                pesoTotalInput.disabled = tipo === 'calzado';
+                calcularVolumetricoBtn.classList.toggle('hidden', tipo === 'calzado');
+        };
+
+        function actualizarCiudades(tipoCaja) {
+                const prefix = tipoCaja === 'calzado' ? 'CALZ_' : 'NORM_';
+                ciudades = Object.keys(tarifas[tipoCaja] || {})
+                        .map(k => k.replace(prefix, ''));
+                pesoTotalInput.value = '';
+                ciudadDestino.value = '';
+                suggestionsBox.innerHTML = '';
+        }
+
+        ciudadDestino.addEventListener('input', function () {
+                const val = this.value.toLowerCase();
+                suggestionsBox.innerHTML = '';
+                ciudades.filter(c => c.toLowerCase().startsWith(val)).forEach(city => {
+                        const p = document.createElement('p');
+                        p.textContent = city;
+                        p.onclick = () => {
+                                ciudadDestino.value = city;
+                                suggestionsBox.innerHTML = '';
+                                ciudadDestino.dispatchEvent(new Event('change'));
+                                validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad no encontrada. Revise la escritura o contacte a Sistemas: Yerson 3212728425');
+                        };
+                        suggestionsBox.appendChild(p);
+                });
+        });
+
+        function ciudadValida(ciudadIngresada) {
+                if (!ciudadIngresada.trim()) return false;
+                const normalizada = ciudadIngresada.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '');
+                return ciudades.some(c => {
+                        const cNormalizada = c.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '');
+                        return cNormalizada === normalizada;
+                });
+        }
+
+        function validarCampo(input, condicion, mensaje) {
+                let error = input.nextElementSibling;
+                if (!error || !error.classList.contains("error-msg")) {
+                        error = document.createElement("div");
+                        error.className = "error-msg";
+                        input.parentNode.insertBefore(error, input.nextSibling);
+                }
+                const icon = input.closest('.input-icon-wrapper')?.querySelector('.estado-icono');
+                if (icon) {
+                        icon.textContent = condicion ? '✔' : '❌';
+                        icon.style.color = condicion ? 'green' : 'red';
+                }
+                error.textContent = condicion ? '' : mensaje;
+                return condicion;
+        }
+
+        function validarValorDeclarado() {
+                const tipo = tipoCajaSelect.value;
+                const ciudad = ciudadDestino.value.trim().toUpperCase();
+                const valor = parseFloat(valorDeclaradoInput.value.replace(/\./g, '').replace(/\D/g, '')) || 0;
+                const minimo = tipo === "calzado" && ciudadesCalzadoSeguro1Porciento.includes(ciudad) ? 1000000 : 500000;
+                return validarCampo(valorDeclaradoInput, valor >= minimo, `Mínimo $${minimo.toLocaleString('es-CO')}`);
+        }
+
+        ciudadDestino.addEventListener('blur', () => validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad no encontrada. Contacto: Yerson 3212728425'));
+        valorDeclaradoInput.addEventListener('blur', validarValorDeclarado);
+        pesoTotalInput.addEventListener('input', () => {
+                if (!pesoTotalInput.disabled) validarCampo(pesoTotalInput, parseFloat(pesoTotalInput.value) > 0, 'Peso inválido');
+        });
+        numUnidadesInput.addEventListener('input', () => validarCampo(numUnidadesInput, parseInt(numUnidadesInput.value) > 0, 'Debe ingresar al menos una unidad'));
+
+        document.getElementById('calcularBtn').addEventListener('click', function () {
+                const ciudad = ciudadDestino.value.trim().toUpperCase();
+                const tipo = tipoCajaSelect.value;
+                const unidades = parseInt(numUnidadesInput.value);
+                const peso = parseFloat(pesoTotalInput.value);
+                const valor = parseFloat(valorDeclaradoInput.value.replace(/\./g, '').replace(/\D/g, '')) || 0;
+                const nombreUsuario = localStorage.getItem('nombreUsuario') || 'Anónimo';
+
+                unidades30 = parseInt(document.getElementById('calzado_30_60')?.value) || 0;
+                unidades60 = parseInt(document.getElementById('calzado_60_90')?.value) || 0;
+                unidades90 = parseInt(document.getElementById('calzado_90_120')?.value) || 0;
+
+                const validaciones = [
+                        validarCampo(ciudadDestino, ciudadValida(ciudadDestino.value), 'Ciudad no encontrada. Contacto: Yerson 3212728425'),
+                        tipo === 'normal' ? validarCampo(numUnidadesInput, unidades > 0, 'Unidades requeridas') : true,
+                        tipo === 'normal' ? validarCampo(pesoTotalInput, peso > 0, 'Peso requerido') : true,
+                        tipo === 'calzado' ? (unidades30 + unidades60 + unidades90 > 0) : true,
+                        validarValorDeclarado()
+                ];
+
+                if (validaciones.includes(false)) {
+                        return mostrarError('⚠️ Completa todos los campos correctamente.');
+                }
+
+                // ✅ Normaliza y agrega prefijo según el tipo
+                let ciudadNormalizada = normalizarTexto(ciudad);
+                console.log('🔍 Ciudad ingresada:', ciudad);
+                console.log('🔍 Ciudad normalizada (antes de prefijo):', ciudadNormalizada);
+
+                if (tipo === 'calzado') {
+                        ciudadNormalizada = 'CALZ_' + ciudadNormalizada;
+                } else {
+                        ciudadNormalizada = 'NORM_' + ciudadNormalizada;
+                }
+
+                console.log('🔍 Ciudad con prefijo:', ciudadNormalizada);
+
+                let origen = localStorage.getItem('origenUsuario') || '';
+                let origenNormalizado = normalizarTexto(origen);
+                if (origen) {
+                        origenNormalizado = 'NORM_' + origenNormalizado;
+                }
+
+                console.log('🔍 Origen normalizado:', origenNormalizado);
+
+                let costoCaja = 0, costoSeguro = 0, kilosAdicionales = 0;
+
+                if (tipo === "normal") {
+                        costoSeguro = valor <= 1000000 ? valor * 0.01 : valor * 0.005;
+                        const tarifaCiudad = tarifas.normal?.[ciudadNormalizada];
+                        console.log('🔍 Tarifa ciudad (normal):', tarifaCiudad);
+
+                        if (!tarifaCiudad || !tarifaCiudad[origenNormalizado]) {
+                                return mostrarError('Ciudad sin tarifa. Contacto: Javier 3002099331 Para confirma tarifa');
+                        }
+
+                        const tarifa = tarifaCiudad[origenNormalizado];
+                        costoCaja = tarifa * unidades;
+                        const pesoMinimo = unidades * 30;
+                        if (peso > pesoMinimo) {
+                                kilosAdicionales = (peso - pesoMinimo) * (tarifa / 30);
+                        }
+                } else if (tipo === "calzado") {
+                        costoSeguro = valor * (ciudadesCalzadoSeguro1Porciento.includes(ciudad) ? 0.01 : 0.005);
+                        const tarifasCiudad = tarifas.calzado?.[ciudadNormalizada] || {};
+                        console.log('🔍 Tarifa ciudad (calzado):', tarifasCiudad);
+                        costoCaja =
+                                (tarifasCiudad["30-60 KG"] || 0) * unidades30 +
+                                (tarifasCiudad["60-90 KG"] || 0) * unidades60 +
+                                (tarifasCiudad["90-120 KG"] || 0) * unidades90;
+                }
+
+                const costoTotal = Math.floor(costoCaja + kilosAdicionales + costoSeguro);
+                const origenFinal = localStorage.getItem('origenUsuario')?.toUpperCase() || 'NO DEFINIDO';
+
+                console.log('💰 Costo envío:', Math.trunc(costoCaja));
+                console.log('💰 Costo seguro:', Math.trunc(costoSeguro));
+                console.log('💰 Total:', Math.trunc(costoTotal));
+
+                resultadoContenido.innerHTML = `
             <div class="resultado-box">
                 <h3><i class="fas fa-receipt"></i> Resultados de la Liquidación</h3>
                 <p><i class="fas fa-box"></i> <strong>Tipo de Caja:</strong> ${tipo}</p>
@@ -350,89 +340,89 @@ document.addEventListener('DOMContentLoaded', async function () {
                 <p><i class="fas fa-shield-alt"></i><strong>Costo Seguro:</strong><span class="seguro"> $${Math.trunc(costoSeguro).toLocaleString('es-CO')}</p>
                 <p><i class="fas fa-coins"></i><strong>Total a Pagar:</strong> <span class="total">$${Math.trunc(costoTotal).toLocaleString('es-CO')}</span></p>
             </div>`;
-        resultadoModal.style.display = 'block';
-        const origenUsuario = localStorage.getItem('origenUsuario') || 'SIN ORIGEN';
-        registrarEvento(
-            nombreUsuario,
-            origenUsuario,
-            ciudad,
-            tipo,
-            peso || '',
-            tipo === "normal" ? unidades : unidades30 + unidades60 + unidades90,
-            valor,
-            Math.trunc(costoCaja),
-            Math.trunc(costoSeguro),
-            Math.trunc(kilosAdicionales),
-            Math.trunc(costoTotal)
-        );
-        guardarEnLocalStorage();
-    });
-
-    function guardarEnLocalStorage() {
-        const datos = {
-            ciudadDestino: ciudadDestino.value,
-            tipoCaja: tipoCajaSelect.value,
-            pesoTotal: pesoTotalInput.value,
-            alto: altoInput.value,
-            ancho: anchoInput.value,
-            largo: largoInput.value,
-            valorDeclarado: valorDeclaradoInput.value,
-            numUnidades: numUnidadesInput.value,
-            unidades30: document.getElementById('calzado_30_60')?.value || '0',
-            unidades60: document.getElementById('calzado_60_90')?.value || '0',
-            unidades90: document.getElementById('calzado_90_120')?.value || '0'
-        };
-        localStorage.setItem('datosFormulario', JSON.stringify(datos));
-    }
-
-    function restaurarFormulario() {
-        const datos = JSON.parse(localStorage.getItem('datosFormulario'));
-        ciudadDestino.value = datos.ciudadDestino || '';
-        tipoCajaSelect.value = datos.tipoCaja || 'normal';
-        tipoCajaSelect.dispatchEvent(new Event('change'));
-        pesoTotalInput.value = datos.pesoTotal || '';
-        altoInput.value = datos.alto || '';
-        anchoInput.value = datos.ancho || '';
-        largoInput.value = datos.largo || '';
-        valorDeclaradoInput.value = datos.valorDeclarado || '';
-        numUnidadesInput.value = datos.numUnidades || '';
-        document.getElementById('calzado_30_60').value = parseInt(datos.unidades30) || 0;
-        document.getElementById('calzado_60_90').value = parseInt(datos.unidades60) || 0;
-        document.getElementById('calzado_90_120').value = parseInt(datos.unidades90) || 0;
-    }
-
-    limpiarBtn.addEventListener('click', () => {
-        localStorage.removeItem('datosFormulario');
-        location.reload();
-    });
-
-    function registrarEvento(nombre, origen, ciudad, tipoCaja, peso, unidades, valor, costoEnvio, costoSeguro, kilosAdicionales, total) {
-        const params = new URLSearchParams();
-        params.append("nombre", nombre);
-        params.append("origen", origen);
-        params.append("ciudad", ciudad);
-        params.append("tipoCaja", tipoCaja);
-        params.append("peso", peso);
-        params.append("unidades", unidades);
-        params.append("valor", valor);
-        params.append("costoEnvio", costoEnvio);
-        params.append("costoSeguro", costoSeguro);
-        params.append("kilosAdicionales", kilosAdicionales);
-        params.append("total", total);
-
-        fetch("https://script.google.com/macros/s/AKfycbwyqXzq06rKm7OcixVtTBa2SfB-QkMwYe1nG84uU5IsBTU3a8ChbN6lj4n-daRCV7JwEg/exec", {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: params.toString()
-        })
-            .then(res => res.text())
-            .then(data => console.log('Registro enviado:', data))
-            .catch(err => console.error('Error registrando:', err));
-    }
-
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/liquidacion/sw.js').catch(console.error);
+                resultadoModal.style.display = 'block';
+                const origenUsuario = localStorage.getItem('origenUsuario') || 'SIN ORIGEN';
+                registrarEvento(
+                        nombreUsuario,
+                        origenUsuario,
+                        ciudad,
+                        tipo,
+                        peso || '',
+                        tipo === "normal" ? unidades : unidades30 + unidades60 + unidades90,
+                        valor,
+                        Math.trunc(costoCaja),
+                        Math.trunc(costoSeguro),
+                        Math.trunc(kilosAdicionales),
+                        Math.trunc(costoTotal)
+                );
+                guardarEnLocalStorage();
         });
-    }
+
+        function guardarEnLocalStorage() {
+                const datos = {
+                        ciudadDestino: ciudadDestino.value,
+                        tipoCaja: tipoCajaSelect.value,
+                        pesoTotal: pesoTotalInput.value,
+                        alto: altoInput.value,
+                        ancho: anchoInput.value,
+                        largo: largoInput.value,
+                        valorDeclarado: valorDeclaradoInput.value,
+                        numUnidades: numUnidadesInput.value,
+                        unidades30: document.getElementById('calzado_30_60')?.value || '0',
+                        unidades60: document.getElementById('calzado_60_90')?.value || '0',
+                        unidades90: document.getElementById('calzado_90_120')?.value || '0'
+                };
+                localStorage.setItem('datosFormulario', JSON.stringify(datos));
+        }
+
+        function restaurarFormulario() {
+                const datos = JSON.parse(localStorage.getItem('datosFormulario'));
+                ciudadDestino.value = datos.ciudadDestino || '';
+                tipoCajaSelect.value = datos.tipoCaja || 'normal';
+                tipoCajaSelect.dispatchEvent(new Event('change'));
+                pesoTotalInput.value = datos.pesoTotal || '';
+                altoInput.value = datos.alto || '';
+                anchoInput.value = datos.ancho || '';
+                largoInput.value = datos.largo || '';
+                valorDeclaradoInput.value = datos.valorDeclarado || '';
+                numUnidadesInput.value = datos.numUnidades || '';
+                document.getElementById('calzado_30_60').value = parseInt(datos.unidades30) || 0;
+                document.getElementById('calzado_60_90').value = parseInt(datos.unidades60) || 0;
+                document.getElementById('calzado_90_120').value = parseInt(datos.unidades90) || 0;
+        }
+
+        limpiarBtn.addEventListener('click', () => {
+                localStorage.removeItem('datosFormulario');
+                location.reload();
+        });
+
+        function registrarEvento(nombre, origen, ciudad, tipoCaja, peso, unidades, valor, costoEnvio, costoSeguro, kilosAdicionales, total) {
+                const params = new URLSearchParams();
+                params.append("nombre", nombre);
+                params.append("origen", origen);
+                params.append("ciudad", ciudad);
+                params.append("tipoCaja", tipoCaja);
+                params.append("peso", peso);
+                params.append("unidades", unidades);
+                params.append("valor", valor);
+                params.append("costoEnvio", costoEnvio);
+                params.append("costoSeguro", costoSeguro);
+                params.append("kilosAdicionales", kilosAdicionales);
+                params.append("total", total);
+
+                fetch("https://script.google.com/macros/s/AKfycbwyqXzq06rKm7OcixVtTBa2SfB-QkMwYe1nG84uU5IsBTU3a8ChbN6lj4n-daRCV7JwEg/exec", {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: params.toString()
+                })
+                        .then(res => res.text())
+                        .then(data => console.log('Registro enviado:', data))
+                        .catch(err => console.error('Error registrando:', err));
+        }
+
+        if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                        navigator.serviceWorker.register('/liquidacion/sw.js').catch(console.error);
+                });
+        }
 });
