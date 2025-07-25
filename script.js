@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         const nombreGuardado = localStorage.getItem('nombreUsuario');
         const origenGuardado = localStorage.getItem('origenUsuario');
-        
+
 
         if (!nombreGuardado || !origenGuardado || origenGuardado === "Selecciona ciudad") {
                 seccionNombre.style.display = 'block';
