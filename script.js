@@ -311,6 +311,11 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         if (tipo === "normal") {
             costoSeguro = valor <= 1000000 ? valor * 0.01 : valor * 0.005;
+             // 👇👇  AQUÍ van los logs
+                console.log('Destino (ciudad):', ciudadNormalizada);
+                console.log('Origen (usuario):', origenNormalizado);
+                console.log('Tarifa buscada:', tarifas.normal?.[ciudadNormalizada]?.[origenNormalizado]);
+
 
             // ✅ Buscamos por ORIGEN primero
             const tarifasOrigen = tarifas.normal?.[origenNormalizado];
