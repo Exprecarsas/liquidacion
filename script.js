@@ -311,17 +311,20 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         if (tipo === "normal") {
             costoSeguro = valor <= 1000000 ? valor * 0.01 : valor * 0.005;
-            const tarifaCiudad = tarifas.normal?.[ciudadNormalizada];
-            if (!tarifaCiudad || !tarifaCiudad[origenNormalizado]) {
+
+            // ✅ Buscamos por ORIGEN primero
+            const tarifasOrigen = tarifas.normal?.[origenNormalizado];
+            if (!tarifasOrigen || !(ciudadNormalizada in tarifasOrigen)) {
                 return mostrarError('Ciudad sin tarifa. Contacto: Javier 3002099331 Para confirma tarifa');
             }
 
-            const tarifa = tarifaCiudad[origenNormalizado];
+            const tarifa = tarifasOrigen[ciudadNormalizada];
             costoCaja = tarifa * unidades;
             const pesoMinimo = unidades * 30;
             if (peso > pesoMinimo) {
                 kilosAdicionales = (peso - pesoMinimo) * (tarifa / 30);
             }
+
         } else if (tipo === "calzado") {
             costoSeguro = valor * (ciudadesCalzadoSeguro1Porciento.includes(ciudad) ? 0.01 : 0.005);
             const tarifasCiudad = tarifas.calzado?.[ciudadNormalizada] || {};
@@ -374,27 +377,27 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
 
     limpiarBtn.addEventListener('click', () => {
-    localStorage.removeItem('datosFormulario');
+        localStorage.removeItem('datosFormulario');
 
-    // Reset de campos
-    ciudadDestino.value = '';
-    tipoCajaSelect.value = 'normal';
-    tipoCajaSelect.dispatchEvent(new Event('change'));
-    pesoTotalInput.value = '';
-    altoInput.value = '';
-    anchoInput.value = '';
-    largoInput.value = '';
-    valorDeclaradoInput.value = '';
-    numUnidadesInput.value = '';
-    document.getElementById('calzado_30_60') && (document.getElementById('calzado_30_60').value = 0);
-    document.getElementById('calzado_60_90') && (document.getElementById('calzado_60_90').value = 0);
-    document.getElementById('calzado_90_120') && (document.getElementById('calzado_90_120').value = 0);
+        // Reset de campos
+        ciudadDestino.value = '';
+        tipoCajaSelect.value = 'normal';
+        tipoCajaSelect.dispatchEvent(new Event('change'));
+        pesoTotalInput.value = '';
+        altoInput.value = '';
+        anchoInput.value = '';
+        largoInput.value = '';
+        valorDeclaradoInput.value = '';
+        numUnidadesInput.value = '';
+        document.getElementById('calzado_30_60') && (document.getElementById('calzado_30_60').value = 0);
+        document.getElementById('calzado_60_90') && (document.getElementById('calzado_60_90').value = 0);
+        document.getElementById('calzado_90_120') && (document.getElementById('calzado_90_120').value = 0);
 
-    // Limpieza visual
-    suggestionsBox.innerHTML = '';
-    document.querySelectorAll('.error-msg').forEach(e => e.remove());
-    document.querySelectorAll('.estado-icono').forEach(icon => icon.textContent = '');
-});
+        // Limpieza visual
+        suggestionsBox.innerHTML = '';
+        document.querySelectorAll('.error-msg').forEach(e => e.remove());
+        document.querySelectorAll('.estado-icono').forEach(icon => icon.textContent = '');
+    });
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
