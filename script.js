@@ -302,10 +302,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         let origen = localStorage.getItem('origenUsuario') || '';
-        let origenNormalizado = normalizarTexto(origen);
-        if (origen) {
-            origenNormalizado = 'NORM_' + origenNormalizado;
-        }
+        let origenNormalizado = normalizarTexto(origen); // ← sin prefijo
 
         let costoCaja = 0, costoSeguro = 0, kilosAdicionales = 0;
 
